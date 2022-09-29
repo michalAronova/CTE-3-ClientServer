@@ -4,6 +4,7 @@ import DTO.codeHistory.CodeHistory;
 import DTO.codeHistory.Translation;
 import DTO.codeObj.CodeObj;
 import engine.decipherManager.DecipherManager;
+import engine.decipherManager.Difficulty;
 import engine.stock.Stock;
 import engine.validator.MachineValidator;
 import engine.validator.Validator;
@@ -41,6 +42,11 @@ public class TheEngine implements Engine {
     private int processedMsgsCnt;
     private Pair<CodeObj, Translation> lastTranslationMade;
     private final LinkedList<CodeHistory> codesHistories = new LinkedList<>();
+
+    private String battleFieldName;
+    private Difficulty battleLevel;
+
+    private int alliesRequired;
     private final static String JAXB_XML_PACKAGE_NAME = "schema.generated";
     private final static int MIN_ROTOR_COUNT = 2;
     private final static int MAX_ROTOR_COUNT = 99;
@@ -58,6 +64,9 @@ public class TheEngine implements Engine {
             Validator machineValidator = new MachineValidator(cteMachine, MIN_ROTOR_COUNT, MAX_ROTOR_COUNT);
             try{
                 machineValidator.validate();
+                this.battleFieldName = enigma.getCTEBattlefield().getBattleName();
+                this.battleLevel = Difficulty.valueOf(enigma.getCTEBattlefield().getLevel().trim().toUpperCase());
+                this.alliesRequired = enigma.getCTEBattlefield().getAllies();
                 stock = new Stock(cteMachine.getCTERotors().getCTERotor(), cteMachine.getCTEReflectors().getCTEReflector(),
                         new KeyBoard(cteMachine.getABC().trim().toUpperCase()), cteMachine.getRotorsCount());
                 this.machine = new Machine(stock.getKeyBoard(), stock.getRotorsCount());
@@ -436,6 +445,18 @@ public class TheEngine implements Engine {
 
     public DecipherManager getDM(){
         return DM;
+    }
+
+    public String getBattleFieldName() {
+        return battleFieldName;
+    }
+
+    public Difficulty getBattleLevel() {
+        return battleLevel;
+    }
+
+    public int getAlliesRequired() {
+        return alliesRequired;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package battleField.servlets.uBoatServlets;
 
+import engine.entity.Allies;
 import engine.entity.EntityEnum;
 import engine.users.UserManager;
 import jakarta.servlet.annotation.WebServlet;
@@ -51,21 +52,17 @@ public class UBoatLoginServlet  extends HttpServlet {
                     }
                     else {
                         //add the new user to the users list
-                        userManager.addUser(usernameFromParameter);
-                        //userManager.addUser(usernameFromParameter, new TheEngine());
+                        //userManager.addUser(usernameFromParameter);
+                        userManager.addUser(usernameFromParameter, new Allies(usernameFromParameter));
                         request.getSession(true).setAttribute(Constants.USERNAME, usernameFromParameter);
                         request.getSession().setAttribute(Constants.ENTITY, EntityEnum.UBOAT);
-                        //redirect the request to the chat room - in order to actually change the URL
-                        System.out.println("On login, request URI is: " + request.getRequestURI());
                         response.setStatus(HttpServletResponse.SC_OK);
-                        //response.getOutputStream().print(String.format("logged in: %s as %s", usernameFromParameter, Constants.UBOAT));
                     }
                 }
             }
         } else {
             //user is already logged in
             response.setStatus(HttpServletResponse.SC_OK);
-            //response.getOutputStream().print("you are already logged in (same session)");
         }
     }
 }

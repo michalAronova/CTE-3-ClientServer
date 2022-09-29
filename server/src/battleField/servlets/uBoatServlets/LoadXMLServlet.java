@@ -31,10 +31,6 @@ public class LoadXMLServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String usernameFromSession = SessionUtils.getUsername(request);
         UserManager userManager = ServletUtils.getUBoatUserManager(getServletContext());
-        //Engine engine = userManager.getEngineFor(usernameFromSession);
-
-        Engine testEngine = new TheEngine();
-
 
         response.setStatus(SC_OK);
         response.setContentType("text/plain");
@@ -42,34 +38,20 @@ public class LoadXMLServlet extends HttpServlet {
 
         Collection<Part> parts = request.getParts();
 
-        out.println("Total parts new : " + parts.size());
-
-        StringBuilder fileContent = new StringBuilder();
-
         for (Part part : parts) {
-            //to write the content of the file to a string
-            fileContent.append(readFromInputStream(part.getInputStream()));
+
             try{
-                testEngine.loadDataFromXML(part.getInputStream());
+                userManager.getEntityObject(usernameFromSession).getEngine().loadDataFromXML(part.getInputStream());
                 System.out.println("woohoo, engine loaded!");
+                out.println("engine loaded");
             }
             catch(InvalidXMLException e){
-                response.setStatus(SC_BAD_REQUEST);
                 response.sendError(SC_BAD_REQUEST, e.getMessage());
                 System.out.println("bad xml!");
+                out.println(e.getMessage());
             }
-
         }
 
-        //printFileContent(fileContent.toString(), out);
     }
 
-    private String readFromInputStream(InputStream inputStream) {
-        return new Scanner(inputStream).useDelimiter("\\Z").next();
-    }
-
-    private void printFileContent(String content, PrintWriter out) {
-        out.println("File content:");
-        out.println(content);
-    }
 }

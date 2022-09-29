@@ -11,7 +11,7 @@ public class HttpClientUtil {
     private final static OkHttpClient HTTP_CLIENT =
             new OkHttpClient.Builder()
                     .cookieJar(simpleCookieManager)
-                    .followRedirects(false)
+                    .followRedirects(true)
                     .build();
 
     public static void setCookieManagerLoggingFacility(Consumer<String> logConsumer) {

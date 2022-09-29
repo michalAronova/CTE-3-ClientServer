@@ -5,6 +5,7 @@ import battleField.client.component.global.entityChooser.EntityChooserController
 import battleField.client.util.Constants;
 import battleField.client.util.http.HttpClientUtil;
 import engine.entity.EntityEnum;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,6 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
+import uBoatClient.UBoatClientMain;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +36,8 @@ public class MainAppController {
     @FXML private AnchorPane mainAnchorPane;
 
     @FXML private EntityChooserController entityChooserController;
+
+    private Application myApp;
 
     private Node loginComponent;
     private LoginController loginController;
@@ -57,6 +61,10 @@ public class MainAppController {
 
         usernameLabel.textProperty().bind(usernameProperty);
         entityLabel.textProperty().bind(entityProperty);
+    }
+
+    public void setMyApp(Application app){
+        this.myApp = app;
     }
 
 
@@ -157,6 +165,16 @@ public class MainAppController {
     public void onUBoatRegistered() {
         System.out.println("switch to uBoat main panel!");
         //switch to uBoat Panel! Let's goooo
+    }
+
+    public void openNewApp() {
+        UBoatClientMain.launch();
+        try{
+            myApp.stop();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
 

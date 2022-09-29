@@ -5,6 +5,7 @@ import DTO.codeHistory.Translation;
 import DTO.codeObj.CodeObj;
 import DTO.techSpecs.TechSpecs;
 import engine.decipherManager.DecipherManager;
+import engine.decipherManager.Difficulty;
 import enigmaMachine.secret.Secret;
 import javafx.util.Pair;
 
@@ -71,4 +72,10 @@ public interface Engine extends Serializable {
     String processWord(String word);
 
     DecipherManager getDM();
+
+    public String getBattleFieldName();
+
+    public Difficulty getBattleLevel();
+
+    public int getAlliesRequired();
 }

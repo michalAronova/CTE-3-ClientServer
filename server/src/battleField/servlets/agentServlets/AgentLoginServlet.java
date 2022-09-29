@@ -3,6 +3,8 @@ package battleField.servlets.agentServlets;
 import battleField.constants.Constants;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
+import engine.entity.Agent;
+import engine.entity.Allies;
 import engine.entity.EntityEnum;
 import engine.users.UserManager;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-import static battleField.constants.Constants.USERNAME;
+import static battleField.constants.Constants.*;
 
 @WebServlet(name = "AgentLoginServlet", urlPatterns = {"/signup/agent/login"})
 public class AgentLoginServlet extends HttpServlet {
@@ -45,7 +47,18 @@ public class AgentLoginServlet extends HttpServlet {
                     }
                     else {
                         //add the new user to the users list
-                        userManager.addUser(usernameFromParameter);
+                        String alliesUsername = request.getParameter(ALLIES_JOINED);
+                        Allies allies = (Allies) ServletUtils.getAlliesUserManager(getServletContext())
+                                                                .getEntityObject(alliesUsername);
+
+                        int threadCount = Integer.parseInt(request.getParameter(THREAD_COUNT));
+                        int missionAmountPull = Integer.parseInt(request.getParameter(MISSION_AMOUNT_PULL));
+
+                        //userManager.addUser(usernameFromParameter);
+                        userManager.addUser(usernameFromParameter,
+                                new Agent(usernameFromParameter, allies, threadCount, missionAmountPull));
+
+                        //Allies.addAgent(^^);
                         request.getSession(true).setAttribute(Constants.USERNAME, usernameFromParameter);
                         request.getSession().setAttribute(Constants.ENTITY, EntityEnum.AGENT);
                         //redirect the request to the chat room - in order to actually change the URL

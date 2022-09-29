@@ -5,6 +5,5 @@ import battleField.client.component.mainApp.MainAppController;
 
 public interface LoginController {
     void setMainController(MainAppController mainController);
-
     void onUsernameSelected(String text);
 }

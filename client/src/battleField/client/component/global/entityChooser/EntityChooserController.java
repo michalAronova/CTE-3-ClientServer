@@ -12,6 +12,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
+import uBoatClient.UBoatClientMain;
 
 import java.io.IOException;
 import java.net.URL;
@@ -50,8 +51,9 @@ public class EntityChooserController {
     }
 
     @FXML public void onContinue(ActionEvent event) {
-        entity = (EntityEnum) entityGroup.getSelectedToggle().getUserData();
-        mainAppController.setEntity(entity);
+        //entity = (EntityEnum) entityGroup.getSelectedToggle().getUserData();
+        //mainAppController.setEntity(entity);
+        mainAppController.openNewApp();
     }
 
     public void setMainController(MainAppController mainAppController){

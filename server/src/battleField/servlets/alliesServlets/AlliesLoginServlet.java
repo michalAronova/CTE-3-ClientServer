@@ -3,6 +3,7 @@ package battleField.servlets.alliesServlets;
 import battleField.constants.Constants;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
+import engine.entity.Allies;
 import engine.entity.EntityEnum;
 import engine.users.UserManager;
 import jakarta.servlet.annotation.WebServlet;
@@ -45,7 +46,8 @@ public class AlliesLoginServlet extends HttpServlet {
                     }
                     else {
                         //add the new user to the users list
-                        userManager.addUser(usernameFromParameter);
+                        //userManager.addUser(usernameFromParameter);
+                        userManager.addUser(usernameFromParameter, new Allies(usernameFromParameter));
                         request.getSession(true).setAttribute(Constants.USERNAME, usernameFromParameter);
                         request.getSession().setAttribute(Constants.ENTITY, EntityEnum.ALLIES);
                         //redirect the request to the chat room - in order to actually change the URL
