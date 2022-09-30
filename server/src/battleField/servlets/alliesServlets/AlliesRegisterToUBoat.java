@@ -27,43 +27,33 @@ public class AlliesRegisterToUBoat extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         PrintWriter out = response.getWriter();
-        UserManager userManager = ServletUtils.getAlliesUserManager(getServletContext());
+        UserManager alliesUserManager = ServletUtils.getAlliesUserManager(getServletContext());
+        out.println(SessionUtils.getEntity(request));
 
         //get the ally entity from session
         String usernameFromSession = SessionUtils.getUsername(request);
-        out.println("usesrname(ally) " + usernameFromSession);
-        Allies ally  = (Allies) userManager.getEntityObject(usernameFromSession);
+        Allies ally  = (Allies) alliesUserManager.getEntityObject(usernameFromSession);
 
         //get uBoat name from parameter
         String uBoatName = request.getParameter(DESIRED_UBOAT);
-        out.println("desired uBoat " + uBoatName);
-
         if (uBoatName == null || uBoatName.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_CONFLICT);
         } else {
             synchronized (this) {
-                out.println("desired uBoat name" + uBoatName);
                 uBoatName = uBoatName.trim();
-                if (userManager.isUserExists(uBoatName)) {
-                    out.println("user exist");
-                    UBoat uBoat = (UBoat) userManager.getEntityObject(uBoatName);
-                    out.println("manage to hold entity " + uBoat.getUsername());
+                UserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
+                if (uBoatUserManager.isUserExists(uBoatName)) {
+                    UBoat uBoat = (UBoat) uBoatUserManager.getEntityObject(uBoatName);
                     uBoat.addParticipant(ally);
-                    Map<String,Allies> map = uBoat.getParticipants();
-                    out.println(map.containsKey(ally.getUsername()));
+                    ally.setUBoat(uBoat);
+                    out.println(ally.getUsername() + " registered to " + uBoat.getUsername());
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
-                    out.println("here");
+                    out.println("no such uBoat exists");
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 }
             }
         }
-        //response.getOutputStream().print(uBoatName);
-        out.println(uBoatName);
-        //String alliesNameFromSession = SessionUtils.getUsername(request);
-        //response.getOutputStream().print(alliesNameFromSession);
-
-        //UserManager userManager = ServletUtils.getAlliesUserManager(getServletContext());
     }
 }
 

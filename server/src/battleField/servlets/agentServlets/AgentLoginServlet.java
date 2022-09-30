@@ -53,10 +53,10 @@ public class AgentLoginServlet extends HttpServlet {
 
                         int threadCount = Integer.parseInt(request.getParameter(THREAD_COUNT));
                         int missionAmountPull = Integer.parseInt(request.getParameter(MISSION_AMOUNT_PULL));
-
+                        Agent agent =  new Agent(usernameFromParameter, allies, threadCount, missionAmountPull);
+                        allies.addAgent(agent);
                         //userManager.addUser(usernameFromParameter);
-                        userManager.addUser(usernameFromParameter,
-                                new Agent(usernameFromParameter, allies, threadCount, missionAmountPull));
+                        userManager.addUser(usernameFromParameter, agent);
 
                         //Allies.addAgent(^^);
                         request.getSession(true).setAttribute(Constants.USERNAME, usernameFromParameter);

@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import static battleField.constants.Constants.USERNAME;
 
-@WebServlet(name = "AlliesLoginServlet", urlPatterns = {"/signup/allies/login"})
+    @WebServlet(name = "AlliesLoginServlet", urlPatterns = {"/signup/allies/login"})
 public class AlliesLoginServlet extends HttpServlet {
 
     @Override
@@ -43,6 +43,8 @@ public class AlliesLoginServlet extends HttpServlet {
                         // stands for unauthorized as there is already such user with this name
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         response.getOutputStream().print(errorMessage);
+                        response.getOutputStream()
+                                .print("here1111");
                     }
                     else {
                         //add the new user to the users list
@@ -53,6 +55,11 @@ public class AlliesLoginServlet extends HttpServlet {
                         //redirect the request to the chat room - in order to actually change the URL
                         System.out.println("On login, request URI is: " + request.getRequestURI());
                         response.setStatus(HttpServletResponse.SC_OK);
+                        response.getOutputStream()
+                                .print(String.format("logged in as %s (%s)",
+                                        usernameFromParameter, EntityEnum.ALLIES));
+                        response.getOutputStream()
+                                .print("here");
                     }
                 }
             }
