@@ -2,6 +2,7 @@ package battleField.servlets.uBoatServlets;
 
 import engine.entity.Allies;
 import engine.entity.EntityEnum;
+import engine.entity.UBoat;
 import engine.users.UserManager;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -53,10 +54,13 @@ public class UBoatLoginServlet  extends HttpServlet {
                     else {
                         //add the new user to the users list
                         //userManager.addUser(usernameFromParameter);
-                        userManager.addUser(usernameFromParameter, new Allies(usernameFromParameter));
+                        userManager.addUser(usernameFromParameter, new UBoat(usernameFromParameter));
                         request.getSession(true).setAttribute(Constants.USERNAME, usernameFromParameter);
                         request.getSession().setAttribute(Constants.ENTITY, EntityEnum.UBOAT);
                         response.setStatus(HttpServletResponse.SC_OK);
+                        response.getOutputStream()
+                                .print(String.format("logged in as %s (%s)",
+                                        usernameFromParameter, EntityEnum.UBOAT));
                     }
                 }
             }

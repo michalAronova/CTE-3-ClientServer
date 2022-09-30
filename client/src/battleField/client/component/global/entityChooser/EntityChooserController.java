@@ -5,17 +5,12 @@ import battleField.client.component.mainApp.MainAppController;
 import engine.entity.EntityEnum;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
-import uBoatClient.UBoatClientMain;
-
-import java.io.IOException;
-import java.net.URL;
 
 public class EntityChooserController {
 

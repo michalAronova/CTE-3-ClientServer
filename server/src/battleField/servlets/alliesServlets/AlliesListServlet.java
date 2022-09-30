@@ -1,6 +1,7 @@
 package battleField.servlets.alliesServlets;
 
 import battleField.utils.ServletUtils;
+import com.google.gson.Gson;
 import engine.entity.Entity;
 import engine.users.UserManager;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,15 +20,17 @@ public class AlliesListServlet extends HttpServlet {
         //returning JSON objects
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
-            //Gson gson = new Gson();
+            Gson gson = new Gson();
             UserManager userManager = ServletUtils.getAlliesUserManager(getServletContext());
             Map<String, Entity> usersList = userManager.getUsers();
-            //String json = gson.toJson(usersList);
-            //out.println(json);
-            //out.flush();
+            //returning only the usernames for allies
+            //for use in choosing an ally on agent register
+            String json = gson.toJson(usersList.keySet());
+            out.println(json);
+            out.flush();
 
             //debug below
-            out.println(usersList.toString());
+            //out.println(usersList.toString());
         }
     }
 }

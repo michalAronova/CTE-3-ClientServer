@@ -6,6 +6,7 @@ import engine.decipherManager.Difficulty;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class UBoat implements Entity{
     private String username;
@@ -29,6 +30,10 @@ public class UBoat implements Entity{
     @Override
     public Engine getEngine() {
         return engine;
+    }
+
+    public EntityEnum getEntity(){
+        return EntityEnum.UBOAT;
     }
 
     public synchronized void addParticipant(Allies ally){
@@ -64,5 +69,23 @@ public class UBoat implements Entity{
 
     public Difficulty getBattleLevel(){
         return engine.getBattleLevel();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UBoat)) return false;
+        UBoat uBoat = (UBoat) o;
+        return username.equals(uBoat.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
+    }
+
+    @Override
+    public String toString() {
+        return "UBoat: "+username;
     }
 }
