@@ -8,6 +8,7 @@ public class Constants {
 
     public static final String THREAD_COUNT = "thread-count";
     public static final String MISSION_AMOUNT_PULL = "mission-amount-pull";
+
     public static final String USER_NAME_ERROR = "username_error";
 
     public static final String CHAT_PARAMETER = "userstring";

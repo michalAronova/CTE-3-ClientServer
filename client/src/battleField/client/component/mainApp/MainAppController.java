@@ -7,7 +7,6 @@ import battleField.client.util.http.HttpClientUtil;
 import engine.entity.EntityEnum;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -20,7 +19,6 @@ import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 import uBoatClient.UBoatClientMain;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 

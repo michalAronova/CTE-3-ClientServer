@@ -1,6 +1,6 @@
 package battleField.utils;
 
-import battleField.servlets.uBoatServlets.chat.ChatManager;
+import battleField.servlets.chat.ChatManager;
 import engine.users.UserManager;
 
 import jakarta.servlet.ServletContext;
