@@ -1,8 +1,14 @@
 package engine.entity;
 
+import DTO.missionResult.MissionResult;
 import engine.Engine;
+import engine.decipherManager.mission.Mission;
+import engine.decipherManager.resultListener.ResultListener;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.util.Objects;
+import java.util.concurrent.*;
+import java.util.function.Consumer;
 
 public class Agent implements Entity {
 
@@ -12,12 +18,34 @@ public class Agent implements Entity {
     private final int threadCount;
     private final int missionAmountPull;
 
+    private BlockingQueue resultQueue;
+
+    private BlockingQueue workQueue;
+
+
     public Agent(String username, Allies myAllies, int threadCount, int missionAmountPull){
         this.username = username;
         this.myAllies = myAllies;
         this.threadCount = threadCount;
         this.missionAmountPull = missionAmountPull;
+
+        //create result queue and register listener thread
+        resultQueue = new LinkedBlockingQueue<>();
+        //new Thread(new ResultListener(resultQueue, transferMissionResult), "Result Listener").start();
+
+        //create work queue and thread pool of agents
+        BasicThreadFactory factory = new BasicThreadFactory.Builder()
+                .namingPattern("Agent %d")
+                .build();
+        workQueue = new ArrayBlockingQueue<>(missionAmountPull);
+        ThreadPoolExecutor threadExecutor = new ThreadPoolExecutor(threadCount, threadCount,
+                Long.MAX_VALUE, TimeUnit.NANOSECONDS, workQueue , factory);
+
+        //new Thread(() -> initiateWork(threadExecutor), "Mission Distributor").start();
+        //initiateWork(threadExecutor);
     }
+
+    //public void decipher(Consumer<Runnable>)
 
     @Override
     public String getUsername() {

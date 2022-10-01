@@ -2,6 +2,7 @@ package battleField.utils;
 
 import battleField.servlets.chat.ChatManager;
 import engine.ServerEngine;
+import engine.users.UBoatUserManager;
 import engine.users.UserManager;
 
 import jakarta.servlet.ServletContext;
@@ -29,14 +30,14 @@ public class ServletUtils {
 
     private static final Object serverEngineLock = new Object();
 
-    public static UserManager getUBoatUserManager(ServletContext servletContext) {
+    public static UBoatUserManager getUBoatUserManager(ServletContext servletContext) {
 
         synchronized (uboatUserManagerLock) {
             if (servletContext.getAttribute(UBOAT_USER_MANAGER_ATTRIBUTE_NAME) == null) {
-                servletContext.setAttribute(UBOAT_USER_MANAGER_ATTRIBUTE_NAME, new UserManager());
+                servletContext.setAttribute(UBOAT_USER_MANAGER_ATTRIBUTE_NAME, new UBoatUserManager());
             }
         }
-        return (UserManager) servletContext.getAttribute(UBOAT_USER_MANAGER_ATTRIBUTE_NAME);
+        return (UBoatUserManager) servletContext.getAttribute(UBOAT_USER_MANAGER_ATTRIBUTE_NAME);
     }
 
     public static ServerEngine getServerEngine(ServletContext servletContext){
