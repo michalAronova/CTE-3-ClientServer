@@ -25,6 +25,7 @@ public class Allies implements Entity {
         this.username = username;
     }
 
+
     public void setUBoat(UBoat uBoat){
         this.uBoat = uBoat;
         uBoat.addParticipant(this);
@@ -32,6 +33,11 @@ public class Allies implements Entity {
 
     public synchronized void addAgent(Agent agent){
         name2Agent.put(agent.getUsername(), agent);
+    }
+
+    public void createDM(Dictionary dictionary, Machine machine,
+                         Stock stock, Difficulty difficulty, CodeObj code, String input){
+        DM = new DecipherManager(dictionary, machine, stock, difficulty, code, input);
     }
 
     public synchronized void removeAgent(String agentName){
@@ -98,4 +104,6 @@ public class Allies implements Entity {
     public UBoat getUBoat() {
         return uBoat;
     }
+
+
 }
