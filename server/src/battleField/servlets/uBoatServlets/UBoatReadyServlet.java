@@ -6,6 +6,7 @@ import battleField.utils.SessionUtils;
 import engine.entity.Allies;
 import engine.entity.EntityEnum;
 import engine.entity.UBoat;
+import engine.users.UBoatUserManager;
 import engine.users.UserManager;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -27,10 +28,9 @@ public class UBoatReadyServlet extends HttpServlet {
                 // stands for unauthorized as there is already such user with this name
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getOutputStream().print(errorMessage);
+                System.out.println(errorMessage);
             } else {
-                //add the new user to the users list
-                //userManager.addUser(usernameFromParameter);
-                uBoatUserManager.addReadyUBoat(usernameFromParameter, uBoat);
+                uBoatUserManager.addReadyUBoat(usernameFromSession);
             }
         }
     }

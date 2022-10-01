@@ -31,7 +31,6 @@ public class Agent implements Entity {
 
         //create result queue and register listener thread
         resultQueue = new LinkedBlockingQueue<>();
-        //new Thread(new ResultListener(resultQueue, transferMissionResult), "Result Listener").start();
 
         //create work queue and thread pool of agents
         BasicThreadFactory factory = new BasicThreadFactory.Builder()
@@ -40,12 +39,11 @@ public class Agent implements Entity {
         workQueue = new ArrayBlockingQueue<>(missionAmountPull);
         ThreadPoolExecutor threadExecutor = new ThreadPoolExecutor(threadCount, threadCount,
                 Long.MAX_VALUE, TimeUnit.NANOSECONDS, workQueue , factory);
-
-        //new Thread(() -> initiateWork(threadExecutor), "Mission Distributor").start();
-        //initiateWork(threadExecutor);
     }
 
-    //public void decipher(Consumer<Runnable>)
+    public void decipher(Consumer<MissionResult> transferMissionResult){
+        new Thread(new ResultListener(resultQueue, transferMissionResult), "Result Listener").start();
+    }
 
     @Override
     public String getUsername() {

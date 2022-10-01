@@ -3,8 +3,8 @@ package engine;
 import DTO.codeHistory.CodeHistory;
 import DTO.codeHistory.Translation;
 import DTO.codeObj.CodeObj;
-import engine.decipherManager.DecipherManager;
 import engine.decipherManager.Difficulty;
+import engine.decipherManager.dictionary.Dictionary;
 import engine.stock.Stock;
 import engine.validator.MachineValidator;
 import engine.validator.Validator;
@@ -37,7 +37,8 @@ import java.util.stream.Collectors;
 public class TheEngine implements Engine {
     private Stock stock;
     private Machine machine;
-    private DecipherManager DM;
+
+    private Dictionary dictionary;
     private CodeObj initialCode;
     private int processedMsgsCnt;
     private Pair<CodeObj, Translation> lastTranslationMade;
@@ -67,15 +68,13 @@ public class TheEngine implements Engine {
                 this.battleFieldName = enigma.getCTEBattlefield().getBattleName();
                 this.battleLevel = Difficulty.valueOf(enigma.getCTEBattlefield().getLevel().trim().toUpperCase());
                 this.alliesRequired = enigma.getCTEBattlefield().getAllies();
+                this.dictionary = new Dictionary(enigma.getCTEDecipher().getCTEDictionary());
                 stock = new Stock(cteMachine.getCTERotors().getCTERotor(), cteMachine.getCTEReflectors().getCTEReflector(),
                         new KeyBoard(cteMachine.getABC().trim().toUpperCase()), cteMachine.getRotorsCount());
                 this.machine = new Machine(stock.getKeyBoard(), stock.getRotorsCount());
                 this.initialCode = null; //new machine - no code yet!
                 this.processedMsgsCnt = 0; //new machine - new count!
                 this.codesHistories.clear(); //new machine - new histories!
-                this.DM = new DecipherManager(cteDecipher, new Machine(stock.getKeyBoard(), stock.getRotorsCount())
-                        , new Stock(cteMachine.getCTERotors().getCTERotor(), cteMachine.getCTEReflectors().getCTEReflector(),
-                        new KeyBoard(cteMachine.getABC().trim().toUpperCase()), cteMachine.getRotorsCount()));
                 return true;
             } catch (InvalidXMLException | OutOfBoundInputException e) {
                 throw e;
@@ -105,9 +104,6 @@ public class TheEngine implements Engine {
                 this.initialCode = null; //new machine - no code yet!
                 this.processedMsgsCnt = 0; //new machine - new count!
                 this.codesHistories.clear(); //new machine - new histories!
-                this.DM = new DecipherManager(cteDecipher, new Machine(stock.getKeyBoard(), stock.getRotorsCount())
-                                                , new Stock(cteMachine.getCTERotors().getCTERotor(), cteMachine.getCTEReflectors().getCTEReflector(),
-                                                    new KeyBoard(cteMachine.getABC().trim().toUpperCase()), cteMachine.getRotorsCount()));
                 return true;
             } catch (InvalidXMLException | OutOfBoundInputException e) {
                 throw e;
@@ -123,8 +119,6 @@ public class TheEngine implements Engine {
         initialCode = machineCode;
         machine.updateBySecret(secretFromCodeObj(initialCode));
         initialCode.setNotchRelativeLocation(getRelativeNotchesMap(initialCode.getID2PositionList()));
-        DM.setMachineCode(machineCode);
-        DM.serializeMachine(this.machine);
     }
 
     private Secret secretFromCodeObj(CodeObj machineCode){
@@ -401,18 +395,10 @@ public class TheEngine implements Engine {
     public List<Character> getKeyBoardList(){ return stock.getKeyBoard().getAsCharList(); }
 
     @Override
-    public void manageAgents(String encryption){
-        DM.manageAgents(encryption);
-    }
-
-    @Override
     public String processWord(String word) {
         return machine.processWord(word);
     }
 
-    public int getAgentCountFromDM(){
-        return DM.getAgentCount();
-    }
     @Override
     public String toString() {
         return "TheEngine{" +
@@ -431,21 +417,6 @@ public class TheEngine implements Engine {
         TheEngine theEngine = (TheEngine) o;
         return processedMsgsCnt == theEngine.processedMsgsCnt && Objects.equals(stock, theEngine.stock) && Objects.equals(machine, theEngine.machine) && Objects.equals(initialCode, theEngine.initialCode) && Objects.equals(codesHistories, theEngine.codesHistories);
     }
-    public void setDMParamsFromUI(int agentCountChosen, String difficulty, int missionSize){
-        DM.setDifficulty(difficulty);
-        DM.setMissionSize(missionSize);
-        DM.setAgentCountChosen(agentCountChosen);
-    }
-
-    public Double calculateTotalMissionsAmount(){
-        //return DM.calcTotalMissionAmountByDifficulty();
-        return DM.getTotalMissionAmount();
-        //return 200;
-    }
-
-    public DecipherManager getDM(){
-        return DM;
-    }
 
     public String getBattleFieldName() {
         return battleFieldName;
@@ -457,6 +428,22 @@ public class TheEngine implements Engine {
 
     public int getAlliesRequired() {
         return alliesRequired;
+    }
+
+    public Dictionary getDictionary(){
+        return dictionary;
+    }
+
+    public Machine getMachine(){
+        return machine;
+    }
+
+    public Stock getStock(){
+        return stock;
+    }
+
+    public Difficulty getDifficulty(){
+        return battleLevel;
     }
 
     @Override

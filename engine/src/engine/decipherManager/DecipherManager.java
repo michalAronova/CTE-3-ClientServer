@@ -29,7 +29,7 @@ public class DecipherManager {
 
     private final int WORK_QUEUE_LIMIT = 1000;
     private int agentCount;
-    private Dictionary dictionary;
+    private final Dictionary dictionary;
     private int missionSize;
     private Difficulty difficulty;
     private Map<Difficulty, Double> diff2totalWork;
@@ -56,17 +56,21 @@ public class DecipherManager {
     private BiConsumer<Integer, Long> updateTotalMissionDone;
 
 
-    public DecipherManager(CTEDecipher cteDecipher, Machine machine,
-                           Stock stock){
-        dictionary = new Dictionary(cteDecipher.getCTEDictionary());
-        this.machine = machine;
-        this.stock = stock;
-        try{
-            stockEncoded = serializableToString(this.stock);
+    public DecipherManager(Dictionary dictionary, Machine machine,
+                           Stock stock, Difficulty difficulty, CodeObj machineCode, String encryption){
+        this.dictionary = dictionary;
+        this.difficulty = difficulty;
+        this.encryption = encryption;
+        try {
+            serializeMachine(machine);
+            stockEncoded = serializableToString(stock);
+            this.machine = (Machine) objectFromString(machineEncoded);
+            this.stock = (Stock) objectFromString(stockEncoded);
         }
-        catch(IOException e){
+        catch(Exception e){
             e.printStackTrace();
         }
+
         possiblePositionPermutations = calculatePermutationsCount();
     }
 
@@ -149,21 +153,16 @@ public class DecipherManager {
         resultQueue = new LinkedBlockingQueue<>();
         new Thread(new ResultListener(resultQueue, transferMissionResult), "Result Listener").start();
 
-        //create work queue and thread pool of agents
-        BasicThreadFactory factory = new BasicThreadFactory.Builder()
-                .namingPattern("Agent %d")
-                .build();
+        //create work queue to push missions to
         workQueue = new ArrayBlockingQueue<>(WORK_QUEUE_LIMIT);
-        ThreadPoolExecutor threadExecutor = new ThreadPoolExecutor(agentCountChosen, agentCountChosen,
-                                            Long.MAX_VALUE, TimeUnit.NANOSECONDS, workQueue , factory);
-
-        //new Thread(() -> initiateWork(threadExecutor), "Mission Distributor").start();
-        initiateWork(threadExecutor);
+        initiateWork();
     }
 
-    private void initiateWork(ThreadPoolExecutor threadExecutor) {
-        threadExecutor.prestartAllCoreThreads();
+    public BlockingQueue<Runnable> getWorkQueue() {
+        return workQueue;
+    }
 
+    private void initiateWork() {
         switch (difficulty){
             case EASY:
                 runEasy();
@@ -180,8 +179,6 @@ public class DecipherManager {
             default:
                 break;
         }
-
-        threadExecutor.shutdown();
     }
 
     private List<Character> initializeRotorsPositions(List<Pair<Integer,Character>> origin) {

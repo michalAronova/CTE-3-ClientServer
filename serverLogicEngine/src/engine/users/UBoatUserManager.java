@@ -28,5 +28,8 @@ public class UBoatUserManager extends UserManager{
         if(super.getUsers().containsKey(username)){
             readyUBoats.put(username, (UBoat) super.getEntityObject(username));
         }
+        else{
+            System.out.println("trying to ready a non registered uboat!");
+        }
     }
 }

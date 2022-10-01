@@ -1,10 +1,14 @@
 package engine.entity;
 
+import DTO.codeObj.CodeObj;
 import DTO.missionResult.AlliesCandidates;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import engine.Engine;
 import engine.TheEngine;
 import engine.decipherManager.Difficulty;
+import engine.decipherManager.dictionary.Dictionary;
+import engine.stock.Stock;
+import enigmaMachine.Machine;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -78,6 +82,14 @@ public class UBoat implements Entity{
     public synchronized void removeAllParticipants(){
         participants.clear();
         isFull = false;
+    }
+
+    //public DecipherManager(Dictionary dictionary, Machine machine,
+    //                       Stock stock, Difficulty difficulty, CodeObj machineCode, String encryption){
+
+    public void setAlliesParams(Allies ally){
+        ally.createDM(engine.getDictionary(), engine.getMachine(),
+                engine.getStock(), engine.getDifficulty(), engine.getUpdatedCode(), input);
     }
 
     public Map<String, Allies> getParticipants() {

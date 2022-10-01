@@ -1,13 +1,19 @@
 package engine.entity;
 
+import DTO.codeObj.CodeObj;
 import engine.Engine;
+import engine.decipherManager.DecipherManager;
+import engine.decipherManager.Difficulty;
+import engine.decipherManager.dictionary.Dictionary;
+import engine.stock.Stock;
+import enigmaMachine.Machine;
 
 import java.util.Map;
 import java.util.Objects;
 
 public class Allies implements Entity {
     private String username;
-    private Engine engine;
+    private DecipherManager DM;
     private UBoat uBoat;
     private Map<String, Agent> name2Agent;
     Boolean isCompeting;
@@ -49,9 +55,9 @@ public class Allies implements Entity {
 
     @Override
     public Engine getEngine() {
-        return engine;
+        return null;
     }
-
+    public DecipherManager getDM(){ return DM;}
     public EntityEnum getEntity(){
         return EntityEnum.ALLIES;
     }
