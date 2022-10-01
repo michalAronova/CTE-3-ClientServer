@@ -5,6 +5,10 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import engine.Engine;
 import engine.TheEngine;
 import engine.decipherManager.Difficulty;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.util.Pair;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
@@ -22,6 +26,8 @@ public class UBoat implements Entity{
     private String input;
     private String output;
     private boolean isFull;
+    private boolean engineLoaded;
+
     private boolean competitionOn;
     private IntegerProperty counterReady;
     public UBoat(String username){
@@ -35,6 +41,10 @@ public class UBoat implements Entity{
                 start();
             }
         });
+    }
+
+    public void setEngineLoaded(boolean engineLoaded) {
+        this.engineLoaded = engineLoaded;
     }
 
     @Override
