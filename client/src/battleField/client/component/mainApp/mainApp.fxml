@@ -23,7 +23,7 @@
    <center>
       <AnchorPane fx:id="mainAnchorPane">
          <children>
-            <fx:include fx:id="entityChooser" source="../global/entityChooser/entityChooser.fxml" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0" />
+            <fx:include fx:id="entityChooser" source="../entityChooser/entityChooser.fxml" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0" />
          </children>
       </AnchorPane>
    </center>

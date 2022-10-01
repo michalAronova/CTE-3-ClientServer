@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<VBox fx:id="rootVBox" prefHeight="250.0" prefWidth="247.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="components.dictionaryComponent.DictionaryComponentController">
+   <children>
+      <Label text="SearchBox" />
+      <TextField fx:id="filterField" />
+      <Label prefHeight="17.0" prefWidth="234.0" text="Double-click to choose word" />
+      <TableView fx:id="wordsTableView" prefHeight="250.0" prefWidth="150.0">
+        <columns>
+          <TableColumn fx:id="wordColumn" editable="false" prefWidth="232.0" sortable="false" text="Dictionary" />
+        </columns>
+      </TableView>
+   </children>
+   <padding>
+      <Insets bottom="7.0" left="7.0" right="7.0" top="5.0" />
+   </padding>
+</VBox>

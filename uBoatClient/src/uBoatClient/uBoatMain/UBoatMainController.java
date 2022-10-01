@@ -5,8 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import uBoatClient.uBoatApp.UBoatAppController;
 
-public class uBoatMainController {
+public class UBoatMainController {
 
     @FXML private Tab setupTab;
     @FXML private Button readyButton;
@@ -14,6 +15,8 @@ public class uBoatMainController {
     @FXML private Label inputLabel;
     @FXML private Label outputLabel;
     @FXML private Button logoutButton;
+    private UBoatAppController uBoatAppController;
+
 
     @FXML
     public void onLogoutClicked(ActionEvent event) {
@@ -24,5 +27,8 @@ public class uBoatMainController {
 
     }
 
+    public void setMainController(UBoatAppController uBoatAppController) {
+        this.uBoatAppController = uBoatAppController;
+    }
 }
 

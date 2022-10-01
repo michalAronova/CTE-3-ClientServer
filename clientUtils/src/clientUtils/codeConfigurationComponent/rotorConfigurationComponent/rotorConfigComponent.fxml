@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+<GridPane fx:id="rootGrid" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="645.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="components.codeConfigurationComponent.rotorConfigurationComponent.RotorConfigComponentController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS" maxWidth="439.33331298828125" minWidth="362.0" prefWidth="387.0" />
+      <ColumnConstraints hgrow="NEVER" maxWidth="198.0" minWidth="10.0" prefWidth="198.0" />
+    </columnConstraints>
+    <rowConstraints>
+      <RowConstraints maxHeight="91.33331298828125" minHeight="10.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="30.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="168.33334350585938" minHeight="10.0" prefHeight="168.33334350585938" vgrow="SOMETIMES" />
+    </rowConstraints>
+    <children>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="myBackground" GridPane.rowSpan="3">
+            <children>
+                <ScrollPane prefHeight="400.0" prefWidth="369.0" styleClass="myBackground" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <content>
+                        <VBox prefHeight="184.0" prefWidth="438.0" styleClass="myBackground">
+                            <children>
+                                <AnchorPane prefHeight="43.0" prefWidth="364.0" />
+                                <HBox fx:id="rotorConfigHBox" prefHeight="129.0" prefWidth="393.0">
+                                    <children>
+                                        <AnchorPane>
+                                            <children>
+                                                <Label layoutX="14.0" layoutY="90.0" styleClass="rotorIDLabel" text="Rotor" />
+                                                <Label layoutX="14.0" layoutY="107.0" styleClass="rotorIDLabel" text="Positions:" />
+                                            </children>
+                                        </AnchorPane>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </children>
+        </AnchorPane>
+      <FlowPane fx:id="rotorChoicesFlowPane" hgap="2.0" prefHeight="200.0" prefWidth="247.0" vgap="2.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <children>
+            <Label fx:id="rotorIDChosenLabel1" alignment="CENTER" prefHeight="35.0" prefWidth="35.0" text="1">
+               <FlowPane.margin>
+                  <Insets />
+               </FlowPane.margin>
+            </Label>
+            <Label fx:id="rotorIDChosenLabel2" alignment="CENTER" prefHeight="35.0" prefWidth="35.0" text="2">
+               <FlowPane.margin>
+                  <Insets />
+               </FlowPane.margin>
+            </Label>
+         </children>
+      </FlowPane>
+      <Label styleClass="rotorIDLabel" text="Choose a rotor and" GridPane.columnIndex="1">
+         <GridPane.margin>
+            <Insets top="20.0" />
+         </GridPane.margin>
+         <padding>
+            <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+         </padding>
+      </Label>
+      <Label styleClass="rotorIDLabel" text="drag to placement" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <padding>
+            <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+         </padding>
+         <GridPane.margin>
+            <Insets top="6.0" />
+         </GridPane.margin>
+      </Label>
+    </children>
+   <styleClass>
+      <String fx:value="grid-pane" />
+      <String fx:value="myBackground" />
+   </styleClass>
+   <padding>
+      <Insets top="10.0" />
+   </padding>
+</GridPane>

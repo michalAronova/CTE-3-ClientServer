@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane fx:id="scrollMain" fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="battleField.client.component.global.entityChooser.EntityChooserController">
+<ScrollPane fx:id="scrollMain" fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="battleField.client.component.entityChooser.EntityChooserController">
   <content>
     <AnchorPane fx:id="anchorPane">
          <children>
