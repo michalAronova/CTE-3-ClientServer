@@ -1,5 +1,6 @@
 package engine.entity;
 
+import DTO.missionResult.AlliesCandidates;
 import engine.Engine;
 import engine.TheEngine;
 import engine.decipherManager.Difficulty;
@@ -7,13 +8,18 @@ import engine.decipherManager.Difficulty;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class UBoat implements Entity{
     private String username;
     private Engine engine;
     private Map<String,Allies> participants;
-
+    private Set<AlliesCandidates> candidates;
+    private String input;
+    private String output;
     private boolean isFull;
+
+    private boolean competitionOn;
 
     public UBoat(String username){
         this.username = username;
@@ -41,6 +47,9 @@ public class UBoat implements Entity{
         isFull = participants.size() == engine.getAlliesRequired();
     }
 
+    public synchronized void addCandidates(AlliesCandidates ac){
+        candidates.add(ac);
+    }
     public synchronized void removeParticipant(String username){
         participants.remove(username);
         isFull = participants.size() == engine.getAlliesRequired();
@@ -53,6 +62,9 @@ public class UBoat implements Entity{
 
     public Map<String, Allies> getParticipants() {
         return participants;
+    }
+    public Set<AlliesCandidates> getCandidates() {
+        return candidates;
     }
 
     public boolean isFull() {
@@ -79,6 +91,13 @@ public class UBoat implements Entity{
         return username.equals(uBoat.username);
     }
 
+    public boolean isCompetitionOn() {
+        return competitionOn;
+    }
+
+    public void setCompetitionOn(boolean competitionOn) {
+        this.competitionOn = competitionOn;
+    }
     @Override
     public int hashCode() {
         return Objects.hash(username);
@@ -87,5 +106,17 @@ public class UBoat implements Entity{
     @Override
     public String toString() {
         return "UBoat: "+username;
+    }
+
+    public String getInput() {
+        return input;
+    }
+
+    public void updateVictory(String winner) {
+        participants.forEach((name, ally) -> {
+            ally.setIsCompetitionOn(false);
+            ally.setIsWinner(name.equals(winner));
+        });
+        competitionOn = false;
     }
 }
