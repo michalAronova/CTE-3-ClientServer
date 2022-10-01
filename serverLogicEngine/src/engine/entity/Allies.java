@@ -1,5 +1,6 @@
 package engine.entity;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import engine.Engine;
 
 import java.util.Map;
@@ -11,6 +12,9 @@ public class Allies implements Entity {
     private UBoat uBoat;
     private Map<String, Agent> name2Agent;
     Boolean isCompeting;
+
+    Boolean isWinner;
+    Boolean isCompetitionOn;
 
     public Allies(String username){
         this.username = username;
@@ -57,6 +61,18 @@ public class Allies implements Entity {
         if (!(o instanceof Allies)) return false;
         Allies allies = (Allies) o;
         return username.equals(allies.username);
+    }
+    public Boolean getIsWinner() {
+        return isWinner;
+    }
+    public void setIsWinner(Boolean winner) {
+        isWinner = winner;
+    }
+    public Boolean getIsCompetitionOn() {
+        return isCompetitionOn;
+    }
+    public void setIsCompetitionOn(Boolean competitionOn) {
+        isCompetitionOn = competitionOn;
     }
 
     @Override
