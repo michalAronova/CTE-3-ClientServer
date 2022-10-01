@@ -1,6 +1,5 @@
 package engine.entity;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import engine.Engine;
 
 import java.util.Map;
@@ -22,6 +21,7 @@ public class Allies implements Entity {
 
     public void setUBoat(UBoat uBoat){
         this.uBoat = uBoat;
+        uBoat.addParticipant(this);
     }
 
     public synchronized void addAgent(Agent agent){
@@ -87,5 +87,9 @@ public class Allies implements Entity {
 
     public Map<String, Agent> getMyAgents() {
         return name2Agent;
+    }
+
+    public UBoat getUBoat() {
+        return uBoat;
     }
 }
