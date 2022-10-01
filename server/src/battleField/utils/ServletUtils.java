@@ -1,6 +1,7 @@
 package battleField.utils;
 
 import battleField.servlets.chat.ChatManager;
+import engine.ServerEngine;
 import engine.users.UserManager;
 
 import jakarta.servlet.ServletContext;
@@ -15,6 +16,8 @@ public class ServletUtils {
     private static final String AGENT_USER_MANAGER_ATTRIBUTE_NAME = "agentUserManager";
     private static final String CHAT_MANAGER_ATTRIBUTE_NAME = "chatManager";
 
+    private static final String SERVER_ENGINE_ATTRIBUTE_NAME ="serverEngine";
+
     /*
     Note how the synchronization is done only on the question and\or creation of the relevant managers and once they exists -
     the actual fetch of them is remained un-synchronized for performance POV
@@ -24,6 +27,8 @@ public class ServletUtils {
     private static final Object agentUserManagerLock = new Object();
     private static final Object chatManagerLock = new Object();
 
+    private static final Object serverEngineLock = new Object();
+
     public static UserManager getUBoatUserManager(ServletContext servletContext) {
 
         synchronized (uboatUserManagerLock) {
@@ -32,6 +37,15 @@ public class ServletUtils {
             }
         }
         return (UserManager) servletContext.getAttribute(UBOAT_USER_MANAGER_ATTRIBUTE_NAME);
+    }
+
+    public static ServerEngine getServerEngine(ServletContext servletContext){
+        synchronized (serverEngineLock) {
+            if (servletContext.getAttribute(SERVER_ENGINE_ATTRIBUTE_NAME) == null) {
+                servletContext.setAttribute(SERVER_ENGINE_ATTRIBUTE_NAME, new ServerEngine());
+            }
+        }
+        return (ServerEngine) servletContext.getAttribute(SERVER_ENGINE_ATTRIBUTE_NAME);
     }
 
     public static UserManager getAlliesUserManager(ServletContext servletContext) {

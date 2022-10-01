@@ -3,6 +3,10 @@ package engine.entity;
 import engine.Engine;
 import engine.TheEngine;
 import engine.decipherManager.Difficulty;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.util.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,15 +15,19 @@ import java.util.Objects;
 public class UBoat implements Entity{
     private String username;
     private Engine engine;
-    private Map<String,Allies> participants;
-
+    private Map<String, Allies> participants;
     private boolean isFull;
+    private boolean engineLoaded;
 
     public UBoat(String username){
         this.username = username;
         this.engine = new TheEngine();
         participants = new HashMap<>();
         isFull = false;
+    }
+
+    public void setEngineLoaded(boolean engineLoaded) {
+        this.engineLoaded = engineLoaded;
     }
 
     @Override
