@@ -2,7 +2,7 @@ package engine.entity;
 
 import DTO.missionResult.MissionResult;
 import engine.Engine;
-import engine.decipherManager.mission.Mission;
+import engine.decipherManager.missionTaker.MissionTaker;
 import engine.decipherManager.resultListener.ResultListener;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
@@ -18,10 +18,11 @@ public class Agent implements Entity {
     private final int threadCount;
     private final int missionAmountPull;
 
-    private BlockingQueue resultQueue;
+    private BlockingQueue<MissionResult> resultQueue;
 
     private BlockingQueue workQueue;
 
+    private ThreadPoolExecutor threadExecutor;
 
     public Agent(String username, Allies myAllies, int threadCount, int missionAmountPull){
         this.username = username;
@@ -37,12 +38,14 @@ public class Agent implements Entity {
                 .namingPattern("Agent %d")
                 .build();
         workQueue = new ArrayBlockingQueue<>(missionAmountPull);
-        ThreadPoolExecutor threadExecutor = new ThreadPoolExecutor(threadCount, threadCount,
+        threadExecutor = new ThreadPoolExecutor(threadCount, threadCount,
                 Long.MAX_VALUE, TimeUnit.NANOSECONDS, workQueue , factory);
     }
 
     public void decipher(Consumer<MissionResult> transferMissionResult){
-        new Thread(new ResultListener(resultQueue, transferMissionResult), "Result Listener").start();
+        threadExecutor.prestartAllCoreThreads();
+        new Thread(new ResultListener(resultQueue, transferMissionResult),
+                "Agent "+username+" Result Listener").start();
     }
 
     @Override
@@ -75,5 +78,14 @@ public class Agent implements Entity {
     @Override
     public String toString() {
         return "Agent "+ username +" in team "+myAllies.getUsername();
+    }
+
+    public void bindWorkAndResultQueues(BlockingQueue<Runnable> alliesWorkQueue,
+                                        Consumer<MissionResult> transferMissionResult) {
+        new Thread(new MissionTaker(alliesWorkQueue, workQueue, resultQueue, missionAmountPull),
+                "Agent "+username+" Mission Taker").start();
+        decipher(transferMissionResult);
+
+
     }
 }

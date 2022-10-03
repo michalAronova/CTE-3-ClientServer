@@ -2,6 +2,7 @@ package engine.decipherManager;
 
 import DTO.codeObj.CodeObj;
 import DTO.missionResult.MissionResult;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import engine.decipherManager.dictionary.Dictionary;
 import engine.decipherManager.mission.Mission;
 import engine.decipherManager.permuter.Permuter;
@@ -12,6 +13,7 @@ import enigmaMachine.reflector.Reflecting;
 import enigmaMachine.rotor.Rotor;
 import exceptions.taskExceptions.TaskIsCancelledException;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.util.Pair;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
@@ -55,7 +57,7 @@ public class DecipherManager {
 
     private BiConsumer<Integer, Long> updateTotalMissionDone;
 
-
+    private BooleanProperty workQueueCreated;
     public DecipherManager(Dictionary dictionary, Machine machine,
                            Stock stock, Difficulty difficulty, CodeObj machineCode, String encryption){
         this.dictionary = dictionary;
@@ -72,6 +74,8 @@ public class DecipherManager {
         }
 
         possiblePositionPermutations = calculatePermutationsCount();
+
+        workQueueCreated = new SimpleBooleanProperty(false);
     }
 
     private double calculatePermutationsCount() {
@@ -155,7 +159,16 @@ public class DecipherManager {
 
         //create work queue to push missions to
         workQueue = new ArrayBlockingQueue<>(WORK_QUEUE_LIMIT);
+        workQueueCreated.set(true);
         initiateWork();
+    }
+
+    public BooleanProperty isWorkQueueCreated() {
+        return workQueueCreated;
+    }
+
+    public BooleanProperty workQueueCreatedProperty() {
+        return workQueueCreated;
     }
 
     public BlockingQueue<Runnable> getWorkQueue() {

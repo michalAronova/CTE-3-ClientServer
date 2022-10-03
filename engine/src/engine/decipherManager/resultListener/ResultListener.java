@@ -21,7 +21,6 @@ public class ResultListener implements Runnable{
             System.out.println("attempting to take...");
             while (!Thread.currentThread().isInterrupted()){
                 transferMissionResult.accept(resultQueue.take());
-                //System.out.println(resultQueue.take());
             }
         }
         catch(InterruptedException e){

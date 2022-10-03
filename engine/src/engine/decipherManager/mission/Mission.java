@@ -45,6 +45,8 @@ public class Mission implements Runnable {
         candidates = new LinkedList<>();
     }
 
+    public void setResultQueue(BlockingQueue<MissionResult> resultQueue){ this.resultQueue = resultQueue; }
+
     @Override
     public void run() {
         long startTime = System.currentTimeMillis();

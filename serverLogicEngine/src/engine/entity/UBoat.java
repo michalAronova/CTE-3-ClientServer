@@ -2,6 +2,7 @@ package engine.entity;
 
 import DTO.codeObj.CodeObj;
 import DTO.missionResult.AlliesCandidates;
+import DTO.missionResult.MissionResult;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import engine.Engine;
 import engine.TheEngine;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 
 public class UBoat implements Entity{
     private String username;
@@ -31,6 +33,7 @@ public class UBoat implements Entity{
     private String output;
     private boolean isFull;
     private boolean engineLoaded;
+    private BlockingQueue<MissionResult> resultQueue;
 
     private boolean competitionOn;
     private IntegerProperty counterReady;
@@ -83,9 +86,6 @@ public class UBoat implements Entity{
         participants.clear();
         isFull = false;
     }
-
-    //public DecipherManager(Dictionary dictionary, Machine machine,
-    //                       Stock stock, Difficulty difficulty, CodeObj machineCode, String encryption){
 
     public void setAlliesParams(Allies ally){
         ally.createDM(engine.getDictionary(), engine.getMachine(),
@@ -157,7 +157,16 @@ public class UBoat implements Entity{
     }
 
     private void start() {
-        //create DM for all allies
-        //start manage agents
+        for (Allies ally: participants.values()) {
+            setAlliesParams(ally);
+
+            new Thread(() -> ally.start(input, (result) -> {
+                try {
+                    resultQueue.put(result);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }), "Allies "+ally.getUsername()+" starting thread");
+        }
     }
 }
