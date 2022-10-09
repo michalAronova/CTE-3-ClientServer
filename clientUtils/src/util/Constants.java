@@ -12,11 +12,11 @@ public class Constants {
     public final static int REFRESH_RATE = 2000;
     public final static String CHAT_LINE_FORMATTING = "%tH:%tM:%tS | %.10s: %s%n";
 
-    // fxml locations
-    public final static String UBOAT_LOGIN_FXML_RESOURCE_LOCATION = "/uBoatClient/uBoatLogin/uBoatLogin.fxml";
-    public final static String ALLIES_LOGIN_FXML_RESOURCE_LOCATION = "/alliesClient/alliesLogin/alliesLogin.fxml";
-    public final static String AGENT_LOGIN_FXML_RESOURCE_LOCATION = "/agentClient/agentLogin/agentLogin.fxml";
+//    public final static String UBOAT_LOGIN_FXML_RESOURCE_LOCATION = "/uBoatClient/uBoatLogin/uBoatLogin.fxml";
+//    public final static String ALLIES_LOGIN_FXML_RESOURCE_LOCATION = "/alliesClient/alliesLogin/alliesLogin.fxml";
+//    public final static String AGENT_LOGIN_FXML_RESOURCE_LOCATION = "/agentClient/agentLogin/agentLogin.fxml";
 
+    // fxml locations
     public final static String UBOAT_MAIN_FXML_RESOURCE_LOCATION = "/uBoatClient/uBoatMain/uBoatMain.fxml";
     public final static String ALLIES_MAIN_FXML_RESOURCE_LOCATION = "/alliesClient/alliesMain/alliesMain.fxml";
     public final static String AGENT_MAIN_FXML_RESOURCE_LOCATION = "/agentClient/agentMain/agentMain.fxml";
@@ -28,6 +28,8 @@ public class Constants {
     private final static String FULL_SERVER_PATH = BASE_URL + CONTEXT_PATH;
 
     public final static String UBOAT_LOGIN_PAGE = FULL_SERVER_PATH + "/signup/uboat/login";
+    public final static String ALLIES_LOGIN_PAGE = FULL_SERVER_PATH + "/signup/allies/login";
+
     public final static String USERS_LIST = FULL_SERVER_PATH + "/userslist";
     public final static String LOGOUT = FULL_SERVER_PATH + "/logout";
     public final static String UPLOAD_XML = FULL_SERVER_PATH + "/signup/uboat/upload-file";

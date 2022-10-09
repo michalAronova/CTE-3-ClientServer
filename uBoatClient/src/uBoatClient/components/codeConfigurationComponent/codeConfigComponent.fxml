@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox fx:id="rootVBox" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uBoatClient.components.codeConfigurationComponent.CodeConfigComponentController">
+    <children>
+        <HBox alignment="CENTER_LEFT">
+            <children>
+                <Button fx:id="setByManualButton" mnemonicParsing="false" onAction="#onSetByManualClicked" styleClass="simpleButton" text="Set by manual">
+                    <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="5.0" top="10.0" />
+                    </HBox.margin>
+                </Button>
+                <Button fx:id="setByRandomButton" mnemonicParsing="false" onAction="#onSetByRandomClicked" styleClass="simpleButton" text="Set by random">
+                    <HBox.margin>
+                        <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
+                    </HBox.margin>
+                </Button>
+            </children>
+        </HBox>
+        <HBox>
+            <children>
+                <Accordion fx:id="codeConfigurationAccordion" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="290.0" prefWidth="650.0">
+                    <panes>
+                        <TitledPane animated="false" prefHeight="178.0" prefWidth="400.0" text="Rotor Configuration">
+                            <content>
+                                <AnchorPane>
+                                    <children>
+                                        <fx:include fx:id="rotorConfigComponent" source="rotorConfigurationComponent/rotorConfigComponent.fxml" />
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </TitledPane>
+                        <TitledPane animated="false" prefWidth="600.0" text="Reflector Configuration">
+                            <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0">
+                                    <children>
+                                        <ComboBox fx:id="reflectorComboBox" layoutX="22.0" layoutY="14.0" prefHeight="25.0" prefWidth="112.0" />
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </TitledPane>
+                        <TitledPane animated="false" prefHeight="190.0" prefWidth="400.0" text="Plugs Configuration">
+                            <content>
+                                <AnchorPane>
+                                    <children>
+                                        <fx:include fx:id="plugsComponent" source="plugsComponent/plugsComponent.fxml" />
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </TitledPane>
+                    </panes>
+                </Accordion>
+                <AnchorPane>
+                    <children>
+                        <Button fx:id="setButton" disable="true" layoutX="9.0" layoutY="50.0" mnemonicParsing="false" onAction="#onSetClicked" styleClass="simpleButton" text="Set!">
+                     <padding>
+                        <Insets bottom="6.0" left="8.0" right="8.0" top="6.0" />
+                     </padding></Button>
+                  <Button fx:id="clearButton" layoutX="9.0" layoutY="87.0" mnemonicParsing="false" onAction="#onClearButtonClicked" styleClass="simpleButton" text="Clear">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding></Button>
+                    </children>
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </padding>
+                    <HBox.margin>
+                        <Insets right="5.0" />
+                    </HBox.margin>
+                </AnchorPane>
+            </children>
+        </HBox>
+    </children>
+</VBox>

@@ -85,7 +85,5 @@ public class Agent implements Entity {
         new Thread(new MissionTaker(alliesWorkQueue, workQueue, resultQueue, missionAmountPull),
                 "Agent "+username+" Mission Taker").start();
         decipher(transferMissionResult);
-
-
     }
 }

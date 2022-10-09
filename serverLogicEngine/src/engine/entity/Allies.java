@@ -21,6 +21,8 @@ public class Allies implements Entity {
     private DecipherManager DM;
     private UBoat uBoat;
     private Map<String, Agent> name2Agent;
+
+    // wait-list for agents joining during a contest here
     private Boolean isCompeting;
 
     private Boolean isWinner;

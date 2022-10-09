@@ -21,16 +21,19 @@ public class MissionTaker implements Runnable{
 
     @Override
     public void run() {
-        if(agentWorkQueue.isEmpty()){
-            for (int i = 0; i < missionAmountPull; i++) {
-                try {
-                    Mission mission = (Mission)alliesWorkQueue.take();
-                    mission.setResultQueue(agentResultQueue);
-                    agentWorkQueue.put(mission);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                if (agentWorkQueue.isEmpty()) {
+                    for (int i = 0; i < missionAmountPull; i++) {
+                        Mission mission = (Mission) alliesWorkQueue.take();
+                        mission.setResultQueue(agentResultQueue);
+                        agentWorkQueue.put(mission);
+                    }
                 }
             }
+        }
+        catch(InterruptedException e){
+            System.out.println(Thread.currentThread().getName() + " was interrupted");
         }
     }
 }

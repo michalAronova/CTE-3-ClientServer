@@ -3,6 +3,7 @@ package uBoatClient.uBoatApp;
 import clientUtils.LoginController;
 import clientUtils.MainAppController;
 import clientUtils.chooseNameComponent.ChooseNameComponentController;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -12,13 +13,20 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
 import uBoatClient.uBoatMain.UBoatMainController;
+import util.Constants;
+import util.http.HttpClientUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import static util.Constants.UBOAT_LOGIN_FXML_RESOURCE_LOCATION;
+import static util.Constants.UBOAT_MAIN_FXML_RESOURCE_LOCATION;
 
 public class UBoatAppController implements LoginController {
     @FXML public ScrollPane mainScrollPane;
@@ -52,20 +60,67 @@ public class UBoatAppController implements LoginController {
     }
 
     private void switchToMain() {
-        URL mainPageUrl = getClass().getResource(UBOAT_LOGIN_FXML_RESOURCE_LOCATION);
+        URL mainPageUrl = getClass().getResource(UBOAT_MAIN_FXML_RESOURCE_LOCATION);
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(mainPageUrl);
             Node main = fxmlLoader.load();
             uBoatMainController = fxmlLoader.getController();
             uBoatMainController.setMainController(this);
-
+            uBoatMainController.initialize();
             vBox.getChildren().clear();
             vBox.getChildren().add(main);
+
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public StringProperty getUsernameProperty() {
+        return usernameProperty;
+    }
+
+    public StringProperty usernamePropertyProperty() {
+        return usernameProperty;
+    }
+
+    @Override
+    public void onUsernameSelected(String username) {
+        System.out.println("dispatch uboat login request to server...");
+
+        String finalUrl = HttpUrl
+                .parse(Constants.UBOAT_LOGIN_PAGE)
+                .newBuilder()
+                .addQueryParameter("username", username)
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() ->
+                        chooseNameComponentController
+                                .errorMessageProperty()
+                                .set("Something went wrong: " + e.getMessage())
+                );
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.code() != 200) {
+                    String responseBody = response.body().string();
+                    Platform.runLater(() ->
+                            chooseNameComponentController
+                                    .errorMessageProperty().set("Something went wrong: " + responseBody)
+                    );
+                } else {
+                    Platform.runLater(() -> {
+                        usernameProperty.set(username);
+                        isValidUsername.set(true);
+                    });
+                }
+            }
+        });
+    }
 }

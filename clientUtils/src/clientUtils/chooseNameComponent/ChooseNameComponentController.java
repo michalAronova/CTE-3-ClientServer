@@ -44,8 +44,15 @@ public class ChooseNameComponentController {
         mainAnchor.setVisible(false);
     }
 
-
     public StringProperty errorMessageProperty() {
         return errorMessageProperty;
+    }
+
+    public String usernameChosen(){
+        return usernameTextField.getText();
+    }
+
+    public void hideRegisterButton(){
+        registerButton.setVisible(false);
     }
 }
