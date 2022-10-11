@@ -6,9 +6,9 @@ import engine.decipherManager.mission.Mission;
 import java.util.concurrent.BlockingQueue;
 
 public class MissionTaker implements Runnable{
-    private BlockingQueue<Runnable> alliesWorkQueue;
-    private BlockingQueue<Runnable> agentWorkQueue;
-    BlockingQueue<MissionResult> agentResultQueue;
+    private final BlockingQueue<Runnable> alliesWorkQueue;
+    private final BlockingQueue<Runnable> agentWorkQueue;
+    private final BlockingQueue<MissionResult> agentResultQueue;
     private final int missionAmountPull;
 
     public MissionTaker(BlockingQueue<Runnable> alliesWorkQueue, BlockingQueue<Runnable> agentWorkQueue,

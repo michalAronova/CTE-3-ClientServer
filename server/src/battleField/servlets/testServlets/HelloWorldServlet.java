@@ -1,4 +1,4 @@
-package battleField.servlets;
+package battleField.servlets.testServlets;
 
 import battleField.utils.SessionUtils;
 import jakarta.servlet.ServletException;

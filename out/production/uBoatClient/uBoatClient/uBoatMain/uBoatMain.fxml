@@ -1,50 +1,135 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" rotateGraphic="true" side="LEFT" tabClosingPolicy="UNAVAILABLE" tabMaxWidth="100.0" tabMinWidth="100.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.171" fx:controller="battleField.client.component.uBoat.uBoatMain.uBoatMainController">
-  <tabs>
-    <Tab fx:id="setupTab" text="Competition Setup">
-      <content>
-            <ScrollPane fitToHeight="true" fitToWidth="true">
-               <content>
-              <AnchorPane>
-                     <children>
-                        <Button fx:id="readyButton" layoutX="148.0" layoutY="218.0" mnemonicParsing="false" onAction="#onReadyClicked" text="Ready" AnchorPane.bottomAnchor="3.0" AnchorPane.rightAnchor="5.0" />
-                     </children>
-                  </AnchorPane>
-               </content>
-            </ScrollPane>
-      </content>
-    </Tab>
-    <Tab fx:id="viewTab" text="Competiton View">
-      <content>
-            <ScrollPane fitToHeight="true" fitToWidth="true">
-               <content>
-              <AnchorPane>
-                     <children>
-                        <GridPane layoutX="17.0" layoutY="8.0" prefHeight="60.0" prefWidth="183.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="86.33331298828125" minWidth="10.0" prefWidth="47.6666259765625" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="137.3333740234375" minWidth="10.0" prefWidth="135.3333740234375" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="mainVBox" alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uBoatClient.uBoatMain.UBoatMainController">
+   <children>
+      <HBox alignment="CENTER" minWidth="200.0" spacing="5.0" VBox.vgrow="NEVER">
+         <children>
+            <Label alignment="CENTER" text="Hello," />
+            <Label fx:id="usernameLabel" text="username" />
+            <Label fx:id="entityLabel" text="(entity)" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER" VBox.vgrow="NEVER">
+         <children>
+            <Button fx:id="loadFileButton" minWidth="70.0" mnemonicParsing="false" onAction="#onLoadClicked" text="Load File" HBox.hgrow="NEVER" />
+            <TextField fx:id="fileTextField" prefWidth="600.0" />
+         </children>
+      </HBox>
+      <Label text="error here" textFill="RED" fx:id="xmlErrorLabel">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </Label>
+      <TabPane fx:id="competitionTabPane" rotateGraphic="true" tabClosingPolicy="UNAVAILABLE" tabMaxWidth="100.0" tabMinWidth="100.0">
+        <tabs>
+          <Tab fx:id="machineTab" text="Machine">
+            <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true">
+                     <content>
+                    <AnchorPane>
                            <children>
-                              <Label text="Input:" />
-                              <Label text="Output:" GridPane.rowIndex="1" />
-                              <Label fx:id="inputLabel" text="Label" GridPane.columnIndex="1" />
-                              <Label fx:id="outputLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <VBox>
+                                 <children>
+                                    <fx:include fx:id="machineDetails" source="../components/machineDetails/machineDetails.fxml" />
+                                    <fx:include fx:id="codeConfig" source="../components/codeConfigurationComponent/codeConfigComponent.fxml" />
+                                    <AnchorPane>
+                                       <children>
+                                          <Button fx:id="readyButton" layoutX="659.0" mnemonicParsing="false" onAction="#onReadyClicked" prefHeight="25.0" prefWidth="111.0" text="Ready!">
+                                             <font>
+                                                <Font size="18.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                                       </VBox.margin>
+                                    </AnchorPane>
+                                 </children>
+                              </VBox>
+                           </children></AnchorPane>
+                     </content>
+                  </ScrollPane>
+            </content>
+          </Tab>
+          <Tab fx:id="contestTab" text="Contest">
+            <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true">
+                     <content>
+                    <AnchorPane>
+                           <children>
+                              <GridPane prefHeight="393.0" prefWidth="777.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" prefWidth="200.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints vgrow="NEVER" />
+                                  <RowConstraints vgrow="ALWAYS" />
+                                    <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="NEVER" />
+                                </rowConstraints>
+                                 <children>
+                                    <fx:include fx:id="codeObjDisplay" source="../components/codeObjDisplayComponent/codeObjDisplayComponent.fxml" />
+                                    <fx:include fx:id="processComponent" source="../components/processComponent/processComponent.fxml" GridPane.columnIndex="1" />
+                                    <fx:include fx:id="dictionaryComponent" source="../components/dictionaryComponent/dictionaryComponent.fxml" GridPane.columnIndex="2" />
+                                    <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#onLogoutClicked" text="Logout" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                                       <GridPane.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </GridPane.margin>
+                                    </Button>
+                                    <SplitPane dividerPositions="0.29797979797979796" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
+                                      <items>
+                                          <ScrollPane fitToWidth="true">
+                                             <content>
+                                              <AnchorPane>
+                                                   <children>
+                                                      <fx:include fx:id="activeTeamsComponent" source="../../../../clientUtils/src/clientUtils/activeTeams/activeTeamsComponent.fxml" GridPane.rowIndex="1" />
+                                                   </children>
+                                                </AnchorPane>
+                                             </content>
+                                          </ScrollPane>
+                                          <ScrollPane fitToHeight="true" fitToWidth="true">
+                                             <content>
+                                              <AnchorPane>
+                                                   <children>
+                                                      <fx:include fx:id="candidatesComponent" source="../../../../clientUtils/src/clientUtils/candidatesComponent/candidatesComponent.fxml" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+                                                   </children>
+                                                </AnchorPane>
+                                             </content>
+                                          </ScrollPane>
+                                      </items>
+                                    </SplitPane>
+                                 </children>
+                              </GridPane>
                            </children>
-                        </GridPane>
-                        <Button fx:id="logoutButton" layoutX="148.0" layoutY="220.0" mnemonicParsing="false" onAction="#onLogoutClicked" text="Logout" AnchorPane.bottomAnchor="3.0" AnchorPane.rightAnchor="5.0" />
-                     </children>
-                  </AnchorPane>
-               </content>
-            </ScrollPane>
-      </content>
-    </Tab>
-  </tabs>
-</TabPane>
+                        </AnchorPane>
+                     </content>
+                  </ScrollPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</VBox>

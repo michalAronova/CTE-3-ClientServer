@@ -18,7 +18,7 @@ public class ResultListener implements Runnable{
     @Override
     public void run() {
         try{
-            System.out.println("attempting to take...");
+            System.out.println("result listener attempting to take...");
             while (!Thread.currentThread().isInterrupted()){
                 transferMissionResult.accept(resultQueue.take());
             }

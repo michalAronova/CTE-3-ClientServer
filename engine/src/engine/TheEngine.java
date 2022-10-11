@@ -98,6 +98,10 @@ public class TheEngine implements Engine {
             Validator machineValidator = new MachineValidator(cteMachine, MIN_ROTOR_COUNT, MAX_ROTOR_COUNT);
             try{
                 machineValidator.validate();
+                this.battleFieldName = enigma.getCTEBattlefield().getBattleName();
+                this.battleLevel = Difficulty.valueOf(enigma.getCTEBattlefield().getLevel().trim().toUpperCase());
+                this.alliesRequired = enigma.getCTEBattlefield().getAllies();
+                this.dictionary = new Dictionary(enigma.getCTEDecipher().getCTEDictionary());
                 stock = new Stock(cteMachine.getCTERotors().getCTERotor(), cteMachine.getCTEReflectors().getCTEReflector(),
                         new KeyBoard(cteMachine.getABC().trim().toUpperCase()), cteMachine.getRotorsCount());
                 this.machine = new Machine(stock.getKeyBoard(), stock.getRotorsCount());
@@ -169,7 +173,8 @@ public class TheEngine implements Engine {
 
     private CodeObj autoGenerateCodeObj(){
         String reflectorID = raffleReflector();
-        List<Pair<Character, Character>> plugs = rafflePlugs();
+        //List<Pair<Character, Character>> plugs = rafflePlugs();
+        List<Pair<Character, Character>> plugs = new ArrayList<>();
         List<Pair<Integer, Character>> rotorsID2Position = raffleRotors();
         return new CodeObj(rotorsID2Position, reflectorID, plugs);
     }

@@ -36,5 +36,9 @@ public class UserManager {
     public synchronized Map<String, Entity> getUsers() { return Collections.unmodifiableMap(user2entity); }
 
     public boolean isUserExists(String username) { return user2entity.containsKey(username); }
+
+    public Entity getUser(String username) {
+        return user2entity.get(username);
+    }
 }
 

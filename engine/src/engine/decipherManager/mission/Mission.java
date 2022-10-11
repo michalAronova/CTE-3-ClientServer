@@ -6,6 +6,7 @@ import engine.decipherManager.dictionary.Dictionary;
 import engine.decipherManager.speedometer.Speedometer;
 import enigmaMachine.Machine;
 import enigmaMachine.keyBoard.KeyBoard;
+import javafx.beans.property.BooleanProperty;
 import javafx.util.Pair;
 
 import java.util.Arrays;
@@ -30,6 +31,9 @@ public class Mission implements Runnable {
 
     private BiConsumer<Integer, Long> updateTotalMissionDone;
 
+    private BlockingQueue<Runnable> workQueue;
+    private BooleanProperty isEmptyQueue;
+
     public Mission(Machine machine, List<Character> startRotorsPositions, double missionSize,
                    String toDecrypt, Dictionary dictionary, Speedometer speedometer,
                    BlockingQueue<MissionResult> resultQueue, BiConsumer<Integer, Long> updateTotalMissionDone) {
@@ -39,16 +43,22 @@ public class Mission implements Runnable {
         this.dictionary = dictionary;
         this.currentPositions = startRotorsPositions;
         this.resultQueue = resultQueue;
-        this.updateTotalMissionDone = updateTotalMissionDone;
+        //this.updateTotalMissionDone = updateTotalMissionDone;
         machine.updateByPositionsList(currentPositions);
         this.speedometer = speedometer;
         candidates = new LinkedList<>();
     }
 
     public void setResultQueue(BlockingQueue<MissionResult> resultQueue){ this.resultQueue = resultQueue; }
-
+    public void setWorkQueueAndEmptyProperty(BlockingQueue<Runnable> workQueue, BooleanProperty isEmptyQueue){
+        this.workQueue = workQueue;
+        this.isEmptyQueue = isEmptyQueue;
+    }
     @Override
     public void run() {
+        if(workQueue != null){
+            isEmptyQueue.set(workQueue.isEmpty());
+        }
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < missionSize; i++){
             //do thing:
@@ -73,9 +83,10 @@ public class Mission implements Runnable {
         }
         long endTime = System.currentTimeMillis();
         long timeElapsed = endTime - startTime;
-        if(missionSize != 0) {
-            updateTotalMissionDone.accept(1, timeElapsed);
-        }
+//        if(missionSize != 0) {
+//            updateTotalMissionDone.accept(1, timeElapsed);
+//        }
+
         if(!candidates.isEmpty()){
             try {
                 resultQueue.put(new MissionResult(candidates,
@@ -84,5 +95,20 @@ public class Mission implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(machine);
+        sb.append(System.lineSeparator());
+        sb.append(missionSize);
+        sb.append(System.lineSeparator());
+        sb.append(toDecrypt);
+        sb.append(System.lineSeparator());
+        sb.append(currentPositions);
+        sb.append(System.lineSeparator());
+        sb.append(missionSize);
+        return sb.toString();
     }
 }

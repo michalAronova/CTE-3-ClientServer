@@ -63,6 +63,7 @@ public class DecipherManager {
         this.dictionary = dictionary;
         this.difficulty = difficulty;
         this.encryption = encryption;
+        this.machineCode = machineCode;
         try {
             serializeMachine(machine);
             stockEncoded = serializableToString(stock);
@@ -74,7 +75,6 @@ public class DecipherManager {
         }
 
         possiblePositionPermutations = calculatePermutationsCount();
-
         workQueueCreated = new SimpleBooleanProperty(false);
     }
 
@@ -252,20 +252,6 @@ public class DecipherManager {
             List<Character> nextRotorsPositions = initializeRotorsPositions(machineCode.getID2PositionList());
 
             for (int i = 0; i <= totalMissionsAmountForPositions; i++) {
-                synchronized (isPaused){
-                    while(isPaused.getValue()){
-                        try{
-                           isPaused.wait();
-                        }
-                        catch(InterruptedException e){
-                            break;
-                        }
-                    }
-                }
-                if(isCancelled.getValue()){
-                    throw new TaskIsCancelledException();
-                }
-
                 if(i != 0) {
                     nextRotorsPositions = getNextRotorsPositions(nextRotorsPositions, missionSize);
                 }

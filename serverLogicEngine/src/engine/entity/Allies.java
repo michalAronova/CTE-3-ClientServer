@@ -6,12 +6,12 @@ import engine.Engine;
 import engine.decipherManager.DecipherManager;
 import engine.decipherManager.Difficulty;
 import engine.decipherManager.dictionary.Dictionary;
+import engine.decipherManager.mission.Mission;
 import engine.decipherManager.resultListener.ResultListener;
 import engine.stock.Stock;
 import enigmaMachine.Machine;
 
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
@@ -30,7 +30,12 @@ public class Allies implements Entity {
 
     private BlockingQueue<MissionResult> resultQueue;
 
-    public Allies(String username){ this.username = username; }
+    private final Object DMLock = new Object();
+
+    public Allies(String username){
+        this.username = username;
+        name2Agent = new HashMap<>();
+    }
 
 
     public synchronized void setUBoat(UBoat uBoat){
@@ -41,7 +46,16 @@ public class Allies implements Entity {
     public void start(String encryption, Consumer<MissionResult> transferMissionResultToUBoat){
         new Thread(new ResultListener(resultQueue, transferMissionResultToUBoat),
                 "Allies "+username+" Result Listener").start();
-        addWorkQueueToAgents(DM.getWorkQueue());
+        DM.isWorkQueueCreated().addListener((observable, oldValue, newValue) -> {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            if(newValue){
+                addWorkQueueToAgents();
+            }
+        });
         DM.manageAgents(encryption); //start creating missions
     }
 
@@ -55,16 +69,28 @@ public class Allies implements Entity {
         resultQueue = new LinkedBlockingQueue<>();
     }
 
-    private void addWorkQueueToAgents(BlockingQueue<Runnable> alliesWorkQueue) {
+    private void addWorkQueueToAgents() {
         for(Agent agent: name2Agent.values()){
-            agent.bindWorkAndResultQueues(alliesWorkQueue, (result) -> {
+            agent.decipher((result) -> {
                 try {
+                    System.out.println(result.getAgentID()+" found result *********************************************");
                     resultQueue.put(result);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             });
         }
+    }
+
+    public List<Runnable> pullMissions(int missionPullAmount) throws InterruptedException {
+        List<Runnable> missions = new ArrayList<>();
+        synchronized (DM.getWorkQueue()){
+            while(!DM.getWorkQueue().isEmpty() && missionPullAmount > 0){
+                --missionPullAmount;
+                missions.add(DM.getWorkQueue().take());
+            }
+        }
+        return missions;
     }
 
     public synchronized void removeAgent(String agentName){
@@ -131,6 +157,5 @@ public class Allies implements Entity {
     public UBoat getUBoat() {
         return uBoat;
     }
-
 
 }
