@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uBoatClient.uBoatApp.UBoatAppController">
+  <content>
+      <VBox fx:id="vBox" alignment="CENTER">
+         <children>
+            <Label text="Welcome, UBOAT!">
+               <font>
+                  <Font name="Bookman Old Style" size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </Label>
+            <fx:include fx:id="chooseNameComponent" source="../../../../clientUtils/src/clientUtils/chooseNameComponent/chooseNameComponent.fxml" />
+         </children>
+      </VBox>
+  </content>
+</ScrollPane>
