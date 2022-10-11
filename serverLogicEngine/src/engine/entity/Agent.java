@@ -65,7 +65,7 @@ public class Agent implements Entity {
         threadExecutor.prestartAllCoreThreads();
         new Thread(new ResultListener(resultQueue, transferMissionResult),
                 "Agent "+username+" Result Listener").start();
-        new Thread(this::pullMissionsFromAlly, "Agent Pull: "+ username).start();
+        new Thread(this::pullMissionsFromAlly, "Pull Thread for "+username).start();
     }
 
     @Override
