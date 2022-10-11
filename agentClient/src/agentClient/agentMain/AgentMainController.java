@@ -7,6 +7,7 @@ import clientUtils.contestDetails.ContestDetailsController;
 import javafx.beans.property.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import sun.management.Agent;
 
 public class AgentMainController implements MainAppController {
     @FXML private Label alliesNameLabel;
@@ -27,6 +28,7 @@ public class AgentMainController implements MainAppController {
     private final BooleanProperty finished;
     private final BooleanProperty inContest;
 
+    private Agent agent;
     public AgentMainController(){
         alliesName = new SimpleStringProperty("");
         totalCandidates = new SimpleIntegerProperty(0);

@@ -1,12 +1,16 @@
 package battleField.servlets.agentServlets;
 
+import DTO.agent.SimpleAgentDTO;
 import battleField.constants.Constants;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
 import engine.entity.Agent;
 import engine.entity.Allies;
 import engine.entity.EntityEnum;
+import engine.entity.SimpleAgent;
+import engine.users.AgentUserManager;
 import engine.users.UserManager;
+import engine.users.UsernameManager;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +28,8 @@ public class AgentLoginServlet extends HttpServlet {
         response.setContentType("text/plain;charset=UTF-8");
 
         String usernameFromSession = SessionUtils.getUsername(request);
-        UserManager userManager = ServletUtils.getAgentUserManager(getServletContext());
+        AgentUserManager agentUserManager = ServletUtils.getAgentUserManager(getServletContext());
+        UsernameManager usernameManager = ServletUtils.getUsernameManager(getServletContext());
 
         if (usernameFromSession == null) { //user is not logged in yet
 
@@ -38,7 +43,7 @@ public class AgentLoginServlet extends HttpServlet {
                 //normalize the username value
                 usernameFromParameter = usernameFromParameter.trim();
                 synchronized (this) {
-                    if (userManager.isUserExists(usernameFromParameter)) {
+                    if (usernameManager.isUserExists(usernameFromParameter)) {
                         String errorMessage = "Username " + usernameFromParameter + " already exists. Please enter a different username.";
 
                         // stands for unauthorized as there is already such user with this name
@@ -47,23 +52,28 @@ public class AgentLoginServlet extends HttpServlet {
                     }
                     else {
                         //add the new user to the users list
+                        usernameManager.addUser(usernameFromParameter);
+
+                        //adding SimpleAgentDTO to allies with manager
                         String alliesUsername = request.getParameter(ALLIES_JOINED);
                         Allies allies = (Allies) ServletUtils.getAlliesUserManager(getServletContext())
                                                                 .getEntityObject(alliesUsername);
-
                         int threadCount = Integer.parseInt(request.getParameter(THREAD_COUNT));
                         int missionAmountPull = Integer.parseInt(request.getParameter(MISSION_AMOUNT_PULL));
-                        Agent agent =  new Agent(usernameFromParameter, allies, threadCount, missionAmountPull);
-                        allies.addAgent(agent);
-                        //userManager.addUser(usernameFromParameter);
-                        userManager.addUser(usernameFromParameter, agent);
+                        SimpleAgentDTO agentDTO = new SimpleAgentDTO(usernameFromParameter, threadCount, missionAmountPull);
+                        allies.addAgentData(agentDTO);
 
-                        //Allies.addAgent(^^);
+                        //adding agent to agents manager
+                        agentUserManager.addUser(usernameFromParameter, new SimpleAgent(alliesUsername, agentDTO));
+
                         request.getSession(true).setAttribute(Constants.USERNAME, usernameFromParameter);
                         request.getSession().setAttribute(Constants.ENTITY, EntityEnum.AGENT);
-                        //redirect the request to the chat room - in order to actually change the URL
-                        System.out.println("On login, request URI is: " + request.getRequestURI());
+
                         response.setStatus(HttpServletResponse.SC_OK);
+
+                        response.getOutputStream()
+                                .print(String.format("logged in as %s (%s)",
+                                        usernameFromParameter, EntityEnum.AGENT));
                     }
                 }
             }

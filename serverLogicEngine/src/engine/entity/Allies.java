@@ -1,5 +1,6 @@
 package engine.entity;
 
+import DTO.agent.SimpleAgentDTO;
 import DTO.codeObj.CodeObj;
 import DTO.missionResult.MissionResult;
 import engine.Engine;
@@ -20,9 +21,13 @@ public class Allies implements Entity {
     private String username;
     private DecipherManager DM;
     private UBoat uBoat;
-    private Map<String, Agent> name2Agent;
+    private final Map<String, Agent> name2Agent;
+
+    private Map<String, SimpleAgentDTO> agentName2data;
 
     // wait-list for agents joining during a contest here
+    private Map<String, SimpleAgentDTO> waitingAgents;
+
     private Boolean isCompeting;
 
     private Boolean isWinner;
@@ -35,6 +40,8 @@ public class Allies implements Entity {
     public Allies(String username){
         this.username = username;
         name2Agent = new HashMap<>();
+        agentName2data = new HashMap<>();
+        waitingAgents = new HashMap<>();
     }
 
 
@@ -62,6 +69,20 @@ public class Allies implements Entity {
     public synchronized void addAgent(Agent agent){
         name2Agent.put(agent.getUsername(), agent);
     }
+    public synchronized void addAgentData(SimpleAgentDTO simpleAgentDTO) {
+        if(isCompetitionOn){
+            waitingAgents.put(simpleAgentDTO.getName(), simpleAgentDTO);
+        }
+        else {
+            agentName2data.put(simpleAgentDTO.getName(), simpleAgentDTO);
+        }
+    }
+
+    public synchronized void removeAgent(String agentName) {
+        if(agentName2data.remove(agentName) == null) {
+            waitingAgents.remove(agentName);
+        }
+    }
 
     public void createDM(Dictionary dictionary, Machine machine,
                          Stock stock, Difficulty difficulty, CodeObj code, String input){
@@ -70,6 +91,7 @@ public class Allies implements Entity {
     }
 
     private void addWorkQueueToAgents() {
+        //method will need to change as Allies will no longer hold reference to its Agents!
         for(Agent agent: name2Agent.values()){
             agent.decipher((result) -> {
                 try {
@@ -82,23 +104,24 @@ public class Allies implements Entity {
         }
     }
 
-    public List<Runnable> pullMissions(int missionPullAmount) throws InterruptedException {
-        List<Runnable> missions = new ArrayList<>();
+    public List<Mission> pullMissions(int missionPullAmount) throws InterruptedException {
+        List<Mission> missions = new ArrayList<>();
         synchronized (DM.getWorkQueue()){
             while(!DM.getWorkQueue().isEmpty() && missionPullAmount > 0){
                 --missionPullAmount;
-                missions.add(DM.getWorkQueue().take());
+                missions.add((Mission) DM.getWorkQueue().take());
             }
         }
         return missions;
     }
 
-    public synchronized void removeAgent(String agentName){
-        name2Agent.remove(agentName);
+    public synchronized void removeAllAgents(){
+        agentName2data.clear();
     }
 
-    public synchronized void removeAllAgents(){
-        name2Agent.clear();
+    public synchronized void drainWaiters(){
+        waitingAgents.forEach((name, DTO) -> agentName2data.put(name, new SimpleAgentDTO(DTO)));
+        waitingAgents.clear();
     }
 
     public void setIsCompeting(boolean competing){
@@ -150,8 +173,8 @@ public class Allies implements Entity {
         return "Allies: "+ username;
     }
 
-    public Map<String, Agent> getMyAgents() {
-        return name2Agent;
+    public Map<String, SimpleAgentDTO> getMyAgents() {
+        return agentName2data;
     }
 
     public UBoat getUBoat() {

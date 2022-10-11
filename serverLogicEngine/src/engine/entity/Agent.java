@@ -1,6 +1,8 @@
 package engine.entity;
 
 import DTO.missionResult.MissionResult;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import engine.Engine;
 import engine.decipherManager.mission.Mission;
 import engine.decipherManager.missionTaker.MissionTaker;
@@ -9,6 +11,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -116,7 +119,7 @@ public class Agent implements Entity {
     }
 
     public void pullMissionsFromAlly(){
-        List<Runnable> missions = new LinkedList<>();
+        List<Mission> missions = new LinkedList<>();
         System.out.println("Using thread: "+ Thread.currentThread().getName());
         try {
             Thread.sleep(3000);
@@ -126,6 +129,7 @@ public class Agent implements Entity {
         while(isEmptyQueue() && !Thread.currentThread().isInterrupted()) {
             try {
                 missions = myAllies.pullMissions(missionAmountPull);
+                jsonTester(missions);
                 //above line will be an okHttp Request!!! ^^^^
                 System.out.println(username+" pulled " + missions.size() + " missions!");
             } catch (InterruptedException e) {
@@ -134,8 +138,8 @@ public class Agent implements Entity {
             if (missions.size() > 0) {
                 missions.forEach(mission -> {
                     try {
-                        ((Mission) mission).setWorkQueueAndEmptyProperty(workQueue, isEmptyQueue);
-                        ((Mission) mission).setResultQueue(resultQueue);
+                        mission.setWorkQueueAndEmptyProperty(workQueue, isEmptyQueue);
+                        mission.setResultQueue(resultQueue);
                         workQueue.put(mission);
                     } catch (InterruptedException e) {
                         System.out.println(Thread.currentThread().getName() + " was interrupted");
@@ -144,6 +148,19 @@ public class Agent implements Entity {
                 isEmptyQueue.set(false);
             }
         }
+    }
+
+    private void jsonTester(List<Mission> missions){
+        System.out.println("--------------- JSON TESTER ---------------");
+        Gson gson = new Gson();
+        //Type missionListType = new TypeToken<List<Mission>>() { }.getType();
+        String missionsToJson = gson.toJson(missions);
+        System.out.println("Json string below:");
+        System.out.println(missionsToJson + System.lineSeparator());
+
+        //List<Mission> missionFromJson = gson.fromJson(missionsToJson, missionListType);
+        //System.out.println(missionFromJson);
+        System.out.println("--------------------------------------------");
     }
 
     public boolean isCompetitionOn() {

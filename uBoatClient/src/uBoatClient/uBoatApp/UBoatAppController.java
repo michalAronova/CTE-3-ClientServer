@@ -13,10 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.HttpUrl;
-import okhttp3.Response;
+import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 import uBoatClient.uBoatMain.UBoatMainController;
 import util.Constants;
@@ -98,28 +95,30 @@ public class UBoatAppController implements LoginController {
 
         HttpClientUtil.runAsync(finalUrl, new Callback() {
             @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.code() == 200) {
+                        Platform.runLater(() -> {
+                            usernameProperty.set(username);
+                            isValidUsername.set(true);
+                        });
+                    }
+                    else {
+                        String responseBodyString = responseBody.string();
+                        Platform.runLater(() ->
+                                chooseNameComponentController
+                                        .errorMessageProperty().set("Something went wrong: " + responseBodyString)
+                        );
+                    }
+                }
+            }
+            @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Platform.runLater(() ->
                         chooseNameComponentController
                                 .errorMessageProperty()
                                 .set("Something went wrong: " + e.getMessage())
                 );
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.code() != 200) {
-                    String responseBody = response.body().string();
-                    Platform.runLater(() ->
-                            chooseNameComponentController
-                                    .errorMessageProperty().set("Something went wrong: " + responseBody)
-                    );
-                } else {
-                    Platform.runLater(() -> {
-                        usernameProperty.set(username);
-                        isValidUsername.set(true);
-                    });
-                }
             }
         });
     }

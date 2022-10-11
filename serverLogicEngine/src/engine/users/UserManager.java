@@ -6,25 +6,12 @@ import engine.entity.Entity;
 import java.util.*;
 
 public class UserManager {
-
-    protected final Set<String> usersSet;
     protected final Map<String, Entity> user2entity;
 
     public UserManager() {
-        usersSet = new HashSet<>();
         user2entity = new HashMap<>();
     }
 
-    //public synchronized void addUser(String username) { usersSet.add(username); }
-
-    //public synchronized void removeUser(String username) { usersSet.remove(username); }
-
-    //public synchronized Set<String> getUsers() {return Collections.unmodifiableSet(usersSet);}
-
-    //public boolean isUserExists(String username) {return usersSet.contains(username);}
-
-
-    // below are methods for when this changes to map --------------------------------------------
     public synchronized Entity getEntityObject(String username){
         return user2entity.get(username);
     }

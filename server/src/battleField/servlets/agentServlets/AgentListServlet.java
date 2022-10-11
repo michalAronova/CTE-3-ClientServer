@@ -20,14 +20,14 @@ public class AgentListServlet extends HttpServlet {
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
             //Gson gson = new Gson();
-            UserManager userManager = ServletUtils.getAgentUserManager(getServletContext());
-            Map<String, Entity> usersList = userManager.getUsers();
+            //UserManager userManager = ServletUtils.getAgentUserManager(getServletContext());
+            //Map<String, Entity> usersList = userManager.getUsers();
             //String json = gson.toJson(usersList);
             //out.println(json);
             //out.flush();
 
             //debug below
-            out.println(usersList.toString());
+            //out.println(usersList.toString());
         }
     }
 }

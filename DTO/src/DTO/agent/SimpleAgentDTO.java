@@ -16,6 +16,12 @@ public class SimpleAgentDTO {
         this.missionPull = new SimpleIntegerProperty(missionPull);
     }
 
+    public SimpleAgentDTO(SimpleAgentDTO dto) {
+        this.name = new SimpleStringProperty(dto.getName());
+        this.threadCount = new SimpleIntegerProperty(dto.getThreadCount());
+        this.missionPull = new SimpleIntegerProperty(dto.getMissionPull());
+    }
+
     public String getName() {
         return name.get();
     }

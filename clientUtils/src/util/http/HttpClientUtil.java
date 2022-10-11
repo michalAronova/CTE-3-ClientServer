@@ -53,4 +53,20 @@ public class HttpClientUtil {
         HTTP_CLIENT.dispatcher().executorService().shutdown();
         HTTP_CLIENT.connectionPool().evictAll();
     }
+
+/*
+ *  HOW TO: make sure response is always closed! (prevent leaks)
+ * Call call = client.newCall(request);
+ * call.enqueue(new Callback() {
+ *   public void onResponse(Call call, Response response) throws IOException {
+ *     try (ResponseBody responseBody = response.body()) {
+ *     ... // Use the response.
+ *     }
+ *   }
+ *
+ *   public void onFailure(Call call, IOException e) {
+ *   ... // Handle the failure.
+ *   }
+ * });
+ */
 }

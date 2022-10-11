@@ -3,8 +3,12 @@ package battleField.servlets;
 import battleField.constants.Constants;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
+import engine.entity.Allies;
+import engine.entity.Entity;
 import engine.entity.EntityEnum;
+import engine.entity.UBoat;
 import engine.users.UserManager;
+import engine.users.UsernameManager;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,25 +27,29 @@ public class LogoutServlet extends HttpServlet {
         String usernameFromSession = SessionUtils.getUsername(request);
         EntityEnum entityFromSession = SessionUtils.getEntity(request);
 
-        UserManager userManager = getUserManagerByEntity(entityFromSession);
+        UsernameManager usernameManager = ServletUtils.getUsernameManager(getServletContext());
 
         if (usernameFromSession != null) { //user is logged in
             synchronized (this) {
-                userManager.removeUser(usernameFromSession);
+                usernameManager.removeUser(usernameFromSession);
+                removeUserByEntity(usernameFromSession, entityFromSession);
                 SessionUtils.clearSession(request);
             }
         }
     }
 
-    private UserManager getUserManagerByEntity(EntityEnum entityFromSession) {
+    private void removeUserByEntity(String usernameFromSession, EntityEnum entityFromSession) {
         switch (entityFromSession){
             case UBOAT:
-                return ServletUtils.getUBoatUserManager(getServletContext());
+                ServletUtils.getUBoatUserManager(getServletContext()).removeUser(usernameFromSession);
             case ALLIES:
-                return ServletUtils.getAlliesUserManager(getServletContext());
+                UBoat uboat = (UBoat) ServletUtils.getUBoatUserManager(getServletContext()).getUser(usernameFromSession);
+                uboat.removeParticipant(usernameFromSession);
+                ServletUtils.getAlliesUserManager(getServletContext()).removeUser(usernameFromSession);
             case AGENT:
-                return ServletUtils.getAgentUserManager(getServletContext());
+                String ally = ServletUtils.getAgentUserManager(getServletContext()).getAllyName(usernameFromSession);
+                ((Allies)ServletUtils.getAlliesUserManager(getServletContext()).getUser(ally)).removeAgent(usernameFromSession);
+                ServletUtils.getAgentUserManager(getServletContext()).removeUser(usernameFromSession);
         }
-        return null;
     }
 }

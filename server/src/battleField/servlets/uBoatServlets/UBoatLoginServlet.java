@@ -4,6 +4,7 @@ import engine.entity.Allies;
 import engine.entity.EntityEnum;
 import engine.entity.UBoat;
 import engine.users.UserManager;
+import engine.users.UsernameManager;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +31,7 @@ public class UBoatLoginServlet  extends HttpServlet {
         response.setContentType("text/plain;charset=UTF-8");
 
         String usernameFromSession = SessionUtils.getUsername(request);
+        UsernameManager usernameManager = ServletUtils.getUsernameManager(getServletContext());
         UserManager userManager = ServletUtils.getUBoatUserManager(getServletContext());
 
         if (usernameFromSession == null) { //user is not logged in yet
@@ -44,7 +46,7 @@ public class UBoatLoginServlet  extends HttpServlet {
                 //normalize the username value
                 usernameFromParameter = usernameFromParameter.trim();
                 synchronized (this) {
-                    if (userManager.isUserExists(usernameFromParameter)) {
+                    if (usernameManager.isUserExists(usernameFromParameter)) {
                         String errorMessage = "Username " + usernameFromParameter + " already exists. Please enter a different username.";
 
                         // stands for unauthorized as there is already such user with this name
@@ -52,6 +54,7 @@ public class UBoatLoginServlet  extends HttpServlet {
                         response.getOutputStream().print(errorMessage);
                     }
                     else {
+                        usernameManager.addUser(usernameFromParameter);
                         //add the new user to the users list
                         //userManager.addUser(usernameFromParameter);
                         userManager.addUser(usernameFromParameter, new UBoat(usernameFromParameter));
