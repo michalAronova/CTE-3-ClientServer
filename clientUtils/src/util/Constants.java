@@ -6,6 +6,8 @@ import com.google.gson.Gson;
 
 public class Constants {
 
+    //this is a change 14/10/22
+
     // global constants
     public final static String LINE_SEPARATOR = System.getProperty("line.separator");
     public final static String JOHN_DOE = "<Anonymous>";
