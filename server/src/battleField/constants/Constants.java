@@ -5,7 +5,7 @@ public class Constants {
     public static final String USERNAME = "username";
     public static final String ALLIES_JOINED = "allies-joined";
     public static final String DESIRED_UBOAT = "desired-uBoat";
-
+    public static final String MSG_TO_DECIPHER = "message-to-decipher";
     public static final String THREAD_COUNT = "thread-count";
     public static final String MISSION_AMOUNT_PULL = "mission-amount-pull";
     public static final String  MY_ALLY = "my-ally";
@@ -16,4 +16,5 @@ public class Constants {
     public static final String CHAT_VERSION_PARAMETER = "chatversion";
     
     public static final int INT_PARAMETER_ERROR = Integer.MIN_VALUE;
+
 }

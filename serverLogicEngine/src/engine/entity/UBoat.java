@@ -10,9 +10,7 @@ import engine.decipherManager.Difficulty;
 import engine.decipherManager.dictionary.Dictionary;
 import engine.stock.Stock;
 import enigmaMachine.Machine;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.*;
 import javafx.util.Pair;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -35,14 +33,17 @@ public class UBoat implements Entity{
     private boolean engineLoaded;
     private BlockingQueue<MissionResult> resultQueue;
 
-    private boolean competitionOn;
+    private BooleanProperty competitionOn;
+
     private IntegerProperty counterReady;
+
     public UBoat(String username){
         this.username = username;
         this.engine = new TheEngine();
         participants = new HashMap<>();
         isFull = false;
         counterReady = new SimpleIntegerProperty(0);
+        competitionOn = new SimpleBooleanProperty();
         counterReady.addListener((observable, oldValue, newValue) -> {
             if(newValue.intValue() == engine.getAlliesRequired()){ //all allies ready to start
                 start();
@@ -74,11 +75,16 @@ public class UBoat implements Entity{
         isFull = participants.size() == engine.getAlliesRequired();
     }
 
+    public Map<String, Boolean> getName2ready() {
+        return name2ready;
+    }
+
     public synchronized void addCandidates(AlliesCandidates ac){
         candidates.add(ac);
     }
     public synchronized void removeParticipant(String username){
         participants.remove(username);
+        name2ready.remove(username);
         isFull = participants.size() == engine.getAlliesRequired();
     }
 
@@ -123,12 +129,12 @@ public class UBoat implements Entity{
         return username.equals(uBoat.username);
     }
 
-    public boolean isCompetitionOn() {
+    public BooleanProperty isCompetitionOn() {
         return competitionOn;
     }
 
     public void setCompetitionOn(boolean competitionOn) {
-        this.competitionOn = competitionOn;
+        this.competitionOn.set(competitionOn);
     }
     @Override
     public int hashCode() {
@@ -149,12 +155,13 @@ public class UBoat implements Entity{
             ally.setIsCompetitionOn(false);
             ally.setIsWinner(name.equals(winner));
         });
-        competitionOn = false;
+        competitionOn.set(false);
     }
     public void updateAllyReady(String ally){
         name2ready.replace(ally, true);
         counterReady.set(counterReady.get() + 1);
     }
+
 
     private void start() {
         for (Allies ally: participants.values()) {
@@ -168,5 +175,10 @@ public class UBoat implements Entity{
                 }
             }), "Allies "+ally.getUsername()+" starting thread");
         }
+    }
+
+    public void updateCompetitionStart() {
+        setCompetitionOn(true);
+        participants.forEach((allyName, ally) -> ally.setIsCompetitionOn(true));
     }
 }
