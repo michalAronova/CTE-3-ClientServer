@@ -1,13 +1,10 @@
 package battleField.servlets;
 
-import battleField.constants.Constants;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
 import engine.entity.Allies;
-import engine.entity.Entity;
 import engine.entity.EntityEnum;
 import engine.entity.UBoat;
-import engine.users.UserManager;
 import engine.users.UsernameManager;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

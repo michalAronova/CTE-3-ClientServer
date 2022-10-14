@@ -3,6 +3,7 @@ package engine.entity;
 import DTO.codeObj.CodeObj;
 import DTO.missionResult.AlliesCandidates;
 import DTO.missionResult.MissionResult;
+import DTO.team.Team;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import engine.Engine;
 import engine.TheEngine;
@@ -15,10 +16,7 @@ import javafx.util.Pair;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 
 public class UBoat implements Entity{
@@ -49,6 +47,7 @@ public class UBoat implements Entity{
                 start();
             }
         });
+        name2ready = new HashMap<>();
     }
 
     public void setEngineLoaded(boolean engineLoaded) {
@@ -98,8 +97,14 @@ public class UBoat implements Entity{
                 engine.getStock(), engine.getDifficulty(), engine.getUpdatedCode(), input);
     }
 
-    public Map<String, Allies> getParticipants() {
+    public synchronized Map<String, Allies> getParticipants() {
         return participants;
+    }
+
+    public synchronized List<Team> getDTOParticipants(){
+        List<Team> teams = new LinkedList<>();
+        participants.forEach((username, ally) -> teams.add(ally.asTeamDTO()));
+        return teams;
     }
     public Set<AlliesCandidates> getCandidates() {
         return candidates;

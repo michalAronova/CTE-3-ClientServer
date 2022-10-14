@@ -3,6 +3,7 @@ package engine.entity;
 import DTO.agent.SimpleAgentDTO;
 import DTO.codeObj.CodeObj;
 import DTO.missionResult.MissionResult;
+import DTO.team.Team;
 import engine.Engine;
 import engine.decipherManager.DecipherManager;
 import engine.decipherManager.Difficulty;
@@ -21,7 +22,7 @@ public class Allies implements Entity {
     private String username;
     private DecipherManager DM;
     private UBoat uBoat;
-    private final Map<String, Agent> name2Agent;
+    //private final Map<String, Agent> name2Agent;
 
     private Map<String, SimpleAgentDTO> agentName2data;
 
@@ -35,15 +36,20 @@ public class Allies implements Entity {
 
     private BlockingQueue<MissionResult> resultQueue;
 
+    private int missionSize;
+
     private final Object DMLock = new Object();
 
     public Allies(String username){
         this.username = username;
-        name2Agent = new HashMap<>();
+        //name2Agent = new HashMap<>();
         agentName2data = new HashMap<>();
         waitingAgents = new HashMap<>();
     }
 
+    public Team asTeamDTO(){
+        return new Team(username, agentName2data.size() + waitingAgents.size(), missionSize);
+    }
 
     public synchronized void setUBoat(UBoat uBoat){
         this.uBoat = uBoat;
@@ -66,9 +72,9 @@ public class Allies implements Entity {
         DM.manageAgents(encryption); //start creating missions
     }
 
-    public synchronized void addAgent(Agent agent){
-        name2Agent.put(agent.getUsername(), agent);
-    }
+    //public synchronized void addAgent(Agent agent){
+    //    name2Agent.put(agent.getUsername(), agent);
+    //}
     public synchronized void addAgentData(SimpleAgentDTO simpleAgentDTO) {
         if(isCompetitionOn){
             waitingAgents.put(simpleAgentDTO.getName(), simpleAgentDTO);
@@ -92,16 +98,16 @@ public class Allies implements Entity {
 
     private void addWorkQueueToAgents() {
         //method will need to change as Allies will no longer hold reference to its Agents!
-        for(Agent agent: name2Agent.values()){
-            agent.decipher((result) -> {
-                try {
-                    System.out.println(result.getAgentID()+" found result *********************************************");
-                    resultQueue.put(result);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
+//        for(Agent agent: name2Agent.values()){
+//            agent.decipher((result) -> {
+//                try {
+//                    System.out.println(result.getAgentID()+" found result *********************************************");
+//                    resultQueue.put(result);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+//        }
     }
 
     public List<Mission> pullMissions(int missionPullAmount) throws InterruptedException {

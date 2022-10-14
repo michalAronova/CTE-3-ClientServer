@@ -56,6 +56,18 @@ public class TheEngine implements Engine {
         initialCode = new CodeObj();
     }
 
+    public void unloadEngine(){
+        this.battleFieldName = null;
+        this.battleLevel = null;
+        this.alliesRequired = 0;
+        this.dictionary = null;
+        this.stock = null;
+        this.machine = null;
+        this.initialCode = null; //new machine - no code yet!
+        this.processedMsgsCnt = 0; //new machine - new count!
+        this.codesHistories.clear(); //new machine - new histories!
+    }
+
     @Override
     public boolean loadDataFromXML(InputStream inputStream){
         try {

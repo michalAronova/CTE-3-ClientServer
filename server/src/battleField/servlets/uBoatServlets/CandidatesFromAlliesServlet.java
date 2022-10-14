@@ -6,6 +6,7 @@ import battleField.utils.SessionUtils;
 import com.google.gson.Gson;
 import engine.entity.Allies;
 import engine.entity.UBoat;
+import engine.users.UBoatUserManager;
 import engine.users.UserManager;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -24,12 +25,12 @@ public class CandidatesFromAlliesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
-        //get uBoat from sess
+        //get uBoat from session
         String usernameFromSession = SessionUtils.getUsername(request);
-        UserManager userManager = ServletUtils.getUBoatUserManager(getServletContext());
+        UBoatUserManager userManager = ServletUtils.getUBoatUserManager(getServletContext());
         UBoat uBoat = (UBoat) userManager.getEntityObject(usernameFromSession);
 
-        //synchronized add list of candidaates to set
+        //synchronized add list of candidates to set
         PrintWriter out = response.getWriter();
         Collection<Part> parts = request.getParts();
 
