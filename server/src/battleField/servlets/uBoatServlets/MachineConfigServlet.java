@@ -1,11 +1,11 @@
 package battleField.servlets.uBoatServlets;
 
+import DTO.codeObj.CodeObj;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
-import engine.Engine;
-import engine.TheEngine;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import engine.users.UBoatUserManager;
-import engine.users.UserManager;
 import exceptions.XMLException.InvalidXMLException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -16,19 +16,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Collection;
-import java.util.Scanner;
 
 import static exceptions.XMLException.XMLExceptionMsg.INVALIDFILE;
 import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 
-@WebServlet(name = "LoadXMLServlet", urlPatterns = {"/signup/uboat/upload-file"})
+@WebServlet(name = "MachineConfigServlet", urlPatterns = {"/uboat/code/configuration"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
-public class LoadXMLServlet extends HttpServlet {
-
+public class MachineConfigServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String usernameFromSession = SessionUtils.getUsername(request);
@@ -38,28 +35,24 @@ public class LoadXMLServlet extends HttpServlet {
         response.setContentType("text/plain");
         PrintWriter out = response.getWriter();
 
+        Gson gson = new Gson();
         Collection<Part> parts = request.getParts();
 
         for (Part part : parts) {
             try{
-                uBoatUserManager.getEntityObject(usernameFromSession).getEngine().loadDataFromXML(part.getInputStream());
-                if(uBoatUserManager.isBattleFieldExist(uBoatUserManager.getEntityObject(usernameFromSession).getEngine().getBattleFieldName())){
-                    uBoatUserManager.getEntityObject(usernameFromSession).getEngine().unloadEngine();
-                    throw new InvalidXMLException(INVALIDFILE, "Battle field name already exists in server!");
-                }
-                System.out.println("woohoo, engine loaded!");
-                out.println("engine loaded");
+                CodeObj code = gson.fromJson(part.getInputStream().toString(), CodeObj.class);
+                uBoatUserManager.getEntityObject(usernameFromSession).getEngine().setMachine(code);
+                System.out.println("woohoo, code configured!");
+                out.println("code configured");
             }
-            catch(InvalidXMLException e){
-                response.sendError(SC_BAD_REQUEST, e.getMessage());
-                System.out.println("bad xml!");
+            catch(JsonSyntaxException e){
+                response.sendError(SC_BAD_REQUEST);
+                System.out.println("Json syntax exception");
                 out.println(e.getMessage());
             }
             finally{
                 out.close();
             }
         }
-
     }
-
 }

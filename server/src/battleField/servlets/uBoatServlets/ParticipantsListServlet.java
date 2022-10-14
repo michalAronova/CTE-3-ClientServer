@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import engine.entity.Allies;
 import engine.entity.EntityEnum;
 import engine.entity.UBoat;
+import engine.users.UBoatUserManager;
 import engine.users.UserManager;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -35,22 +36,15 @@ public class ParticipantsListServlet extends HttpServlet {
             return;
         }
         resp.setContentType("application/json");
-
-        //for debug:
-        Allies ally1 = new Allies("bob");
-        Allies ally2 = new Allies("alice");
-
+        UBoatUserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
         Gson gson = new Gson();
-        UserManager userManager = ServletUtils.getUBoatUserManager(getServletContext());
-        UBoat uboat = (UBoat) userManager.getEntityObject(usernameFromSession);
 
-        uboat.addParticipant(ally1);
-        uboat.addParticipant(ally2);
+        String json = gson.toJson(((UBoat) uBoatUserManager
+                                            .getUser(usernameFromSession))
+                                            .getDTOParticipants());
 
-        String json = gson.toJson(uboat.getParticipants());
         resp.setStatus(HttpServletResponse.SC_OK);
         out.println(json);
         out.flush();
-        resp.setStatus(HttpServletResponse.SC_OK);
     }
 }
