@@ -159,7 +159,7 @@ public class UBoat implements Entity{
 
     public void updateVictory(String winner) {
         participants.forEach((name, ally) -> {
-            ally.setIsCompetitionOn(false);
+            //ally.setIsCompetitionOn(false);
             ally.setIsWinner(name.equals(winner));
         });
         competitionOn.set(false);
@@ -174,19 +174,19 @@ public class UBoat implements Entity{
         for (Allies ally: participants.values()) {
             setAlliesParams(ally);
 
-            new Thread(() -> ally.start(input, (result) -> {
-                try {
-                    resultQueue.put(result);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }), "Allies "+ally.getUsername()+" starting thread");
+//            new Thread(() -> ally.start(input, (result) -> {
+//                try {
+//                    //resultQueue.put(result);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }), "Allies "+ally.getUsername()+" starting thread");
         }
     }
 
     public void updateCompetitionStart() {
         setCompetitionOn(true);
-        participants.forEach((allyName, ally) -> ally.setIsCompetitionOn(true));
+        //participants.forEach((allyName, ally) -> ally.setIsCompetitionOn(true));
     }
 
     public synchronized void addResult(MissionResult result) {

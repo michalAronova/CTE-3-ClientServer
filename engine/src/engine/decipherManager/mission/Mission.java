@@ -30,7 +30,7 @@ public class Mission implements Runnable {
 
     private BlockingQueue<MissionResult> resultQueue;
 
-    private Consumer<Integer> updateTotalMissionDone;
+    private BiConsumer<Integer, Long> updateTotalMissionDone;
 
     private BlockingQueue<Runnable> workQueue;
     private BooleanProperty isEmptyQueue;
@@ -40,7 +40,7 @@ public class Mission implements Runnable {
 
     public Mission(Machine machine, List<Character> startRotorsPositions, double missionSize,
                    String toDecrypt, Dictionary dictionary, Speedometer speedometer,
-                   BlockingQueue<MissionResult> resultQueue, Consumer<Integer> updateTotalMissionDone) {
+                   BlockingQueue<MissionResult> resultQueue, BiConsumer<Integer, Long> updateTotalMissionDone) {
         this.machine = machine;
         this.missionSize = missionSize;
         this.toDecrypt = toDecrypt;
@@ -88,7 +88,7 @@ public class Mission implements Runnable {
 //        long endTime = System.currentTimeMillis();
 //        long timeElapsed = endTime - startTime;
         if(missionSize != 0) {
-            updateTotalMissionDone.accept(1);
+            updateTotalMissionDone.accept(1, 1L);
         }
 
         if(!candidates.isEmpty()){

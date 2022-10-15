@@ -12,7 +12,7 @@ import static util.Constants.GSON_INSTANCE;
 public class HttpClientUtil {
 
     private final static SimpleCookieManager simpleCookieManager = new SimpleCookieManager();
-    private final static OkHttpClient HTTP_CLIENT =
+    public final static OkHttpClient HTTP_CLIENT =
             new OkHttpClient.Builder()
                     .cookieJar(simpleCookieManager)
                     .followRedirects(true)
@@ -67,6 +67,10 @@ public class HttpClientUtil {
         Call call = HttpClientUtil.HTTP_CLIENT.newCall(request);
 
         call.enqueue(callback);
+    }
+
+    public static void runPostAsync(String finalUrl, Callback callback){
+
     }
 
     public static void shutdown() {
