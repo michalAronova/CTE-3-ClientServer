@@ -1,39 +1,35 @@
 package engine.entity;
 
 import DTO.codeObj.CodeObj;
-import DTO.missionResult.AlliesCandidates;
 import DTO.missionResult.MissionResult;
 import DTO.team.Team;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import engine.Engine;
 import engine.TheEngine;
 import engine.decipherManager.Difficulty;
-import engine.decipherManager.dictionary.Dictionary;
-import engine.stock.Stock;
-import enigmaMachine.Machine;
 import javafx.beans.property.*;
-import javafx.util.Pair;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.util.Pair;
 
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
 
 public class UBoat implements Entity{
     private String username;
     private Engine engine;
     private Map<String,Allies> participants;
     private Map<String, Boolean> name2ready;
-    private Set<AlliesCandidates> candidates;
+    private List<MissionResult> candidatesList;
     private String input;
     private String output;
     private boolean isFull;
     private boolean engineLoaded;
-    private BlockingQueue<MissionResult> resultQueue;
 
     private BooleanProperty competitionOn;
 
     private IntegerProperty counterReady;
+
+    private StringProperty winner;
+    private BooleanProperty winnerFound;
 
     public UBoat(String username){
         this.username = username;
@@ -48,6 +44,9 @@ public class UBoat implements Entity{
             }
         });
         name2ready = new HashMap<>();
+        candidatesList = new LinkedList<>();
+        winner = new SimpleStringProperty("");
+        winnerFound = new SimpleBooleanProperty(false);
     }
 
     public void setEngineLoaded(boolean engineLoaded) {
@@ -78,8 +77,8 @@ public class UBoat implements Entity{
         return name2ready;
     }
 
-    public synchronized void addCandidates(AlliesCandidates ac){
-        candidates.add(ac);
+    public synchronized void addCandidates(MissionResult ac){
+        candidatesList.add(ac);
     }
     public synchronized void removeParticipant(String username){
         participants.remove(username);
@@ -106,8 +105,11 @@ public class UBoat implements Entity{
         participants.forEach((username, ally) -> teams.add(ally.asTeamDTO()));
         return teams;
     }
-    public Set<AlliesCandidates> getCandidates() {
-        return candidates;
+    public List<MissionResult> getCandidates() {
+        for (Allies ally: participants.values()) {
+            candidatesList.addAll(ally.getResultList());
+        }
+        return candidatesList;
     }
 
     public boolean isFull() {
@@ -185,5 +187,35 @@ public class UBoat implements Entity{
     public void updateCompetitionStart() {
         setCompetitionOn(true);
         participants.forEach((allyName, ally) -> ally.setIsCompetitionOn(true));
+    }
+
+    public synchronized void addResult(MissionResult result) {
+        candidatesList.add(result);
+        for (Pair<String, CodeObj> candidate: result.getCandidates()) {
+            if(candidate.getKey().equals(input)){
+                winner.set(result.getAllyName());
+                winnerFound.set(true);
+            }
+        }
+    }
+
+    public boolean isWinnerFound() {
+        return winnerFound.get();
+    }
+
+    public BooleanProperty winnerFoundProperty() {
+        return winnerFound;
+    }
+
+    public String getWinner() {
+        return winner.get();
+    }
+
+    public StringProperty winnerProperty() {
+        return winner;
+    }
+
+    public void setWinner(String winner) {
+        this.winner.set(winner);
     }
 }

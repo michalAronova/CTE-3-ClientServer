@@ -34,8 +34,8 @@ public class Allies implements Entity {
     private Boolean isWinner;
     private Boolean isCompetitionOn;
 
-    private BlockingQueue<MissionResult> resultQueue;
-
+    private final BlockingQueue<MissionResult> resultQueue;
+    private List<MissionResult> resultList;
     private int missionSize;
 
     private final Object DMLock = new Object();
@@ -45,6 +45,8 @@ public class Allies implements Entity {
         //name2Agent = new HashMap<>();
         agentName2data = new HashMap<>();
         waitingAgents = new HashMap<>();
+        resultQueue = new LinkedBlockingQueue<>();
+        resultList = new LinkedList<>();
     }
 
     public Team asTeamDTO(){
@@ -93,7 +95,6 @@ public class Allies implements Entity {
     public void createDM(Dictionary dictionary, Machine machine,
                          Stock stock, Difficulty difficulty, CodeObj code, String input){
         DM = new DecipherManager(dictionary, machine, stock, difficulty, code, input);
-        resultQueue = new LinkedBlockingQueue<>();
     }
 
     private void addWorkQueueToAgents() {
@@ -101,7 +102,7 @@ public class Allies implements Entity {
 //        for(Agent agent: name2Agent.values()){
 //            agent.decipher((result) -> {
 //                try {
-//                    System.out.println(result.getAgentID()+" found result *********************************************");
+//                    System.out.println(result.getEntityName()+" found result *********************************************");
 //                    resultQueue.put(result);
 //                } catch (InterruptedException e) {
 //                    e.printStackTrace();
@@ -128,6 +129,13 @@ public class Allies implements Entity {
     public synchronized void drainWaiters(){
         waitingAgents.forEach((name, DTO) -> agentName2data.put(name, new SimpleAgentDTO(DTO)));
         waitingAgents.clear();
+    }
+
+    public List<MissionResult> getResultList(){
+        synchronized (resultQueue){
+            resultQueue.drainTo(resultList);
+        }
+        return resultList;
     }
 
     public void setIsCompeting(boolean competing){
@@ -187,4 +195,19 @@ public class Allies implements Entity {
         return uBoat;
     }
 
+    public synchronized void addResult(MissionResult result) {
+        resultList.add(result);
+        uBoat.addResult(result);
+    }
+
+    public int getResultVersion(){
+        return resultList.size();
+    }
+
+    public synchronized List<MissionResult> getResults(int fromIndex){
+        if (fromIndex < 0 || fromIndex > resultList.size()) {
+            fromIndex = 0;
+        }
+        return resultList.subList(fromIndex, resultList.size());
+    }
 }

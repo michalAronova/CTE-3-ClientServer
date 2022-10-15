@@ -6,6 +6,7 @@ import battleField.utils.SessionUtils;
 import com.google.gson.Gson;
 import engine.entity.Entity;
 import engine.entity.UBoat;
+import engine.users.UBoatUserManager;
 import engine.users.UserManager;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,9 +28,9 @@ public class CandidatesListServlet extends HttpServlet {
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
             Gson gson = new Gson();
-            //get uboat from ses
+            //get uboat from session
             String usernameFromSession = SessionUtils.getUsername(request);
-            UserManager userManager = ServletUtils.getUBoatUserManager(getServletContext());
+            UBoatUserManager userManager = ServletUtils.getUBoatUserManager(getServletContext());
             UBoat uBoat = (UBoat) userManager.getEntityObject(usernameFromSession);
 
             //parse candidates list

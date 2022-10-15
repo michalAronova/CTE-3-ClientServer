@@ -24,6 +24,7 @@ public class AgentUserManager {
 
     public synchronized void removeUser(String username) { username2allyName.remove(username);}
 
+
     public synchronized Map<String, SimpleAgent> getUsers() { return Collections.unmodifiableMap(username2allyName); }
 
     public boolean isUserExists(String username) { return username2allyName.containsKey(username); }

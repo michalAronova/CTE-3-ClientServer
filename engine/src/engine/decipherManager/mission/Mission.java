@@ -1,6 +1,7 @@
 package engine.decipherManager.mission;
 
 import DTO.codeObj.CodeObj;
+import DTO.missionResult.AlliesCandidates;
 import DTO.missionResult.MissionResult;
 import engine.decipherManager.dictionary.Dictionary;
 import engine.decipherManager.speedometer.Speedometer;
@@ -29,21 +30,24 @@ public class Mission implements Runnable {
 
     private BlockingQueue<MissionResult> resultQueue;
 
-    private BiConsumer<Integer, Long> updateTotalMissionDone;
+    private Consumer<Integer> updateTotalMissionDone;
 
     private BlockingQueue<Runnable> workQueue;
     private BooleanProperty isEmptyQueue;
 
+    private String allyName;
+
+
     public Mission(Machine machine, List<Character> startRotorsPositions, double missionSize,
                    String toDecrypt, Dictionary dictionary, Speedometer speedometer,
-                   BlockingQueue<MissionResult> resultQueue, BiConsumer<Integer, Long> updateTotalMissionDone) {
+                   BlockingQueue<MissionResult> resultQueue, Consumer<Integer> updateTotalMissionDone) {
         this.machine = machine;
         this.missionSize = missionSize;
         this.toDecrypt = toDecrypt;
         this.dictionary = dictionary;
         this.currentPositions = startRotorsPositions;
         this.resultQueue = resultQueue;
-        //this.updateTotalMissionDone = updateTotalMissionDone;
+        this.updateTotalMissionDone = updateTotalMissionDone;
         machine.updateByPositionsList(currentPositions);
         this.speedometer = speedometer;
         candidates = new LinkedList<>();
@@ -59,7 +63,7 @@ public class Mission implements Runnable {
         if(workQueue != null){
             isEmptyQueue.set(workQueue.isEmpty());
         }
-        long startTime = System.currentTimeMillis();
+//        long startTime = System.currentTimeMillis();
         for (int i = 0; i < missionSize; i++){
             //do thing:
             //  1. machine.process(toDecrypt);
@@ -81,16 +85,17 @@ public class Mission implements Runnable {
             currentPositions = speedometer.calculateNext(currentPositions);
             machine.updateByPositionsList(currentPositions);
         }
-        long endTime = System.currentTimeMillis();
-        long timeElapsed = endTime - startTime;
-//        if(missionSize != 0) {
-//            updateTotalMissionDone.accept(1, timeElapsed);
-//        }
+//        long endTime = System.currentTimeMillis();
+//        long timeElapsed = endTime - startTime;
+        if(missionSize != 0) {
+            updateTotalMissionDone.accept(1);
+        }
 
         if(!candidates.isEmpty()){
             try {
+//              resultQueue.put(new AlliesCandidates(candidates, allyName));
                 resultQueue.put(new MissionResult(candidates,
-                        Thread.currentThread().getName(), timeElapsed));
+                        Thread.currentThread().getName(), 0));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

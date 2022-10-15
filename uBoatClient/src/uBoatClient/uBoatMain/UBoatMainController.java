@@ -4,6 +4,7 @@ import DTO.codeObj.CodeObj;
 import clientUtils.MainAppController;
 import clientUtils.activeTeams.ActiveTeamsComponentController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
+import okhttp3.*;
 import uBoatClient.components.codeConfigurationComponent.CodeConfigComponentController;
 import uBoatClient.components.codeObjDisplayComponent.CodeObjDisplayComponentController;
 import uBoatClient.components.dictionaryComponent.DictionaryComponentController;
@@ -19,10 +20,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.HttpUrl;
-import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import uBoatClient.uBoatApp.UBoatAppController;
 import util.Constants;
@@ -160,26 +157,27 @@ public class UBoatMainController implements MainAppController{
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.code() != 200) {
-                    String responseBody = response.body().string();
-                    Platform.runLater(() ->
-                            {
-                                xmlErrorLabel.setStyle("-fx-text-fill: red");
-                                xmlErrorMessage.set("Something went wrong...");
-                                filePath.set("");
-                                //exception message from engine will be above (in body?)
-                            }
-                    );
-                } else {
-                    Platform.runLater(() -> {
-                        xmlErrorLabel.setStyle("-fx-text-fill: green");
-                        xmlErrorMessage.set("Successfully uploaded file to server!");
-                        isFileLoaded.set(true);
-                        filePath.set(selectedFile.getName());
-                        //also should get from server the following details:
-                        //machine details -> fill the component
-                        //dictionary words -> fillDictionaryTable(List<Word> words)
-                    });
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.code() != 200) {
+                        Platform.runLater(() ->
+                                {
+                                    xmlErrorLabel.setStyle("-fx-text-fill: red");
+                                    xmlErrorMessage.set("Something went wrong...");
+                                    filePath.set("");
+                                    //exception message from engine will be above (in body?)
+                                }
+                        );
+                    } else {
+                        Platform.runLater(() -> {
+                            xmlErrorLabel.setStyle("-fx-text-fill: green");
+                            xmlErrorMessage.set("Successfully uploaded file to server!");
+                            isFileLoaded.set(true);
+                            filePath.set(selectedFile.getName());
+                            //also should get from server the following details:
+                            //machine details -> fill the component
+                            //dictionary words -> fillDictionaryTable(List<Word> words)
+                        });
+                    }
                 }
             }
         });

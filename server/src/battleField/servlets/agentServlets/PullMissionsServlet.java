@@ -1,5 +1,6 @@
 package battleField.servlets.agentServlets;
 
+import battleField.constants.Constants;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
 import com.google.gson.Gson;
@@ -22,8 +23,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import static battleField.constants.Constants.MISSION_AMOUNT_PULL;
-import static battleField.constants.Constants.MY_ALLY;
+import static battleField.constants.Constants.*;
 
 @WebServlet(name = "PullMissionsServlet", urlPatterns = {"/agent/pull"})
 public class PullMissionsServlet extends HttpServlet {
@@ -35,8 +35,16 @@ public class PullMissionsServlet extends HttpServlet {
         AgentUserManager agentUserManager = ServletUtils.getAgentUserManager(getServletContext());
         UserManager alliesUserManager = ServletUtils.getAlliesUserManager(getServletContext());
 
+
         Allies myAllies = (Allies) alliesUserManager.getEntityObject
                                     (agentUserManager.getAllyName(usernameFromSession));
+
+        int missionsDoneByAgent = ServletUtils.getIntParameter(req, MISSIONS_DONE_BY_AGENT);
+        if (missionsDoneByAgent == Constants.INT_PARAMETER_ERROR) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        //add above integer to the missions done count of its ally
 
         try {
             List<Mission> missions = myAllies.pullMissions

@@ -8,7 +8,9 @@ import engine.decipherManager.mission.Mission;
 import engine.decipherManager.missionTaker.MissionTaker;
 import engine.decipherManager.resultListener.ResultListener;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.lang.reflect.Type;
@@ -36,11 +38,14 @@ public class Agent implements Entity {
 
     private final BooleanProperty isCompetitionOn;
 
+    private IntegerProperty missionsDone;
+
     public Agent(String username, Allies myAllies, int threadCount, int missionAmountPull){
         this.username = username;
         this.myAllies = myAllies;
         this.threadCount = threadCount;
         this.missionAmountPull = missionAmountPull;
+        missionsDone = new SimpleIntegerProperty(0);
 
         //create result queue and register listener thread
         resultQueue = new LinkedBlockingQueue<>();
@@ -64,6 +69,7 @@ public class Agent implements Entity {
     }
 
     public void decipher(Consumer<MissionResult> transferMissionResult){
+        missionsDone.set(0);
         isCompetitionOn.set(true);
         threadExecutor.prestartAllCoreThreads();
         new Thread(new ResultListener(resultQueue, transferMissionResult),
@@ -148,6 +154,10 @@ public class Agent implements Entity {
                 isEmptyQueue.set(false);
             }
         }
+    }
+
+    private void requestMissionPull(){
+
     }
 
     private void jsonTester(List<Mission> missions){

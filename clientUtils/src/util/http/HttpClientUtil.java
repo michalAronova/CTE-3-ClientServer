@@ -1,9 +1,13 @@
 package util.http;
 
+import DTO.missionResult.MissionResult;
+import com.google.gson.Gson;
 import okhttp3.*;
 
 import java.io.File;
 import java.util.function.Consumer;
+
+import static util.Constants.GSON_INSTANCE;
 
 public class HttpClientUtil {
 
@@ -36,6 +40,23 @@ public class HttpClientUtil {
         RequestBody body =
                 new MultipartBody.Builder()
                         .addFormDataPart("BattleFile", file.getName(), RequestBody.create(file, MediaType.parse("text/xml")))
+                        .build();
+
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .post(body)
+                .build();
+
+        Call call = HttpClientUtil.HTTP_CLIENT.newCall(request);
+
+        call.enqueue(callback);
+    }
+
+    public static void runAsyncResultUpload(String finalUrl, MissionResult result, Callback callback) {
+        String resultJson = GSON_INSTANCE.toJson(result);
+        RequestBody body =
+                new MultipartBody.Builder()
+                        .addFormDataPart("result", resultJson)
                         .build();
 
         Request request = new Request.Builder()
