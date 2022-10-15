@@ -2,6 +2,7 @@ package engine.entity;
 
 import DTO.agent.SimpleAgentDTO;
 import DTO.codeObj.CodeObj;
+import DTO.mission.MissionDTO;
 import DTO.missionResult.MissionResult;
 import DTO.team.Team;
 import engine.Engine;
@@ -12,6 +13,8 @@ import engine.decipherManager.mission.Mission;
 import engine.decipherManager.resultListener.ResultListener;
 import engine.stock.Stock;
 import enigmaMachine.Machine;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -29,10 +32,8 @@ public class Allies implements Entity {
     // wait-list for agents joining during a contest here
     private Map<String, SimpleAgentDTO> waitingAgents;
 
-    private Boolean isCompeting;
-
     private Boolean isWinner;
-    private Boolean isCompetitionOn;
+    private BooleanProperty isCompetitionOn;
 
     private final BlockingQueue<MissionResult> resultQueue;
     private List<MissionResult> resultList;
@@ -47,6 +48,19 @@ public class Allies implements Entity {
         waitingAgents = new HashMap<>();
         resultQueue = new LinkedBlockingQueue<>();
         resultList = new LinkedList<>();
+
+        isCompetitionOn = new SimpleBooleanProperty(false);
+        isCompetitionOn.addListener(((observable, oldValue, newValue) -> {
+            if(!newValue){ //competition finished
+                //method to be called upon end of game
+                //need to know if im the winner
+                //things that need to happen when the game ends
+            }
+            else{ //competition started
+                //send info to agents: dictionary and keyboard (and that competition started)
+                //active servlet?
+            }
+        }));
     }
 
     public Team asTeamDTO(){
@@ -56,6 +70,13 @@ public class Allies implements Entity {
     public synchronized void setUBoat(UBoat uBoat){
         this.uBoat = uBoat;
         uBoat.addParticipant(this);
+        isCompetitionOn.bind(uBoat.isCompetitionOn());
+    }
+
+    public synchronized void removeUBoat(){
+        uBoat.removeParticipant(username);
+        isCompetitionOn.unbind();
+        this.uBoat = null;
     }
 
     public void start(String encryption, Consumer<MissionResult> transferMissionResultToUBoat){
@@ -74,11 +95,8 @@ public class Allies implements Entity {
         DM.manageAgents(encryption); //start creating missions
     }
 
-    //public synchronized void addAgent(Agent agent){
-    //    name2Agent.put(agent.getUsername(), agent);
-    //}
     public synchronized void addAgentData(SimpleAgentDTO simpleAgentDTO) {
-        if(isCompetitionOn){
+        if(isCompetitionOn.getValue()){
             waitingAgents.put(simpleAgentDTO.getName(), simpleAgentDTO);
         }
         else {
@@ -111,12 +129,16 @@ public class Allies implements Entity {
 //        }
     }
 
-    public List<Mission> pullMissions(int missionPullAmount) throws InterruptedException {
-        List<Mission> missions = new ArrayList<>();
+    public List<MissionDTO> pullMissions(int missionPullAmount) {
+        List<MissionDTO> missions = new ArrayList<>();
         synchronized (DM.getWorkQueue()){
             while(!DM.getWorkQueue().isEmpty() && missionPullAmount > 0){
                 --missionPullAmount;
-                missions.add((Mission) DM.getWorkQueue().take());
+                try {
+                    missions.add(DM.getWorkQueue().take());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return missions;
@@ -137,12 +159,6 @@ public class Allies implements Entity {
         }
         return resultList;
     }
-
-    public void setIsCompeting(boolean competing){
-        isCompeting = competing;
-    }
-
-    public boolean getIsCompeting() { return isCompeting; }
 
     @Override
     public String getUsername() {
@@ -170,11 +186,8 @@ public class Allies implements Entity {
     public void setIsWinner(Boolean winner) {
         isWinner = winner;
     }
-    public Boolean getIsCompetitionOn() {
+    public BooleanProperty isCompetitionOnProperty() {
         return isCompetitionOn;
-    }
-    public void setIsCompetitionOn(Boolean competitionOn) {
-        isCompetitionOn = competitionOn;
     }
 
     @Override

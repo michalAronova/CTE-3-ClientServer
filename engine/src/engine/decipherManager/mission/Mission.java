@@ -1,6 +1,7 @@
 package engine.decipherManager.mission;
 
 import DTO.codeObj.CodeObj;
+import DTO.mission.MissionDTO;
 import DTO.missionResult.AlliesCandidates;
 import DTO.missionResult.MissionResult;
 import engine.decipherManager.dictionary.Dictionary;
@@ -8,6 +9,7 @@ import engine.decipherManager.speedometer.Speedometer;
 import enigmaMachine.Machine;
 import enigmaMachine.keyBoard.KeyBoard;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.util.Pair;
 
 import java.util.Arrays;
@@ -30,7 +32,7 @@ public class Mission implements Runnable {
 
     private BlockingQueue<MissionResult> resultQueue;
 
-    private Consumer<Integer> updateTotalMissionDone;
+    private BiConsumer<Integer, Long> updateTotalMissionDone;
 
     private BlockingQueue<Runnable> workQueue;
     private BooleanProperty isEmptyQueue;
@@ -40,7 +42,7 @@ public class Mission implements Runnable {
 
     public Mission(Machine machine, List<Character> startRotorsPositions, double missionSize,
                    String toDecrypt, Dictionary dictionary, Speedometer speedometer,
-                   BlockingQueue<MissionResult> resultQueue, Consumer<Integer> updateTotalMissionDone) {
+                   BlockingQueue<MissionResult> resultQueue, BiConsumer<Integer, Long> updateTotalMissionDone) {
         this.machine = machine;
         this.missionSize = missionSize;
         this.toDecrypt = toDecrypt;
@@ -51,6 +53,13 @@ public class Mission implements Runnable {
         machine.updateByPositionsList(currentPositions);
         this.speedometer = speedometer;
         candidates = new LinkedList<>();
+    }
+
+    public Mission(Machine machine, List<Character> startPositions, double missionSize,
+                   String toDecrypt, Dictionary dictionary, Speedometer speedometer,
+                   IntegerProperty missionsDone, BlockingQueue<MissionResult> resultQueue,
+                   BlockingQueue<Mission> workQueue, BooleanProperty isEmptyQueue){
+
     }
 
     public void setResultQueue(BlockingQueue<MissionResult> resultQueue){ this.resultQueue = resultQueue; }
@@ -88,7 +97,7 @@ public class Mission implements Runnable {
 //        long endTime = System.currentTimeMillis();
 //        long timeElapsed = endTime - startTime;
         if(missionSize != 0) {
-            updateTotalMissionDone.accept(1);
+            updateTotalMissionDone.accept(1, 1L);
         }
 
         if(!candidates.isEmpty()){

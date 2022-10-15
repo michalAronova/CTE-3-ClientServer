@@ -29,7 +29,7 @@ public class Json extends HttpServlet {
 //        chars.add('a');
 //        chars.add('a');
         Machine machine = new Machine(new KeyBoard("abc"), 3);
-        //Mission mission = new Mission(machine, chars,
+        //MissionDTO mission = new MissionDTO(machine, chars,
         //        100, "abba", new Dictionary(), (list) -> list, null, null);
 
         resp.setContentType("application/json");

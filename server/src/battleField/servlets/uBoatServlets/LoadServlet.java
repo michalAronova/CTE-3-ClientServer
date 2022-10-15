@@ -20,38 +20,43 @@ import java.util.Collection;
 import static exceptions.XMLException.XMLExceptionMsg.INVALIDFILE;
 import static jakarta.servlet.http.HttpServletResponse.*;
 
-@WebServlet(name = "LoadXMLServlet", urlPatterns = {"/signup/uboat/upload-file"})
+@WebServlet(name = "LoadServlet", urlPatterns = {"/uboat/upload"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
-public class LoadXMLServlet extends HttpServlet {
+public class LoadServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setStatus(SC_OK);
-        String usernameFromSession = SessionUtils.getUsername(request);
-        UBoatUserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setStatus(200);
+        PrintWriter out = resp.getWriter();
+
+        String usernameFromSession = SessionUtils.getUsername(req);
 
         if(usernameFromSession == null){
-            response.sendError(SC_UNAUTHORIZED, "you are not logged in");
+            resp.sendError(SC_UNAUTHORIZED, "you are not logged in");
+            out.println("you are not logged in");
             return;
         }
 
-        UBoat boatFromSession = (UBoat) uBoatUserManager.getEntityObject(usernameFromSession);
-        PrintWriter out = response.getWriter();
+        UBoatUserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
+        UBoat boatFromSession = (UBoat) uBoatUserManager.getUser(usernameFromSession);
+        if(boatFromSession == null){
+            resp.sendError(SC_UNAUTHORIZED, "no boat by this name");
+            out.println("no boat by name "+ usernameFromSession);
+            return;
+        }
 
-        Collection<Part> parts = request.getParts();
+        Collection<Part> parts = req.getParts();
 
         for (Part part : parts) {
+            boatFromSession.getEngine().loadDataFromXML(part.getInputStream());
             try{
-                boatFromSession.getEngine().loadDataFromXML(part.getInputStream());
-                if(uBoatUserManager.isBattleFieldExist(boatFromSession.getEngine().getBattleFieldName())){
+                if(uBoatUserManager.isBattleFieldExist(boatFromSession.getBattleFieldName())){
                     boatFromSession.getEngine().unloadEngine();
                     throw new InvalidXMLException(INVALIDFILE, "Battle field name already exists in server!");
                 }
-                System.out.println("woohoo, engine loaded!");
                 out.println("engine loaded");
             }
             catch(InvalidXMLException e){
-                response.sendError(SC_BAD_REQUEST, e.getMessage());
-                System.out.println("bad xml!");
+                resp.sendError(SC_BAD_REQUEST, e.getMessage());
                 out.println(e.getMessage());
             }
             finally{

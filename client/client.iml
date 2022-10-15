@@ -16,5 +16,6 @@
     <orderEntry type="module" module-name="engine" />
     <orderEntry type="module" module-name="DTO" />
     <orderEntry type="module" module-name="enigmaMachine" />
+    <orderEntry type="module" module-name="clientUtils" />
   </component>
 </module>

@@ -21,11 +21,11 @@ public class IsAssignedToContestServlet extends HttpServlet {
         response.setContentType("text/plain;charset=UTF-8");
 
         //get agent from ses
-        String usernameFromSession = SessionUtils.getUsername(request);
-        AgentUserManager agentUserManager = ServletUtils.getAgentUserManager(getServletContext());
-        Agent agent = agentUserManager.
-        synchronized (this){
-            ally.getUBoat().updateAllyReady(usernameFromSession);
-        }
+//        String usernameFromSession = SessionUtils.getUsername(request);
+//        AgentUserManager agentUserManager = ServletUtils.getAgentUserManager(getServletContext());
+//        Agent agent = agentUserManager.
+//        synchronized (this){
+//            ally.getUBoat().updateAllyReady(usernameFromSession);
+//        }
     }
 }

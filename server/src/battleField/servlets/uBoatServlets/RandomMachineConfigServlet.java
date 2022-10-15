@@ -41,6 +41,7 @@ public class RandomMachineConfigServlet extends HttpServlet {
 
             //put in body
             response.setStatus(SC_OK);
+            System.out.println("server code:" + code);
             out.println(json);
             out.flush();
         }

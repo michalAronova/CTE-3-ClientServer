@@ -1,5 +1,6 @@
 package battleField.servlets.agentServlets;
 
+import DTO.mission.MissionDTO;
 import battleField.constants.Constants;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
@@ -35,7 +36,6 @@ public class PullMissionsServlet extends HttpServlet {
         AgentUserManager agentUserManager = ServletUtils.getAgentUserManager(getServletContext());
         UserManager alliesUserManager = ServletUtils.getAlliesUserManager(getServletContext());
 
-
         Allies myAllies = (Allies) alliesUserManager.getEntityObject
                                     (agentUserManager.getAllyName(usernameFromSession));
 
@@ -46,22 +46,17 @@ public class PullMissionsServlet extends HttpServlet {
         }
         //add above integer to the missions done count of its ally
 
-        try {
-            List<Mission> missions = myAllies.pullMissions
-                                                (agentUserManager
-                                                    .getSimpleAgent(usernameFromSession)
-                                                    .getDTO()
-                                                    .getMissionPull());
-            try (PrintWriter out = resp.getWriter()) {
-                Gson gson = new Gson();
-                Type missionListType = new TypeToken<List<Mission>>() { }.getType();
-                String missionsToJson = gson.toJson(missions, missionListType);
-                out.println(missionsToJson);
-                resp.setStatus(HttpServletResponse.SC_OK);
-            }
+        List<MissionDTO> missions = myAllies.pullMissions
+                (agentUserManager
+                        .getSimpleAgent(usernameFromSession)
+                        .getDTO()
+                        .getMissionPull());
 
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        try (PrintWriter out = resp.getWriter()) {
+            Gson gson = new Gson();
+            String missionsToJson = gson.toJson(missions);
+            out.println(missionsToJson);
+            resp.setStatus(HttpServletResponse.SC_OK);
         }
     }
 }
