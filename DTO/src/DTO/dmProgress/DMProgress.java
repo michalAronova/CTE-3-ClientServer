@@ -1,40 +1,42 @@
 package DTO.dmProgress;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 public class DMProgress {
-    private final IntegerProperty total;
-    private final IntegerProperty produced;
-    private final IntegerProperty completed;
+    private final DoubleProperty total;
+    private final DoubleProperty produced;
+    private final DoubleProperty completed;
 
-    public DMProgress(int total, int produced, int completed) {
-        this.total = new SimpleIntegerProperty(total);
-        this.produced = new SimpleIntegerProperty(produced);
-        this.completed = new SimpleIntegerProperty(completed);
+    public DMProgress(double total, double produced, double completed) {
+        this.total = new SimpleDoubleProperty(total);
+        this.produced = new SimpleDoubleProperty(produced);
+        this.completed = new SimpleDoubleProperty(completed);
     }
 
-    public int getTotal() {
+    public double getTotal() {
         return total.get();
     }
 
-    public IntegerProperty totalProperty() {
+    public DoubleProperty totalProperty() {
         return total;
     }
 
-    public int getProduced() {
+    public double getProduced() {
         return produced.get();
     }
 
-    public IntegerProperty producedProperty() {
+    public DoubleProperty producedProperty() {
         return produced;
     }
 
-    public int getCompleted() {
+    public double getCompleted() {
         return completed.get();
     }
 
-    public IntegerProperty completedProperty() {
+    public DoubleProperty completedProperty() {
         return completed;
     }
 }

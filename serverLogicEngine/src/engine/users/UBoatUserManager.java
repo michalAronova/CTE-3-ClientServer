@@ -45,4 +45,7 @@ public class UBoatUserManager extends UserManager{
     public synchronized boolean isBattleFieldExist(String battleFieldName) {
         return battleFieldNames.contains(battleFieldName.toUpperCase());
     }
+    public Map<String, UBoat> getReadyUBoats() {
+        return readyUBoats;
+    }
 }

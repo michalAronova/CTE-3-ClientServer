@@ -93,7 +93,6 @@ public class Mission implements Runnable {
 
         if(!candidates.isEmpty()){
             try {
-//              resultQueue.put(new AlliesCandidates(candidates, allyName));
                 resultQueue.put(new MissionResult(candidates,
                         Thread.currentThread().getName(), 0));
             } catch (InterruptedException e) {

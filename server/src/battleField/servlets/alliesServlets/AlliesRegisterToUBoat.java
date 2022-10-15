@@ -44,10 +44,19 @@ public class AlliesRegisterToUBoat extends HttpServlet {
                 UserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
                 if (uBoatUserManager.isUserExists(uBoatName)) {
                     UBoat uBoat = (UBoat) uBoatUserManager.getEntityObject(uBoatName);
-                    uBoat.addParticipant(ally);
-                    ally.setUBoat(uBoat);
-                    out.println(ally.getUsername() + " registered to " + uBoat.getUsername());
-                    response.setStatus(HttpServletResponse.SC_OK);
+                    if(uBoat.isFull()) {
+                        out.println("trying to register a full contest");
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    }
+                    if(uBoat.isCompetitionOn().getValue()){
+                        out.println("trying to register a running contest");
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    } else {
+                        uBoat.addParticipant(ally);
+                        ally.setUBoat(uBoat);
+                        out.println(ally.getUsername() + " registered to " + uBoat.getUsername());
+                        response.setStatus(HttpServletResponse.SC_OK);
+                    }
                 } else {
                     out.println("no such uBoat exists");
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
