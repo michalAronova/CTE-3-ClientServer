@@ -3,6 +3,7 @@ package battleField.servlets.uBoatServlets;
 import DTO.codeObj.CodeObj;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
+import engine.decipherManager.dictionary.Dictionary;
 import engine.entity.Allies;
 import engine.entity.UBoat;
 import engine.users.UBoatUserManager;
@@ -35,23 +36,19 @@ public class DecipherMsgServlet extends HttpServlet {
         String usernameFromSession = SessionUtils.getUsername(request);
         UBoatUserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
         UBoat uBoat  = (UBoat) uBoatUserManager.getEntityObject(usernameFromSession);
-        response.getOutputStream().print(uBoat.getUsername());
 
         String message = request.getParameter(MSG_TO_DECIPHER);
-        response.getOutputStream().print(message);
         if (message == null || message.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_CONFLICT);
-            response.getOutputStream().print("error");
         } else {
             synchronized (this) {
                 //if words not in dictionary
                 if(!uBoat.getEngine().getDictionary().areAllWordsInDictionary(message)){
+                    response.getOutputStream().print("trying to decipher words not from dictionary");
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 }
-                //message = uBoat.getEngine().getDictionary().removeExcludedChars(message);
-                response.getOutputStream().print(message);
                 String output = uBoat.getEngine().processMsg(message);
-                response.getOutputStream().print("output: " + output);
+                response.getOutputStream().print(output);
                 response.setStatus(SC_OK);
             }
         }

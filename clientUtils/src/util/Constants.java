@@ -37,6 +37,8 @@ public class Constants {
     public final static String UPLOAD_XML = FULL_SERVER_PATH + "/signup/uboat/upload-file";
     public final static String SEND_CHAT_LINE = FULL_SERVER_PATH + "/pages/chatroom/sendChat";
     public final static String CHAT_LINES_LIST = FULL_SERVER_PATH + "/chat";
+    public final static String CONTEST_STARTED = FULL_SERVER_PATH + "/uBoat/ContestStartedServlet";
+
 
     // GSON instance
     public final static Gson GSON_INSTANCE = new Gson();

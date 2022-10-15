@@ -68,4 +68,16 @@ public class Contest {
     public IntegerProperty teamsInContestProperty() {
         return teamsInContest;
     }
+
+    @Override
+    public String toString() {
+        return "Contest{" +
+                "battleFieldName=" + battleFieldName +
+                ", uBoatName=" + uBoatName +
+                ", isActive=" + isActive +
+                ", difficulty=" + difficulty +
+                ", totalRequiredTeams=" + totalRequiredTeams +
+                ", teamsInContest=" + teamsInContest +
+                '}';
+    }
 }

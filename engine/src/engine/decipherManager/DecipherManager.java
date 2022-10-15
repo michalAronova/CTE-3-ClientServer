@@ -58,6 +58,8 @@ public class DecipherManager {
     private BiConsumer<Integer, Long> updateTotalMissionDone;
 
     private BooleanProperty workQueueCreated;
+    private double totalMissionDone;
+    private double totalMissionProduced;
     public DecipherManager(Dictionary dictionary, Machine machine,
                            Stock stock, Difficulty difficulty, CodeObj machineCode, String encryption){
         this.dictionary = dictionary;
@@ -76,6 +78,8 @@ public class DecipherManager {
 
         possiblePositionPermutations = calculatePermutationsCount();
         workQueueCreated = new SimpleBooleanProperty(false);
+        totalMissionProduced = 0;
+        totalMissionDone = 0;
     }
 
     private double calculatePermutationsCount() {
@@ -175,6 +179,10 @@ public class DecipherManager {
         return workQueue;
     }
 
+    public double getTotalMissionProduced() {
+        return totalMissionProduced;
+    }
+
     private void initiateWork() {
         switch (difficulty){
             case EASY:
@@ -258,10 +266,12 @@ public class DecipherManager {
                 if(i == totalMissionsAmountForPositions){
                     workQueue.put(new Mission(deepCopyMachine(updatingMachineEncoding), nextRotorsPositions, leftoverMissionsAmountForPositions,
                             encryption, dictionary, this::speedometer, resultQueue, updateTotalMissionDone));
+                    totalMissionProduced++;
                 }
                 else{
                     workQueue.put(new Mission(deepCopyMachine(updatingMachineEncoding), nextRotorsPositions, missionSize,
                             encryption, dictionary, this::speedometer, resultQueue, updateTotalMissionDone));
+                    totalMissionProduced++;
                 }
                 totalMissions++;
 
@@ -391,6 +401,10 @@ public class DecipherManager {
 
     public void setAgentCountChosen(int agentCountChosen) {
         this.agentCountChosen = agentCountChosen;
+    }
+
+    public double getTotalMissionDone() {
+        return totalMissionDone;
     }
 }
 

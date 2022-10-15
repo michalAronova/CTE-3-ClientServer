@@ -24,11 +24,16 @@ public class ContestStartedServlet extends HttpServlet {
         String usernameFromSession = SessionUtils.getUsername(request);
         UBoatUserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
         UBoat uBoat = (UBoat) uBoatUserManager.getEntityObject(usernameFromSession);
-        response.getOutputStream().print(uBoat.getUsername());
         synchronized (this) {
+//            delete this if handled outside
             if (countReadyAllies(uBoat) == uBoat.getAlliesRequired()) {
+                response.getOutputStream().print("wohoo contest ready to begin!");
                 uBoat.updateCompetitionStart();
             }
+
+//            if the check handled outside the call than only-->
+//            uBoat.updateCompetitionStart();
+
         }
     }
 

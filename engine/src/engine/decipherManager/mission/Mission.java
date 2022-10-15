@@ -33,7 +33,6 @@ public class Mission implements Runnable {
 
     private BlockingQueue<Runnable> workQueue;
     private BooleanProperty isEmptyQueue;
-
     public Mission(Machine machine, List<Character> startRotorsPositions, double missionSize,
                    String toDecrypt, Dictionary dictionary, Speedometer speedometer,
                    BlockingQueue<MissionResult> resultQueue, BiConsumer<Integer, Long> updateTotalMissionDone) {

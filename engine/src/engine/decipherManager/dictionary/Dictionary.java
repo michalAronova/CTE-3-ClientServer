@@ -36,7 +36,7 @@ public class Dictionary {
         excluded = new ArrayList<>();
         excluded.add("!");
         excluded.add(",");
-        String newWords = "hello,,,!, world!!!!";
+        String newWords = "hello,,,!,!!!!";
         String another = "tes,,ting!!";
         List<String> list = new ArrayList<>();
         list.add(newWords);
