@@ -35,8 +35,7 @@ public class DMProgressServlet extends HttpServlet {
             DecipherManager dm = ally.getDM();
             DMProgress progress = new DMProgress(dm.getTotalMissionAmount(),
                                             dm.getTotalMissionProduced(),
-                                            dm.getTotalMissionDone());
-
+                                            ally.getTotalMissionDone());
             String json = gson.toJson(progress);
 
             //put in body

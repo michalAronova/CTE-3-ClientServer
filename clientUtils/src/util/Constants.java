@@ -37,6 +37,8 @@ public class Constants {
     public final static String UPLOAD_XML = FULL_SERVER_PATH + "/uboat/upload";
     public final static String PROCESS = FULL_SERVER_PATH +"/uboat/process";
     public final static String PULL_MISSIONS = FULL_SERVER_PATH + "/agent/pull";
+    public final static String UPLOAD_CANDIDATES = FULL_SERVER_PATH + "/agent/upload/candidates";
+
     public final static String RANDOM_CONFIG = FULL_SERVER_PATH + "/uboat/code/configuration/random";
     public final static String SEND_CHAT_LINE = FULL_SERVER_PATH + "/pages/chatroom/sendChat";
     public final static String CHAT_LINES_LIST = FULL_SERVER_PATH + "/chat";

@@ -44,7 +44,7 @@ public class PullMissionsServlet extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        //add above integer to the missions done count of its ally
+        myAllies.updateAgentMissionDone(usernameFromSession, missionsDoneByAgent);
 
         List<MissionDTO> missions = myAllies.pullMissions
                 (agentUserManager

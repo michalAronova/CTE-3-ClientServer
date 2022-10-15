@@ -36,7 +36,7 @@ public class Allies implements Entity {
     private BooleanProperty isCompetitionOn;
 
     private final BlockingQueue<MissionResult> resultQueue;
-    private List<MissionResult> resultList;
+    private final List<MissionResult> resultList;
     private int missionSize;
 
     private final Object DMLock = new Object();
@@ -208,19 +208,39 @@ public class Allies implements Entity {
         return uBoat;
     }
 
-    public synchronized void addResult(MissionResult result) {
-        resultList.add(result);
-        uBoat.addResult(result);
+    public void addResult(MissionResult result) {
+        synchronized (resultList){
+            resultList.add(result);
+            uBoat.addResult(result);
+        }
     }
 
     public int getResultVersion(){
         return resultList.size();
     }
 
-    public synchronized List<MissionResult> getResults(int fromIndex){
-        if (fromIndex < 0 || fromIndex > resultList.size()) {
-            fromIndex = 0;
+    public List<MissionResult> getResults(int fromIndex){
+        List<MissionResult> ret;
+        synchronized (resultList){
+            if (fromIndex < 0 || fromIndex > resultList.size()) {
+                fromIndex = 0;
+            }
+            ret = resultList.subList(fromIndex, resultList.size());
         }
-        return resultList.subList(fromIndex, resultList.size());
+        return ret;
+    }
+
+    public void updateAgentMissionDone(String agentName, int missionsDoneByAgent) {
+        agentName2data.get(agentName).setMissionDone(missionsDoneByAgent);
+    }
+
+    public double getTotalMissionDone() {
+        double totalMission = 0;
+        synchronized (this){
+            for (SimpleAgentDTO agent: agentName2data.values()) {
+                totalMission += agent.getMissionDone();
+            }
+        }
+        return totalMission;
     }
 }

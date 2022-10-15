@@ -21,26 +21,24 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class Mission implements Runnable {
-    private Machine machine;
+    private final IntegerProperty missionsDone;
+    private final Machine machine;
     private final double missionSize;
     private final String toDecrypt;
     private final Dictionary dictionary;
     private List<Character> currentPositions;
     private final Speedometer speedometer;
 
-    private List<Pair<String, CodeObj>> candidates;
+    private final List<Pair<String, CodeObj>> candidates;
 
-    private BlockingQueue<MissionResult> resultQueue;
+    private final BlockingQueue<MissionResult> resultQueue;
 
-    private BiConsumer<Integer, Long> updateTotalMissionDone;
+    private final BlockingQueue<Runnable> workQueue;
+    private final BooleanProperty isEmptyQueue;
+    private final String allyName;
+    private final String agentName;
 
-    private BlockingQueue<Runnable> workQueue;
-    private BooleanProperty isEmptyQueue;
-
-    private String allyName;
-
-
-    public Mission(Machine machine, List<Character> startRotorsPositions, double missionSize,
+    /*public Mission(Machine machine, List<Character> startRotorsPositions, double missionSize,
                    String toDecrypt, Dictionary dictionary, Speedometer speedometer,
                    BlockingQueue<MissionResult> resultQueue, BiConsumer<Integer, Long> updateTotalMissionDone) {
         this.machine = machine;
@@ -49,24 +47,38 @@ public class Mission implements Runnable {
         this.dictionary = dictionary;
         this.currentPositions = startRotorsPositions;
         this.resultQueue = resultQueue;
-        this.updateTotalMissionDone = updateTotalMissionDone;
         machine.updateByPositionsList(currentPositions);
         this.speedometer = speedometer;
         candidates = new LinkedList<>();
-    }
+    }*/
 
     public Mission(Machine machine, List<Character> startPositions, double missionSize,
                    String toDecrypt, Dictionary dictionary, Speedometer speedometer,
                    IntegerProperty missionsDone, BlockingQueue<MissionResult> resultQueue,
-                   BlockingQueue<Mission> workQueue, BooleanProperty isEmptyQueue){
-
-    }
-
-    public void setResultQueue(BlockingQueue<MissionResult> resultQueue){ this.resultQueue = resultQueue; }
-    public void setWorkQueueAndEmptyProperty(BlockingQueue<Runnable> workQueue, BooleanProperty isEmptyQueue){
+                   BlockingQueue<Runnable> workQueue, BooleanProperty isEmptyQueue,
+                   String allyName, String agentName){
+        this.machine = machine;
+        this.missionSize = missionSize;
+        this.toDecrypt = toDecrypt;
+        this.dictionary = dictionary;
+        this.currentPositions = startPositions;
+        this.resultQueue = resultQueue;
+        this.missionsDone = missionsDone;
+        machine.updateByPositionsList(currentPositions);
+        this.speedometer = speedometer;
+        candidates = new LinkedList<>();
         this.workQueue = workQueue;
         this.isEmptyQueue = isEmptyQueue;
+        this.allyName = allyName;
+        this.agentName = agentName;
     }
+
+//    public void setResultQueue(BlockingQueue<MissionResult> resultQueue){ this.resultQueue = resultQueue; }
+//
+//    public void setWorkQueueAndEmptyProperty(BlockingQueue<Runnable> workQueue, BooleanProperty isEmptyQueue){
+//        this.workQueue = workQueue;
+//        this.isEmptyQueue = isEmptyQueue;
+//    }
     @Override
     public void run() {
         if(workQueue != null){
@@ -94,16 +106,14 @@ public class Mission implements Runnable {
             currentPositions = speedometer.calculateNext(currentPositions);
             machine.updateByPositionsList(currentPositions);
         }
-//        long endTime = System.currentTimeMillis();
-//        long timeElapsed = endTime - startTime;
         if(missionSize != 0) {
-            updateTotalMissionDone.accept(1, 1L);
+            synchronized (missionsDone){
+                missionsDone.set(missionsDone.get() + 1);
+            }
         }
-
         if(!candidates.isEmpty()){
             try {
-                resultQueue.put(new MissionResult(candidates,
-                        Thread.currentThread().getName(), 0));
+                resultQueue.put(new MissionResult(candidates, agentName, allyName));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

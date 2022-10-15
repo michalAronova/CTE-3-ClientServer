@@ -9,6 +9,7 @@ public class SimpleAgentDTO {
     private final StringProperty name;
     private final IntegerProperty threadCount;
     private final IntegerProperty missionPull;
+    private int missionDone = 0;
 
     public SimpleAgentDTO(String name, int threadCount, int missionPull) {
         this.name = new SimpleStringProperty(name);
@@ -44,5 +45,13 @@ public class SimpleAgentDTO {
 
     public IntegerProperty missionPullProperty() {
         return missionPull;
+    }
+
+    public int getMissionDone() {
+        return missionDone;
+    }
+
+    public void setMissionDone(int missionDone) {
+        this.missionDone = missionDone;
     }
 }

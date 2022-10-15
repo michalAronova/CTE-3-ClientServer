@@ -27,11 +27,11 @@ public class AlliesCandidatesServlet extends HttpServlet {
         response.setContentType("application/json");
         UserManager alliesUserManager = ServletUtils.getAlliesUserManager(getServletContext());
         String username = SessionUtils.getUsername(request);
-        Allies ally  = (Allies) alliesUserManager.getEntityObject(username);
-
         if (username == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
+
+        Allies ally  = (Allies) alliesUserManager.getEntityObject(username);
         int clientCandidatesVersion = ServletUtils.getIntParameter(request, CANDIDATES_VERSION);
         if (clientCandidatesVersion == Constants.INT_PARAMETER_ERROR) {
             return;

@@ -10,6 +10,8 @@ import engine.decipherManager.dictionary.Dictionary;
 import engine.decipherManager.mission.Mission;
 import engine.decipherManager.missionTaker.MissionTaker;
 import engine.decipherManager.resultListener.ResultListener;
+import engine.decipherManager.speedometer.Speedometer;
+import enigmaMachine.Machine;
 import enigmaMachine.keyBoard.KeyBoard;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -53,7 +55,7 @@ public class Agent implements Entity {
     private KeyBoard keyboard;
     private Dictionary dictionary;
 
-    public Agent(String username, Allies myAllies, int threadCount, int missionAmountPull){
+    public Agent(String username, Allies myAllies, int threadCount, int missionAmountPull) {
         this.username = username;
         this.myAllies = myAllies;
         this.threadCount = threadCount;
@@ -65,30 +67,61 @@ public class Agent implements Entity {
 
         //create work queue and thread pool of agents
         BasicThreadFactory factory = new BasicThreadFactory.Builder()
-                .namingPattern("Thread %d of "+username)
+                .namingPattern("Thread %d of " + username)
                 .build();
         workQueue = new ArrayBlockingQueue<>(missionAmountPull);
         threadExecutor = new ThreadPoolExecutor(threadCount, threadCount,
-                Long.MAX_VALUE, TimeUnit.NANOSECONDS, workQueue , factory);
+                Long.MAX_VALUE, TimeUnit.NANOSECONDS, workQueue, factory);
 
         isEmptyQueue = new SimpleBooleanProperty(true);
         isCompetitionOn = new SimpleBooleanProperty(false);
 
         isEmptyQueue.addListener((observable, oldValue, newValue) -> {
-            if(newValue && isCompetitionOn.getValue()){
-                new Thread(this::pullMissionsFromAlly, "Pull Thread for "+username).start();
+            if (newValue && isCompetitionOn.getValue()) {
+                new Thread(this::pullMissionsFromAlly, "Pull Thread for " + username).start();
             }
         });
     }
 
-    public void decipher(Consumer<MissionResult> transferMissionResult){
+    public void decipher() {
         missionsDone.set(0);
         isCompetitionOn.set(true);
         threadExecutor.prestartAllCoreThreads();
-        new Thread(new ResultListener(resultQueue, transferMissionResult),
-                "Agent "+username+" Result Listener").start();
-        new Thread(this::pullMissionsFromAlly, "Pull Thread for "+username).start();
+        new Thread(new ResultListener(resultQueue, this::transferMissionResult),
+                "Agent " + username + " Result Listener").start();
+        new Thread(this::pullMissionsFromAlly, "Pull Thread for " + username).start();
     }
+
+    private void transferMissionResult(MissionResult missionResult) {
+        String finalUrl = HttpUrl
+                .parse(Constants.UPLOAD_CANDIDATES)
+                .newBuilder()
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsyncResultUpload(finalUrl, missionResult, new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.code() == 200) {
+                        String str = responseBody.string();
+                        System.out.println("loaded!");
+                    } else {
+                        System.out.println("not loaded :(");
+                        System.out.println(responseBody.string());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println(e.getMessage());
+            }
+
+        });
+    }
+
+
 
     private List<Character> speedometer(List<Character> characters) {
         List<Character> updated = new ArrayList<>(characters);
@@ -162,7 +195,7 @@ public class Agent implements Entity {
                                         Consumer<MissionResult> transferMissionResult) {
 //        new Thread(new MissionTaker(alliesWorkQueue, workQueue, resultQueue, missionAmountPull),
 //                "Agent "+username+" MissionDTO Taker").start();
-        decipher(transferMissionResult);
+//        decipher(transferMissionResult);
     }
 
     public boolean isEmptyQueue() {
@@ -189,8 +222,9 @@ public class Agent implements Entity {
             if (missionsDTOs.size() > 0) {
                 missionsDTOs.forEach(missionDTO -> {
                     try {
-                        Mission mission = new Mission(missionDTO, dictionary, keyboard, this::speedometer,
-                                missionsDone, resultQueue, workQueue, isEmptyQueue);
+                        Mission mission = new Mission(deepCopyMachine(missionDTO.getMachineEncoded()), missionDTO.getStartPositions(),
+                                missionDTO.getMissionSize(), missionDTO.getToDecrypt(), dictionary, this::speedometer,
+                                missionsDone, resultQueue, workQueue, isEmptyQueue, myAllies.getUsername(), username);
                         workQueue.put(mission);
                     } catch (InterruptedException e) {
                         System.out.println(Thread.currentThread().getName() + " was interrupted");
@@ -201,20 +235,28 @@ public class Agent implements Entity {
         }
     }
 
+    private Machine deepCopyMachine(String machineEncoded) {
+        try{
+            return (Machine)objectFromString(machineEncoded);
+        }
+        catch(ClassNotFoundException | IOException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private List<MissionDTO> requestMissionPull(){
         List<MissionDTO> missionDTOS = new ArrayList<>();
         String finalUrl = HttpUrl
                 .parse(Constants.PULL_MISSIONS)
                 .newBuilder()
-                //.addQueryParameter("mission-done-by-agent", String.valueOf(?missionDoneDelta?))
+                .addQueryParameter("mission-done-by-agent", String.valueOf(missionsDone))
                 .build()
                 .toString();
 
         Request request = new Request.Builder()
                 .url(finalUrl)
                 .build();
-
-        Call call = HTTP_CLIENT.newCall(request);
 
         try {
             Response response = HTTP_CLIENT.newCall(request).execute();

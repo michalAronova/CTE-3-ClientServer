@@ -18,7 +18,7 @@ public class UBoat implements Entity{
     private Engine engine;
     private Map<String,Allies> participants;
     private Map<String, Boolean> name2ready;
-    private List<MissionResult> candidatesList;
+    private final List<MissionResult> candidatesList;
     private String input;
     private String output;
     private boolean isFull;
@@ -189,12 +189,14 @@ public class UBoat implements Entity{
         //participants.forEach((allyName, ally) -> ally.setIsCompetitionOn(true));
     }
 
-    public synchronized void addResult(MissionResult result) {
-        candidatesList.add(result);
-        for (Pair<String, CodeObj> candidate: result.getCandidates()) {
-            if(candidate.getKey().equals(input)){
-                winner.set(result.getAllyName());
-                winnerFound.set(true);
+    public void addResult(MissionResult result) {
+        synchronized (candidatesList){
+            candidatesList.add(result);
+            for (Pair<String, CodeObj> candidate: result.getCandidates()) {
+                if(candidate.getKey().equals(input)){
+                    winner.set(result.getAllyName());
+                    winnerFound.set(true);
+                }
             }
         }
     }
@@ -217,5 +219,20 @@ public class UBoat implements Entity{
 
     public void setWinner(String winner) {
         this.winner.set(winner);
+    }
+
+    public int getResultVersion(){
+        return candidatesList.size();
+    }
+
+    public List<MissionResult> getResults(int fromIndex){
+        List<MissionResult> ret;
+        synchronized (candidatesList){
+            if (fromIndex < 0 || fromIndex > candidatesList.size()) {
+                fromIndex = 0;
+            }
+            ret = candidatesList.subList(fromIndex, candidatesList.size());
+        }
+        return ret;
     }
 }

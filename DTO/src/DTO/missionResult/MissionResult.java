@@ -8,17 +8,14 @@ import java.util.List;
 
 public class MissionResult implements Serializable {
     private final List<Pair<String,CodeObj>> candidates;
-    private String allyName;
-
-    private String agentName;
-    private final long time;
+    private final String allyName;
+    private final String agentName;
 
 
-    public MissionResult(List<Pair<String,CodeObj>> candidates, String allyName, long time) {
+    public MissionResult(List<Pair<String, CodeObj>> candidates, String agentName, String allyName) {
         this.candidates = candidates;
+        this.agentName = agentName;
         this.allyName = allyName;
-        //this.agentName = agentName;
-        this.time = time;
     }
 
     public String getAllyName() {
@@ -33,20 +30,15 @@ public class MissionResult implements Serializable {
         return candidates;
     }
 
-    public long getTime() {
-        return time;
-    }
-
-    public void setEntityName(String entityName) {
-        this.allyName = entityName;
-    }
-
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
-        sb.append("Time taken: "+ time);
         sb.append(System.lineSeparator());
         sb.append(candidates);
+        sb.append(System.lineSeparator());
+        sb.append("ally name ").append(allyName);
+        sb.append(System.lineSeparator());
+        sb.append("agent name ").append(agentName);
         return sb.toString();
     }
 }
