@@ -2,6 +2,7 @@ package engine.entity;
 
 import DTO.agent.SimpleAgentDTO;
 import DTO.codeObj.CodeObj;
+import DTO.mission.MissionDTO;
 import DTO.missionResult.MissionResult;
 import DTO.team.Team;
 import engine.Engine;
@@ -50,10 +51,14 @@ public class Allies implements Entity {
 
         isCompetitionOn = new SimpleBooleanProperty(false);
         isCompetitionOn.addListener(((observable, oldValue, newValue) -> {
-            if(!newValue){
+            if(!newValue){ //competition finished
                 //method to be called upon end of game
                 //need to know if im the winner
                 //things that need to happen when the game ends
+            }
+            else{ //competition started
+                //send info to agents: dictionary and keyboard (and that competition started)
+                //active servlet?
             }
         }));
     }
@@ -124,12 +129,16 @@ public class Allies implements Entity {
 //        }
     }
 
-    public List<Mission> pullMissions(int missionPullAmount) throws InterruptedException {
-        List<Mission> missions = new ArrayList<>();
+    public List<MissionDTO> pullMissions(int missionPullAmount) {
+        List<MissionDTO> missions = new ArrayList<>();
         synchronized (DM.getWorkQueue()){
             while(!DM.getWorkQueue().isEmpty() && missionPullAmount > 0){
                 --missionPullAmount;
-                missions.add((Mission) DM.getWorkQueue().take());
+                try {
+                    missions.add(DM.getWorkQueue().take());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return missions;

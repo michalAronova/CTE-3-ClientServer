@@ -1,6 +1,7 @@
 package engine.decipherManager;
 
 import DTO.codeObj.CodeObj;
+import DTO.mission.MissionDTO;
 import DTO.missionResult.MissionResult;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import engine.decipherManager.dictionary.Dictionary;
@@ -46,7 +47,7 @@ public class DecipherManager {
     private int agentCountChosen;
 
     private BlockingQueue<MissionResult> resultQueue;
-    private BlockingQueue<Runnable>  workQueue;
+    private BlockingQueue<MissionDTO> workQueue;
 
     private String encryption;
     private BooleanProperty isPaused;
@@ -175,7 +176,7 @@ public class DecipherManager {
         return workQueueCreated;
     }
 
-    public BlockingQueue<Runnable> getWorkQueue() {
+    public BlockingQueue<MissionDTO> getWorkQueue() {
         return workQueue;
     }
 
@@ -264,17 +265,19 @@ public class DecipherManager {
                     nextRotorsPositions = getNextRotorsPositions(nextRotorsPositions, missionSize);
                 }
                 if(i == totalMissionsAmountForPositions){
-                    workQueue.put(new Mission(deepCopyMachine(updatingMachineEncoding), nextRotorsPositions, leftoverMissionsAmountForPositions,
-                            encryption, dictionary, this::speedometer, resultQueue, updateTotalMissionDone));
-                    totalMissionProduced++;
+                    workQueue.put(new MissionDTO(updatingMachineEncoding,
+                                                    nextRotorsPositions,
+                                                    leftoverMissionsAmountForPositions,
+                                                    encryption));
                 }
                 else{
-                    workQueue.put(new Mission(deepCopyMachine(updatingMachineEncoding), nextRotorsPositions, missionSize,
-                            encryption, dictionary, this::speedometer, resultQueue, updateTotalMissionDone));
-                    totalMissionProduced++;
+                    workQueue.put(new MissionDTO(updatingMachineEncoding,
+                                                    nextRotorsPositions,
+                                                    missionSize,
+                                                    encryption));
                 }
+                totalMissionProduced++;
                 totalMissions++;
-
             }
         }
         catch (InterruptedException e) {
