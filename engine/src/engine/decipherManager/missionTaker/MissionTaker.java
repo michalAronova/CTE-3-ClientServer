@@ -26,7 +26,7 @@ public class MissionTaker implements Runnable{
                 if (agentWorkQueue.isEmpty()) {
                     for (int i = 0; i < missionAmountPull; i++) {
                         Mission mission = (Mission) alliesWorkQueue.take();
-                        mission.setResultQueue(agentResultQueue);
+                        //mission.setResultQueue(agentResultQueue); //TODO: check if line needed
                         agentWorkQueue.put(mission);
                     }
                 }

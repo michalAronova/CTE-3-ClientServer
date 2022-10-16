@@ -1,14 +1,13 @@
 package battleField.servlets.agentServlets;
 
-import DTO.agent.WorkStatusDTO;
+import DTO.contest.Contest;
 import battleField.constants.Constants;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
 import com.google.gson.Gson;
-import engine.entity.Agent;
 import engine.entity.Allies;
 import engine.entity.EntityEnum;
-import engine.entity.SimpleAgent;
+import engine.entity.UBoat;
 import engine.users.AgentUserManager;
 import engine.users.UserManager;
 import jakarta.servlet.ServletException;
@@ -22,17 +21,18 @@ import java.io.PrintWriter;
 
 import static battleField.constants.Constants.*;
 
-@WebServlet(name = "UpdateWorkStatusServlet", urlPatterns = {"/agent/work-status"})
-public class UpdateWorkStatusServlet extends HttpServlet {
+@WebServlet(name = "IsRegisterToUBoatServlet", urlPatterns = {"/agent/check-uboat-registered"})
+public class IsRegisterToUBoatServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //get agent from ses
-        resp.setContentType("text/plain;charset=UTF-8");
+        resp.setContentType("application/json");
+        PrintWriter out = resp.getWriter();
 
+        //get agent from ses
         String usernameFromSession = SessionUtils.getUsername(req);
         AgentUserManager agentUserManager = ServletUtils.getAgentUserManager(getServletContext());
 
-        PrintWriter out = resp.getWriter();
+        //validation
         if(usernameFromSession == null){
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             out.println("You are not logged in...");
@@ -44,21 +44,26 @@ public class UpdateWorkStatusServlet extends HttpServlet {
             return;
         }
 
-        int candidatesProduced = ServletUtils.getIntParameter(req, CANDIDATES_PRODUCED);
-        int missionsLeft = ServletUtils.getIntParameter(req, MISSIONS_LEFT);
-        int missionsDoneByAgent = ServletUtils.getIntParameter(req, MISSIONS_DONE_BY_AGENT);
-        if (candidatesProduced == Constants.INT_PARAMETER_ERROR ||
-                missionsLeft == Constants.INT_PARAMETER_ERROR ||
-                missionsDoneByAgent == Constants.INT_PARAMETER_ERROR) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.println("Wrong parameter type inserted");
-            return;
-        }
+        //get agent's ally
         UserManager alliesUserManager = ServletUtils.getAlliesUserManager(getServletContext());
         Allies myAllies = (Allies) alliesUserManager.getEntityObject
                 (agentUserManager.getAllyName(usernameFromSession));
-        WorkStatusDTO workStatus = new WorkStatusDTO (candidatesProduced, missionsDoneByAgent, missionsLeft);
-        myAllies.updateAgentWorkStatus(usernameFromSession, workStatus);
-        resp.setStatus(HttpServletResponse.SC_OK);
+        //if agent's ally not registered to any uboat yet.. sent nothing on response
+        if(myAllies.getUBoat() == null){
+            return;
+        }
+        //yay my ally registered to competition! return contest details on body
+        else {
+            UBoat boat = myAllies.getUBoat();
+            Contest contest = new Contest(boat.getBattleFieldName(), boat.getUsername(),
+                                            myAllies.isCompetitionOnProperty().getValue(),
+                                            myAllies.getDM().getDifficulty().name(),
+                                            boat.getAlliesRequired(), boat.getParticipants().size());
+            Gson gson = new Gson();
+            String json = gson.toJson(contest);
+            resp.setStatus(HttpServletResponse.SC_OK);
+            out.println(json);
+            out.flush();
+        }
     }
 }

@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import static battleField.constants.Constants.USERNAME;
 
@@ -26,7 +27,7 @@ public class AlliesLoginServlet extends HttpServlet {
         String usernameFromSession = SessionUtils.getUsername(request);
         UsernameManager usernameManager = ServletUtils.getUsernameManager(getServletContext());
         UserManager userManager = ServletUtils.getAlliesUserManager(getServletContext());
-
+        PrintWriter out = response.getWriter();
         if (usernameFromSession == null) { //user is not logged in yet
 
             String usernameFromParameter = request.getParameter(USERNAME);
@@ -44,9 +45,7 @@ public class AlliesLoginServlet extends HttpServlet {
 
                         // stands for unauthorized as there is already such user with this name
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                        response.getOutputStream().print(errorMessage);
-                        response.getOutputStream()
-                                .print("here1111");
+                        out.println(errorMessage);
                     }
                     else {
                         usernameManager.addUser(usernameFromParameter);
@@ -57,9 +56,8 @@ public class AlliesLoginServlet extends HttpServlet {
                         request.getSession().setAttribute(Constants.ENTITY, EntityEnum.ALLIES);
 
                         response.setStatus(HttpServletResponse.SC_OK);
-                        response.getOutputStream()
-                                .print(String.format("logged in as %s (%s)",
-                                        usernameFromParameter, EntityEnum.ALLIES));
+                        out.println(String.format("logged in as %s (%s)",
+                                usernameFromParameter, EntityEnum.ALLIES));
                     }
                 }
             }

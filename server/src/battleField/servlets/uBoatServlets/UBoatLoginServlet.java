@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import static battleField.constants.Constants.USERNAME;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet(name = "UBoatLoginServlet", urlPatterns = {"/signup/uboat/login"})
 public class UBoatLoginServlet  extends HttpServlet {
@@ -33,6 +34,7 @@ public class UBoatLoginServlet  extends HttpServlet {
         String usernameFromSession = SessionUtils.getUsername(request);
         UsernameManager usernameManager = ServletUtils.getUsernameManager(getServletContext());
         UserManager userManager = ServletUtils.getUBoatUserManager(getServletContext());
+        PrintWriter out = response.getWriter();
 
         if (usernameFromSession == null) { //user is not logged in yet
 
@@ -51,7 +53,7 @@ public class UBoatLoginServlet  extends HttpServlet {
 
                         // stands for unauthorized as there is already such user with this name
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                        response.getOutputStream().print(errorMessage);
+                        out.println(errorMessage);
                     }
                     else {
                         usernameManager.addUser(usernameFromParameter);
@@ -61,15 +63,15 @@ public class UBoatLoginServlet  extends HttpServlet {
                         request.getSession(true).setAttribute(Constants.USERNAME, usernameFromParameter);
                         request.getSession().setAttribute(Constants.ENTITY, EntityEnum.UBOAT);
                         response.setStatus(HttpServletResponse.SC_OK);
-                        response.getOutputStream()
-                                .print(String.format("logged in as %s (%s)",
-                                        usernameFromParameter, EntityEnum.UBOAT));
+                        out.println(String.format("logged in as %s (%s)",
+                                usernameFromParameter, EntityEnum.UBOAT));
                     }
                 }
             }
         } else {
             //user is already logged in
             response.setStatus(HttpServletResponse.SC_OK);
+            out.println("user is already logged in");
         }
     }
 }

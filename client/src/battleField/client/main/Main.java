@@ -1,6 +1,9 @@
 package battleField.client.main;
 
 import DTO.codeObj.CodeObj;
+import DTO.mission.MissionDTO;
+import DTO.team.Team;
+import com.google.gson.reflect.TypeToken;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 import util.Constants;
@@ -8,6 +11,9 @@ import util.http.HttpClientUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
+
 import static util.Constants.GSON_INSTANCE;
 import static util.http.HttpClientUtil.HTTP_CLIENT;
 
@@ -22,19 +28,40 @@ public class Main {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        loadXMLRequest();
+        registerUBoat();
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        configRandomRequest();
+        registerAllies();
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        processMsgRequest();
+        registerAllies();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        // **load XML**
+//        loadXMLRequest();
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+        // **config Code**
+//        configRandomRequest();
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+        // **process MSG**
+//        processMsgRequest();
 
 //        Engine engine = new TheEngine();
 //        engine.loadDataFromXML("C:\\Users\\micha\\IdeaProjects\\CTE-3-ClientServer\\engine\\src\\resources\\ex3-basic.xml");
@@ -84,6 +111,8 @@ public class Main {
                 try (ResponseBody responseBody = response.body()) {
                     if (response.code() == 200) {
                         System.out.println("registered as " + username);
+                        String responseBodyString = responseBody.string();
+                        System.out.println(responseBodyString);
                     }
                     else {
                         String responseBodyString = responseBody.string();
@@ -97,7 +126,6 @@ public class Main {
             }
         });
     }
-
     public static void loadXMLRequest(){
         File selectedFile = new File("C:\\Users\\micha\\IdeaProjects\\CTE-3-ClientServer\\engine\\src\\resources\\ex3-basic.xml");
         String finalUrl = HttpUrl
@@ -148,7 +176,6 @@ public class Main {
             }
         });
     }
-
     public static void processMsgRequest(){
         String msg = "Hello";
         String finalUrl = HttpUrl
@@ -177,6 +204,98 @@ public class Main {
             }
         });
     }
+    public static void updateWorkStatusRequest(){
+        //get these from agent
+        String candidatesProduced = "10";
+        String missionsLeft = "10";
+        String missionDone = "10";
+
+        String finalUrl = HttpUrl
+                .parse("/agent/work-status") //to update!!!!!!!!!!!!
+                .newBuilder()
+                .addQueryParameter("candidates-produced", candidatesProduced)
+                .addQueryParameter("missions-left", missionsLeft)
+                .addQueryParameter("mission-done-by-agent", missionDone)
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.code() == 200) {
+                        System.out.println("Agent work status loaded successfully");
+                    }
+                    else {
+                        System.out.println("Error: "+ responseBody.string());
+                    }
+                }
+            }
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("failed");
+            }
+        });
+    }
+    public static void uBoatParticipantsListRequest(){
+        String finalUrl = HttpUrl
+                .parse("/uboat/participants") //to update with constants1!!!!!
+                .newBuilder()
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.code() == 200) {
+                        Type listType = new TypeToken<List<Team>>() { }.getType();
+                        List<Team> participants = GSON_INSTANCE.fromJson(responseBody.string(),listType);
+                        System.out.println(participants);
+                    }
+                    else {
+                        System.out.println("Error! "+ responseBody.string());
+                    }
+                }
+            }
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("request failed");
+            }
+        });
+    }
+    public static void registerAllies(){
+        String username = "Ally";
+        String finalUrl = HttpUrl
+                .parse(Constants.ALLIES_LOGIN_PAGE)
+                .newBuilder()
+                .addQueryParameter("username", username)
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.code() == 200) {
+                        System.out.println("registered as " + username);
+                        String responseBodyString = responseBody.string();
+                        System.out.println(responseBodyString);
+
+                    }
+                    else {
+                        String responseBodyString = responseBody.string();
+                        System.out.println(responseBodyString);
+                    }
+                }
+            }
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("failed");
+            }
+        });
+    }
+
 
 
 //    public static void puller(DecipherManager DM){

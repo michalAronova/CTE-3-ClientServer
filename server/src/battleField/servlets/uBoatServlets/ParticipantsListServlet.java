@@ -29,12 +29,12 @@ public class ParticipantsListServlet extends HttpServlet {
             out.println("You are not logged in...");
             return;
         }
-
         if(!SessionUtils.getEntity(req).equals(EntityEnum.UBOAT)){
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             out.println("You are not a UBoat!");
             return;
         }
+
         resp.setContentType("application/json");
         UBoatUserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
         Gson gson = new Gson();

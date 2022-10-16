@@ -52,7 +52,7 @@ public class Allies implements Entity {
         uBoat = null;
         isCompetitionOn = new SimpleBooleanProperty(false);
         isCompetitionOn.addListener(((observable, oldValue, newValue) -> {
-            if(!newValue){ //competition finished
+            if(!newValue){ //competition finished //TODO
                 //method to be called upon end of game
                 //need to know if im the winner
                 //things that need to happen when the game ends
