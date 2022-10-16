@@ -6,11 +6,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import uBoatClient.uBoatApp.UBoatAppController;
-import uBoatClient.uBoatLogin.UBoatLoginController;
+import util.Constants;
 import util.http.HttpClientUtil;
 
 import java.io.IOException;
 import java.net.URL;
+
+import static util.Constants.UBOAT_APP_FXML_RESOURCE_LOCATION;
 
 public class UBoatClientMain extends Application {
     private UBoatAppController uBoatAppController;
@@ -20,7 +22,7 @@ public class UBoatClientMain extends Application {
 
         primaryStage.setTitle("UBoat");
 
-        URL loginPage = getClass().getResource("/uBoatClient/uBoatApp/UBoatApp.fxml");
+        URL loginPage = getClass().getResource(UBOAT_APP_FXML_RESOURCE_LOCATION);
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(loginPage);

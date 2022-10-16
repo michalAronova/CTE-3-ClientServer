@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class UBoatMainController implements MainAppController{
+    public Button continueButton;
     @FXML private Button readyButton;
     @FXML private VBox mainVBox;
     @FXML private Label usernameLabel;
@@ -59,7 +60,6 @@ public class UBoatMainController implements MainAppController{
     }
     @FXML
     public void initialize() {
-        usernameLabel.textProperty().bind(uBoatAppController.getUsernameProperty());
         if(codeObjDisplayController != null && processComponentController != null
         && dictionaryComponentController != null && machineDetailsController != null
         && codeConfigController != null && candidatesComponentController != null
@@ -78,6 +78,10 @@ public class UBoatMainController implements MainAppController{
 
         xmlErrorLabel.textProperty().bind(xmlErrorMessage);
         fileTextField.textProperty().bind(filePath);
+        contestTab.setDisable(true);
+        continueButton.setDisable(true);
+
+        entityLabel.setText("UBOAT");
     }
 
     @FXML
@@ -87,13 +91,11 @@ public class UBoatMainController implements MainAppController{
     @FXML
     public void onReadyClicked(ActionEvent event) {
         //dispatch to server...
-
-        //below switches to the contest tab
-        competitionTabPane.getSelectionModel().select(contestTab);
     }
 
     public void setMainController(UBoatAppController uBoatAppController) {
         this.uBoatAppController = uBoatAppController;
+        usernameLabel.textProperty().bind(uBoatAppController.getUsernameProperty());
     }
 
     public void codeResetRequested() {
@@ -118,11 +120,13 @@ public class UBoatMainController implements MainAppController{
     public void handleSetByRandom() {
         //dispatch random set request to server
         //receive back the new code and insert it to code obj display with onCodeChosen
+        continueButton.setDisable(false);
     }
 
     public void handleManualSet(CodeObj code) {
         //dispatch random set request to server
         //receive back the new code and insert it to code obj display with onCodeChosen
+        continueButton.setDisable(false);
     }
 
     public void onLoadClicked(ActionEvent actionEvent) {
@@ -158,11 +162,12 @@ public class UBoatMainController implements MainAppController{
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
+                    String body = responseBody.string();
                     if (response.code() != 200) {
                         Platform.runLater(() ->
                                 {
                                     xmlErrorLabel.setStyle("-fx-text-fill: red");
-                                    xmlErrorMessage.set("Something went wrong...");
+                                    xmlErrorMessage.set("Error:" +body);
                                     filePath.set("");
                                     //exception message from engine will be above (in body?)
                                 }
@@ -173,6 +178,7 @@ public class UBoatMainController implements MainAppController{
                             xmlErrorMessage.set("Successfully uploaded file to server!");
                             isFileLoaded.set(true);
                             filePath.set(selectedFile.getName());
+                            //TODO: update by this after fixing servlet
                             //also should get from server the following details:
                             //machine details -> fill the component
                             //dictionary words -> fillDictionaryTable(List<Word> words)
@@ -181,6 +187,12 @@ public class UBoatMainController implements MainAppController{
                 }
             }
         });
+    }
+
+    public void onContinueClicked(ActionEvent actionEvent) {
+        //below switches to the contest tab
+        contestTab.setDisable(false);
+        competitionTabPane.getSelectionModel().select(contestTab);
     }
 }
 

@@ -11,6 +11,9 @@ public class Constants {
     public final static String CHAT_LINE_FORMATTING = "%tH:%tM:%tS | %.10s: %s%n";
 
     // fxml locations
+    public final static String UBOAT_APP_FXML_RESOURCE_LOCATION = "/uBoatClient/uBoatApp/uBoatApp.fxml";
+    public final static String ALLIES_APP_FXML_RESOURCE_LOCATION = "/alliesClient/alliesApp/alliesApp.fxml";
+    public final static String AGENT_APP_FXML_RESOURCE_LOCATION = "/agentClient/agentApp/agentApp.fxml";
     public final static String UBOAT_MAIN_FXML_RESOURCE_LOCATION = "/uBoatClient/uBoatMain/uBoatMain.fxml";
     public final static String ALLIES_MAIN_FXML_RESOURCE_LOCATION = "/alliesClient/alliesMain/alliesMain.fxml";
     public final static String AGENT_MAIN_FXML_RESOURCE_LOCATION = "/agentClient/agentMain/agentMain.fxml";

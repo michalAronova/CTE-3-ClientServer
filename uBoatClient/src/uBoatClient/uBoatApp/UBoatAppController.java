@@ -38,6 +38,7 @@ public class UBoatAppController implements LoginController {
     public UBoatAppController(){
         isValidUsername = new SimpleBooleanProperty(false);
         isFileSelectedProperty = new SimpleBooleanProperty(false);
+        usernameProperty = new SimpleStringProperty("");
     }
 
     @FXML
@@ -64,7 +65,7 @@ public class UBoatAppController implements LoginController {
             Node main = fxmlLoader.load();
             uBoatMainController = fxmlLoader.getController();
             uBoatMainController.setMainController(this);
-            uBoatMainController.initialize();
+            //uBoatMainController.initialize();
             vBox.getChildren().clear();
             vBox.getChildren().add(main);
 

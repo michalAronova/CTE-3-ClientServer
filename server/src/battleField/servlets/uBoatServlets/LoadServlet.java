@@ -53,6 +53,10 @@ public class LoadServlet extends HttpServlet {
                     boatFromSession.getEngine().unloadEngine();
                     throw new InvalidXMLException(INVALIDFILE, "Battle field name already exists in server!");
                 }
+                //TODO:
+                //also send (JSON?) of the following details:
+                //machine details -> fill the component
+                //dictionary words -> fillDictionaryTable(List<Word> words)
                 out.println("engine loaded");
             }
             catch(InvalidXMLException e){
