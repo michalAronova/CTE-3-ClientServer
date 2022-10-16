@@ -1,6 +1,7 @@
 package engine.entity;
 
 import DTO.agent.SimpleAgentDTO;
+import DTO.agent.WorkStatusDTO;
 import DTO.codeObj.CodeObj;
 import DTO.mission.MissionDTO;
 import DTO.missionResult.MissionResult;
@@ -48,7 +49,7 @@ public class Allies implements Entity {
         waitingAgents = new HashMap<>();
         resultQueue = new LinkedBlockingQueue<>();
         resultList = new LinkedList<>();
-
+        uBoat = null;
         isCompetitionOn = new SimpleBooleanProperty(false);
         isCompetitionOn.addListener(((observable, oldValue, newValue) -> {
             if(!newValue){ //competition finished
@@ -230,15 +231,16 @@ public class Allies implements Entity {
         return ret;
     }
 
-    public void updateAgentMissionDone(String agentName, int missionsDoneByAgent) {
-        agentName2data.get(agentName).setMissionDone(missionsDoneByAgent);
+    public void updateAgentWorkStatus(String agentName, WorkStatusDTO workStatus) {
+        agentName2data.get(agentName).setWorkStatus(workStatus);
+
     }
 
     public double getTotalMissionDone() {
         double totalMission = 0;
         synchronized (this){
             for (SimpleAgentDTO agent: agentName2data.values()) {
-                totalMission += agent.getMissionDone();
+                totalMission += agent.getWorkStatus().getMissionDone();
             }
         }
         return totalMission;

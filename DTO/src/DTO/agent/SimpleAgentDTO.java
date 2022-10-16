@@ -9,12 +9,13 @@ public class SimpleAgentDTO {
     private final StringProperty name;
     private final IntegerProperty threadCount;
     private final IntegerProperty missionPull;
-    private int missionDone = 0;
+    private WorkStatusDTO workStatus;
 
     public SimpleAgentDTO(String name, int threadCount, int missionPull) {
         this.name = new SimpleStringProperty(name);
         this.threadCount = new SimpleIntegerProperty(threadCount);
         this.missionPull = new SimpleIntegerProperty(missionPull);
+        this.workStatus = new WorkStatusDTO();
     }
 
     public SimpleAgentDTO(SimpleAgentDTO dto) {
@@ -46,12 +47,10 @@ public class SimpleAgentDTO {
     public IntegerProperty missionPullProperty() {
         return missionPull;
     }
-
-    public int getMissionDone() {
-        return missionDone;
+    public void setWorkStatus(WorkStatusDTO workStatus){
+        this.workStatus = workStatus;
     }
-
-    public void setMissionDone(int missionDone) {
-        this.missionDone = missionDone;
+    public WorkStatusDTO getWorkStatus(){
+        return workStatus;
     }
 }

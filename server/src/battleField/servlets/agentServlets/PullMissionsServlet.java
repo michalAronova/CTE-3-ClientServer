@@ -39,13 +39,6 @@ public class PullMissionsServlet extends HttpServlet {
         Allies myAllies = (Allies) alliesUserManager.getEntityObject
                                     (agentUserManager.getAllyName(usernameFromSession));
 
-        int missionsDoneByAgent = ServletUtils.getIntParameter(req, MISSIONS_DONE_BY_AGENT);
-        if (missionsDoneByAgent == Constants.INT_PARAMETER_ERROR) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-        myAllies.updateAgentMissionDone(usernameFromSession, missionsDoneByAgent);
-
         List<MissionDTO> missions = myAllies.pullMissions
                 (agentUserManager
                         .getSimpleAgent(usernameFromSession)

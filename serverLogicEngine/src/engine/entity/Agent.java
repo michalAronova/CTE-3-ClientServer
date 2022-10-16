@@ -55,12 +55,16 @@ public class Agent implements Entity {
     private KeyBoard keyboard;
     private Dictionary dictionary;
 
+    private List<MissionResult> resultList;
+    private int totalMissionDone = 0;
+    private int totalCandidatesFound = 0;
     public Agent(String username, Allies myAllies, int threadCount, int missionAmountPull) {
         this.username = username;
         this.myAllies = myAllies;
         this.threadCount = threadCount;
         this.missionAmountPull = missionAmountPull;
         missionsDone = new SimpleIntegerProperty(0);
+        resultList = new LinkedList<>();
 
         //create result queue and register listener thread
         resultQueue = new LinkedBlockingQueue<>();
@@ -98,7 +102,8 @@ public class Agent implements Entity {
                 .newBuilder()
                 .build()
                 .toString();
-
+        totalCandidatesFound += missionResult.getCandidates().size();
+        resultList.add(missionResult);
         HttpClientUtil.runAsyncResultUpload(finalUrl, missionResult, new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
