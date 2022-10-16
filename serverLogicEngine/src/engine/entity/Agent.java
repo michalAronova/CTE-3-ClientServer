@@ -8,7 +8,6 @@ import com.google.gson.reflect.TypeToken;
 import engine.Engine;
 import engine.decipherManager.dictionary.Dictionary;
 import engine.decipherManager.mission.Mission;
-import engine.decipherManager.missionTaker.MissionTaker;
 import engine.decipherManager.resultListener.ResultListener;
 import engine.decipherManager.speedometer.Speedometer;
 import enigmaMachine.Machine;

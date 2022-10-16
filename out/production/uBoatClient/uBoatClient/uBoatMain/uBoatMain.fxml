@@ -105,7 +105,7 @@
                                              <content>
                                               <AnchorPane>
                                                    <children>
-                                                      <fx:include fx:id="activeTeamsComponent" source="../../../../clientUtils/src/clientUtils/activeTeams/activeTeamsComponent.fxml" GridPane.rowIndex="1" />
+                                                      <fx:include fx:id="activeTeamsComponent" source="../../../clientUtils/clientUtils/activeTeams/activeTeamsComponent.fxml" GridPane.rowIndex="1" />
                                                    </children>
                                                 </AnchorPane>
                                              </content>
@@ -114,7 +114,7 @@
                                              <content>
                                               <AnchorPane>
                                                    <children>
-                                                      <fx:include fx:id="candidatesComponent" source="../../../../clientUtils/src/clientUtils/candidatesComponent/candidatesComponent.fxml" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+                                                      <fx:include fx:id="candidatesComponent" source="../../../clientUtils/clientUtils/candidatesComponent/candidatesComponent.fxml" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
                                                    </children>
                                                 </AnchorPane>
                                              </content>

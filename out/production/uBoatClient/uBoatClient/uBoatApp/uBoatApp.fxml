@@ -18,7 +18,8 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
             </Label>
-            <fx:include fx:id="chooseNameComponent" source="../../../../clientUtils/src/clientUtils/chooseNameComponent/chooseNameComponent.fxml" />
+            <fx:include fx:id="chooseNameComponent" source="../../../clientUtils/clientUtils/chooseNameComponent/chooseNameComponent.fxml" />
+
          </children>
       </VBox>
   </content>
