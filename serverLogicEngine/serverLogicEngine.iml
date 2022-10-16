@@ -15,5 +15,6 @@
     <orderEntry type="library" name="commons-lang3-3.12.0" level="project" />
     <orderEntry type="module" module-name="clientUtils" />
     <orderEntry type="library" name="okHttp" level="project" />
+    <orderEntry type="module" module-name="constants" />
   </component>
 </module>

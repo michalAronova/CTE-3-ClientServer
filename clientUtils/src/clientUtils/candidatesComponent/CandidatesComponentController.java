@@ -2,6 +2,7 @@ package clientUtils.candidatesComponent;
 
 import DTO.missionResult.AlliesCandidates;
 import DTO.missionResult.Candidate;
+import DTO.missionResult.MissionResult;
 import clientUtils.MainAppController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -16,11 +17,9 @@ import java.util.List;
 public class CandidatesComponentController {
     @FXML public VBox rootVBox;
     @FXML private TableView<Candidate> candidatesTableView;
-
     @FXML private TableColumn<Candidate, String> allyColumn;
     @FXML private TableColumn<Candidate, String> candidateColumn;
     @FXML private TableColumn<Candidate, String> codeColumn;
-
     private final ObservableList<Candidate> dataList = FXCollections.observableArrayList();
 
     private MainAppController mainApplicationController;
@@ -45,5 +44,9 @@ public class CandidatesComponentController {
 
     public void hideAllyColumn(){
         allyColumn.setVisible(false);
+    }
+
+    public void addMissionResult(MissionResult missionResult, boolean isForAllyDisplay){
+        List<Candidate> candidates = Candidate.getListFromMissionResult(missionResult, isForAllyDisplay);
     }
 }

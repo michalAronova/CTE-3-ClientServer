@@ -1,6 +1,6 @@
-package battleField.constants;
+package parameters;
 
-public class Constants {
+public class ConstantParams {
     public static final String ENTITY = "entity";
     public static final String USERNAME = "username";
     public static final String ALLIES_JOINED = "allies-joined";
@@ -11,6 +11,7 @@ public class Constants {
     public static final String MISSION_AMOUNT_PULL = "mission-amount-pull";
     public static final String  MY_ALLY = "my-ally";
     public static final String CANDIDATES_VERSION = "candidates-version";
+    public static final String MISSION_SIZE = "mission-size";
 
     public static final String USER_NAME_ERROR = "username_error";
 

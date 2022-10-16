@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/alliesClient/alliesClient.iml" filepath="$PROJECT_DIR$/alliesClient/alliesClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/client/client.iml" filepath="$PROJECT_DIR$/client/client.iml" />
       <module fileurl="file://$PROJECT_DIR$/clientUtils/clientUtils.iml" filepath="$PROJECT_DIR$/clientUtils/clientUtils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/constants/constants.iml" filepath="$PROJECT_DIR$/constants/constants.iml" />
       <module fileurl="file://$PROJECT_DIR$/engine/engine.iml" filepath="$PROJECT_DIR$/engine/engine.iml" />
       <module fileurl="file://$PROJECT_DIR$/enigmaMachine/enigmaMachine.iml" filepath="$PROJECT_DIR$/enigmaMachine/enigmaMachine.iml" />
       <module fileurl="file://$PROJECT_DIR$/exceptions/exceptions.iml" filepath="$PROJECT_DIR$/exceptions/exceptions.iml" />

@@ -1,6 +1,5 @@
 package alliesClient.components.missionsProgress;
 
-import DTO.agent.ActiveAgentDTO;
 import DTO.dmProgress.DMProgress;
 import alliesClient.alliesMain.AlliesMainController;
 import javafx.beans.binding.Bindings;

@@ -1,7 +1,7 @@
 package battleField.servlets.alliesServlets;
 
 import DTO.missionResult.MissionResult;
-import battleField.constants.Constants;
+import parameters.ConstantParams;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
 import com.google.gson.Gson;
@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import static battleField.constants.Constants.CANDIDATES_VERSION;
+import static parameters.ConstantParams.CANDIDATES_VERSION;
 
 @WebServlet(name = "AlliesCandidatesServlet", urlPatterns = {"/allies/candidates"})
 public class AlliesCandidatesServlet extends HttpServlet {
@@ -32,8 +32,9 @@ public class AlliesCandidatesServlet extends HttpServlet {
         }
 
         Allies ally  = (Allies) alliesUserManager.getEntityObject(username);
+
         int clientCandidatesVersion = ServletUtils.getIntParameter(request, CANDIDATES_VERSION);
-        if (clientCandidatesVersion == Constants.INT_PARAMETER_ERROR) {
+        if (clientCandidatesVersion == ConstantParams.INT_PARAMETER_ERROR) {
             return;
         }
 

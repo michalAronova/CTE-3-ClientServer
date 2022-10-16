@@ -2,7 +2,7 @@
 //
 //import battleField.client.component.LoginController;
 //import battleField.client.component.entityChooser.EntityChooserController;
-//import battleField.client.util.Constants;
+//import battleField.client.util.ConstantParams;
 //import battleField.client.util.http.HttpClientUtil;
 //import engine.entity.EntityEnum;
 //import javafx.application.Application;
@@ -22,7 +22,7 @@
 //import java.io.IOException;
 //import java.net.URL;
 //
-//import static battleField.client.util.Constants.*;
+//import static battleField.client.util.ConstantParams.*;
 //
 //public class MainAppController {
 //
@@ -44,7 +44,7 @@
 //    private EntityEnum entity;
 //
 //    public MainAppController(){
-//        usernameProperty = new SimpleStringProperty(Constants.JOHN_DOE);
+//        usernameProperty = new SimpleStringProperty(ConstantParams.JOHN_DOE);
 //        entityProperty = new SimpleStringProperty("");
 //    }
 //
@@ -133,7 +133,7 @@
 //    public void close() {
 //
 //        String finalUrl = HttpUrl
-//                .parse(Constants.LOGOUT)
+//                .parse(ConstantParams.LOGOUT)
 //                .newBuilder().build()
 //                .toString();
 //
@@ -149,7 +149,7 @@
 //                System.out.println("logged out successfully for " + usernameProperty.getValue());
 //                entity = null;
 //                Platform.runLater(() -> {
-//                    usernameProperty.set(Constants.JOHN_DOE);
+//                    usernameProperty.set(ConstantParams.JOHN_DOE);
 //                    entityProperty.set("");
 //                });
 //            }

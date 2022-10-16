@@ -1,14 +1,11 @@
 package battleField.servlets.agentServlets;
 
 import DTO.agent.WorkStatusDTO;
-import battleField.constants.Constants;
+import parameters.ConstantParams;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
-import com.google.gson.Gson;
-import engine.entity.Agent;
 import engine.entity.Allies;
 import engine.entity.EntityEnum;
-import engine.entity.SimpleAgent;
 import engine.users.AgentUserManager;
 import engine.users.UserManager;
 import jakarta.servlet.ServletException;
@@ -20,7 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static battleField.constants.Constants.*;
+import static parameters.ConstantParams.*;
 
 @WebServlet(name = "UpdateWorkStatusServlet", urlPatterns = {"/agent/work-status"})
 public class UpdateWorkStatusServlet extends HttpServlet {
@@ -47,9 +44,9 @@ public class UpdateWorkStatusServlet extends HttpServlet {
         int candidatesProduced = ServletUtils.getIntParameter(req, CANDIDATES_PRODUCED);
         int missionsLeft = ServletUtils.getIntParameter(req, MISSIONS_LEFT);
         int missionsDoneByAgent = ServletUtils.getIntParameter(req, MISSIONS_DONE_BY_AGENT);
-        if (candidatesProduced == Constants.INT_PARAMETER_ERROR ||
-                missionsLeft == Constants.INT_PARAMETER_ERROR ||
-                missionsDoneByAgent == Constants.INT_PARAMETER_ERROR) {
+        if (candidatesProduced == ConstantParams.INT_PARAMETER_ERROR ||
+                missionsLeft == ConstantParams.INT_PARAMETER_ERROR ||
+                missionsDoneByAgent == ConstantParams.INT_PARAMETER_ERROR) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.println("Wrong parameter type inserted");
             return;

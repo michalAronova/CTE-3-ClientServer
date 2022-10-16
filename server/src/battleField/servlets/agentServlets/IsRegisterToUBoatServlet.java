@@ -1,7 +1,6 @@
 package battleField.servlets.agentServlets;
 
 import DTO.contest.Contest;
-import battleField.constants.Constants;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
 import com.google.gson.Gson;
@@ -18,8 +17,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import static battleField.constants.Constants.*;
 
 @WebServlet(name = "IsRegisterToUBoatServlet", urlPatterns = {"/agent/check-uboat-registered"})
 public class IsRegisterToUBoatServlet extends HttpServlet {

@@ -26,6 +26,18 @@ public class Candidate {
         return candidates;
     }
 
+    public static List<Candidate> getListFromMissionResult(MissionResult missionResult, boolean isForAllyDisplay) {
+        List<Candidate> candidates = new LinkedList<>();
+        for(Pair<String,CodeObj> candidate: missionResult.getCandidates()){
+            //if for ally display, column should show agent name. otherwise:
+            //1. It's for uboat display meaning should show ally name in column
+            //2. It's for agent display, and the ally column will be hidden.
+            String entityName = isForAllyDisplay ? missionResult.getAgentName() : missionResult.getAllyName();
+            candidates.add(new Candidate(entityName, candidate.getKey(), candidate.getValue()));
+        }
+        return candidates;
+    }
+
     public String getAllyName() {
         return allyName;
     }

@@ -10,7 +10,7 @@ import engine.users.UsernameManager;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 
-import static battleField.constants.Constants.INT_PARAMETER_ERROR;
+import static parameters.ConstantParams.INT_PARAMETER_ERROR;
 
 public class ServletUtils {
 

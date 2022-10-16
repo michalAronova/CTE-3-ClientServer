@@ -68,6 +68,14 @@ public class Allies implements Entity {
         return new Team(username, agentName2data.size() + waitingAgents.size(), missionSize);
     }
 
+    public int getMissionSize() {
+        return missionSize;
+    }
+
+    public void setMissionSize(int missionSize) {
+        this.missionSize = missionSize;
+    }
+
     public synchronized void setUBoat(UBoat uBoat){
         this.uBoat = uBoat;
         uBoat.addParticipant(this);

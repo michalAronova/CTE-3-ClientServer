@@ -17,5 +17,6 @@
     <orderEntry type="module" module-name="DTO" />
     <orderEntry type="module" module-name="enigmaMachine" />
     <orderEntry type="module" module-name="clientUtils" />
+    <orderEntry type="module" module-name="constants" />
   </component>
 </module>

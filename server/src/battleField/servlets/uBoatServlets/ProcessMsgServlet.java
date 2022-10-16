@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static battleField.constants.Constants.MSG_TO_PROCESS;
+import static parameters.ConstantParams.MSG_TO_PROCESS;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 
 @WebServlet(name = "ProcessMsgServlet", urlPatterns = {"/uboat/process"})

@@ -88,7 +88,7 @@ public class UBoatMainController implements MainAppController{
     public void onReadyClicked(ActionEvent event) {
         //dispatch to server...
 
-        //below switched to the contest tab
+        //below switches to the contest tab
         competitionTabPane.getSelectionModel().select(contestTab);
     }
 

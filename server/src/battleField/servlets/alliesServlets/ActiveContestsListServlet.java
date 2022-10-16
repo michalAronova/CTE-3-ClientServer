@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet(name = "ActiveContestsListServlet", urlPatterns = {"/allies/active-Contests"})
+@WebServlet(name = "ActiveContestsListServlet", urlPatterns = {"/allies/active-contests"})
 public class ActiveContestsListServlet extends HttpServlet{
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

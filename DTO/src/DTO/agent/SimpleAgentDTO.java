@@ -24,6 +24,10 @@ public class SimpleAgentDTO {
         this.missionPull = new SimpleIntegerProperty(dto.getMissionPull());
     }
 
+    public void resetWorkStatus(){
+        workStatus.reset();
+    }
+
     public String getName() {
         return name.get();
     }

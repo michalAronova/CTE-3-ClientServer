@@ -1,15 +1,13 @@
 package battleField.servlets.agentServlets;
 
 import DTO.agent.SimpleAgentDTO;
-import battleField.constants.Constants;
+import parameters.ConstantParams;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
-import engine.entity.Agent;
 import engine.entity.Allies;
 import engine.entity.EntityEnum;
 import engine.entity.SimpleAgent;
 import engine.users.AgentUserManager;
-import engine.users.UserManager;
 import engine.users.UsernameManager;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-import static battleField.constants.Constants.*;
+import static parameters.ConstantParams.*;
 
 @WebServlet(name = "AgentLoginServlet", urlPatterns = {"/signup/agent/login"})
 public class AgentLoginServlet extends HttpServlet {
@@ -66,8 +64,8 @@ public class AgentLoginServlet extends HttpServlet {
                         //adding agent to agents manager
                         agentUserManager.addUser(usernameFromParameter, new SimpleAgent(alliesUsername, agentDTO));
 
-                        request.getSession(true).setAttribute(Constants.USERNAME, usernameFromParameter);
-                        request.getSession().setAttribute(Constants.ENTITY, EntityEnum.AGENT);
+                        request.getSession(true).setAttribute(ConstantParams.USERNAME, usernameFromParameter);
+                        request.getSession().setAttribute(ConstantParams.ENTITY, EntityEnum.AGENT);
 
                         response.setStatus(HttpServletResponse.SC_OK);
 

@@ -1,16 +1,13 @@
 package battleField.servlets.uBoatServlets;
 
 import DTO.missionResult.MissionResult;
-import battleField.constants.Constants;
-import battleField.servlets.alliesServlets.AlliesCandidatesServlet;
+import parameters.ConstantParams;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
 import com.google.gson.Gson;
-import engine.entity.Allies;
 import engine.entity.EntityEnum;
 import engine.entity.UBoat;
 import engine.users.UBoatUserManager;
-import engine.users.UserManager;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,7 +18,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import static battleField.constants.Constants.CANDIDATES_VERSION;
+import static parameters.ConstantParams.CANDIDATES_VERSION;
 
 @WebServlet(name = "UBoatCandidatesServlet", urlPatterns = {"/uboat/candidates"})
 public class UBoatCandidatesServlet extends HttpServlet {
@@ -35,7 +32,7 @@ public class UBoatCandidatesServlet extends HttpServlet {
         }
         UBoat boat = (UBoat) uBoatUserManager.getEntityObject(username);
         int clientCandidatesVersion = ServletUtils.getIntParameter(request, CANDIDATES_VERSION);
-        if (clientCandidatesVersion == Constants.INT_PARAMETER_ERROR) {
+        if (clientCandidatesVersion == ConstantParams.INT_PARAMETER_ERROR) {
             return;
         }
 

@@ -1,7 +1,6 @@
 package battleField.utils;
 
-import battleField.constants.Constants;
-import com.google.gson.Gson;
+import parameters.ConstantParams;
 
 import engine.entity.EntityEnum;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,13 +10,13 @@ public class SessionUtils {
 
     public static String getUsername(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        Object sessionAttribute = session != null ? session.getAttribute(Constants.USERNAME) : null;
+        Object sessionAttribute = session != null ? session.getAttribute(ConstantParams.USERNAME) : null;
         return sessionAttribute != null ? sessionAttribute.toString() : null;
     }
 
     public static EntityEnum getEntity(HttpServletRequest request){
         HttpSession session = request.getSession(false);
-        Object sessionAttribute = session != null ? session.getAttribute(Constants.ENTITY) : null;
+        Object sessionAttribute = session != null ? session.getAttribute(ConstantParams.ENTITY) : null;
         return sessionAttribute != null ? EntityEnum.valueOf(sessionAttribute.toString()) : null;
     }
 

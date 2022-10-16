@@ -1,6 +1,5 @@
 package battleField.servlets.uBoatServlets;
 
-import engine.entity.Allies;
 import engine.entity.EntityEnum;
 import engine.entity.UBoat;
 import engine.users.UserManager;
@@ -9,19 +8,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import battleField.constants.Constants;
+import parameters.ConstantParams;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
-import engine.users.UserManager;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static battleField.constants.Constants.USERNAME;
-import java.io.IOException;
+import static parameters.ConstantParams.USERNAME;
+
 import java.io.PrintWriter;
 
 @WebServlet(name = "UBoatLoginServlet", urlPatterns = {"/signup/uboat/login"})
@@ -60,8 +54,8 @@ public class UBoatLoginServlet  extends HttpServlet {
                         //add the new user to the users list
                         //userManager.addUser(usernameFromParameter);
                         userManager.addUser(usernameFromParameter, new UBoat(usernameFromParameter));
-                        request.getSession(true).setAttribute(Constants.USERNAME, usernameFromParameter);
-                        request.getSession().setAttribute(Constants.ENTITY, EntityEnum.UBOAT);
+                        request.getSession(true).setAttribute(ConstantParams.USERNAME, usernameFromParameter);
+                        request.getSession().setAttribute(ConstantParams.ENTITY, EntityEnum.UBOAT);
                         response.setStatus(HttpServletResponse.SC_OK);
                         out.println(String.format("logged in as %s (%s)",
                                 usernameFromParameter, EntityEnum.UBOAT));

@@ -1,8 +1,10 @@
 package battleField.servlets.uBoatServlets;
 
+import DTO.contest.Contest;
 import battleField.utils.ServletUtils;
 import com.google.gson.Gson;
 import engine.entity.Entity;
+import engine.entity.UBoat;
 import engine.users.UserManager;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,12 +27,15 @@ public class UBoatListServlet extends HttpServlet {
             Gson gson = new Gson();
             UserManager userManager = ServletUtils.getUBoatUserManager(getServletContext());
             Map<String, Entity> usersList = userManager.getUsers();
-            String json = gson.toJson(usersList);
+
+            List<Contest> contests = new LinkedList<>();
+            for (Entity boat: usersList.values()) {
+                contests.add(((UBoat)boat).getAsDTO());
+            }
+
+            String json = gson.toJson(contests);
             out.println(json);
             out.flush();
-
-            //debug below
-            //out.println(usersList.toString());
         }
     }
 }

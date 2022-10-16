@@ -1,6 +1,6 @@
 package battleField.servlets.alliesServlets;
 
-import battleField.constants.Constants;
+import parameters.ConstantParams;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
 import engine.entity.Allies;
@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static battleField.constants.Constants.USERNAME;
+import static parameters.ConstantParams.USERNAME;
 
     @WebServlet(name = "AlliesLoginServlet", urlPatterns = {"/signup/allies/login"})
 public class AlliesLoginServlet extends HttpServlet {
@@ -52,8 +52,8 @@ public class AlliesLoginServlet extends HttpServlet {
                         //add the new user to the users list
                         //userManager.addUser(usernameFromParameter);
                         userManager.addUser(usernameFromParameter, new Allies(usernameFromParameter));
-                        request.getSession(true).setAttribute(Constants.USERNAME, usernameFromParameter);
-                        request.getSession().setAttribute(Constants.ENTITY, EntityEnum.ALLIES);
+                        request.getSession(true).setAttribute(ConstantParams.USERNAME, usernameFromParameter);
+                        request.getSession().setAttribute(ConstantParams.ENTITY, EntityEnum.ALLIES);
 
                         response.setStatus(HttpServletResponse.SC_OK);
                         out.println(String.format("logged in as %s (%s)",

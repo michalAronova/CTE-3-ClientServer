@@ -28,9 +28,6 @@ public class AlliesListServlet extends HttpServlet {
             String json = gson.toJson(usersList.keySet());
             out.println(json);
             out.flush();
-
-            //debug below
-            //out.println(usersList.toString());
         }
     }
 }

@@ -1,13 +1,9 @@
 package battleField.servlets.uBoatServlets;
 
-import battleField.constants.Constants;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
-import engine.entity.Allies;
-import engine.entity.EntityEnum;
 import engine.entity.UBoat;
 import engine.users.UBoatUserManager;
-import engine.users.UserManager;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(name = "UBoatReadyServlet", urlPatterns = {"/uboat/uBoat-ready"})
+@WebServlet(name = "UBoatReadyServlet", urlPatterns = {"/uboat/ready"})
 public class UBoatReadyServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

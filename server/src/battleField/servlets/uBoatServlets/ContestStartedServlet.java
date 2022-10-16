@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-@WebServlet(name = "ContestStartedServlet", urlPatterns = {"/uBoat/ContestStartedServlet"})
+@WebServlet(name = "ContestStartedServlet", urlPatterns = {"/uboat/contest/start"})
 public class ContestStartedServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

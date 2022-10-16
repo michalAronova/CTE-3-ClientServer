@@ -1,6 +1,7 @@
 package engine.entity;
 
 import DTO.codeObj.CodeObj;
+import DTO.contest.Contest;
 import DTO.missionResult.MissionResult;
 import DTO.team.Team;
 import engine.Engine;
@@ -56,6 +57,11 @@ public class UBoat implements Entity{
     @Override
     public String getUsername() {
         return username;
+    }
+
+    public Contest getAsDTO(){
+        return new Contest(getBattleFieldName(), username, isCompetitionOn().get(),
+                engine.getDifficulty().toString(), engine.getAlliesRequired(), participants.size());
     }
 
     @Override

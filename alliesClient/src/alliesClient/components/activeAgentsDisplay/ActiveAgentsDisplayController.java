@@ -17,13 +17,13 @@ import java.util.List;
 public class ActiveAgentsDisplayController {
     @FXML private Label encryptionLabel;
     private final StringProperty encryption;
-    @FXML private TableView<ActiveAgentDTO> activeAgentsTableView;
-    @FXML private TableColumn<ActiveAgentDTO, String> agentNameColumn;
-    @FXML private TableColumn<ActiveAgentDTO, String> totalMissionsLabel;
-    @FXML private TableColumn<ActiveAgentDTO, String> awaitingMissionsLabel;
-    @FXML private TableColumn<ActiveAgentDTO, String> totalCandidates;
+    @FXML private TableView<SimpleAgentDTO> activeAgentsTableView;
+    @FXML private TableColumn<SimpleAgentDTO, String> agentNameColumn;
+    @FXML private TableColumn<SimpleAgentDTO, String> totalMissionsLabel;
+    @FXML private TableColumn<SimpleAgentDTO, String> awaitingMissionsLabel;
+    @FXML private TableColumn<SimpleAgentDTO, String> totalCandidates;
 
-    private final ObservableList<ActiveAgentDTO> dataList = FXCollections.observableArrayList();
+    private final ObservableList<SimpleAgentDTO> dataList = FXCollections.observableArrayList();
 
     private AlliesMainController mainApplicationController;
 
@@ -37,11 +37,17 @@ public class ActiveAgentsDisplayController {
         agentNameColumn.setCellValueFactory(param ->
                 new SimpleStringProperty(param.getValue().getName()));
         totalMissionsLabel.setCellValueFactory(param ->
-                new SimpleStringProperty(String.valueOf(param.getValue().getTotalMissions())));
+                new SimpleStringProperty(String.valueOf(param.getValue()
+                        .getWorkStatus()
+                        .getTotalMissions())));
         awaitingMissionsLabel.setCellValueFactory(param ->
-                new SimpleStringProperty(String.valueOf(param.getValue().getPendingMissions())));
+                new SimpleStringProperty(String.valueOf(param.getValue()
+                        .getWorkStatus()
+                        .getMissionLeftInQueue())));
         totalCandidates.setCellValueFactory(param ->
-                new SimpleStringProperty(String.valueOf(param.getValue().getCandidatesProduced())));
+                new SimpleStringProperty(String.valueOf(param.getValue()
+                        .getWorkStatus()
+                        .getCandidatesProduced())));
 
         activeAgentsTableView.setItems(dataList);
     }
@@ -50,11 +56,11 @@ public class ActiveAgentsDisplayController {
         this.mainApplicationController = mainApplicationController;
     }
 
-    public void addSingleAgent(ActiveAgentDTO agent){
+    public void addSingleAgent(SimpleAgentDTO agent){
         dataList.add(agent);
     }
 
-    public void addMultipleAgents(List<ActiveAgentDTO> agents){
+    public void addMultipleAgents(List<SimpleAgentDTO> agents){
         dataList.addAll(agents);
     }
 

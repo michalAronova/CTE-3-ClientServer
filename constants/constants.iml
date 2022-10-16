@@ -7,10 +7,5 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="clientUtils" />
-    <orderEntry type="module" module-name="DTO" />
-    <orderEntry type="module" module-name="exceptions" />
-    <orderEntry type="library" name="okHttp" level="project" />
-    <orderEntry type="module" module-name="constants" />
   </component>
 </module>

@@ -3,7 +3,6 @@ package battleField.servlets.alliesServlets;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
 import engine.entity.Allies;
-import engine.entity.Entity;
 import engine.entity.UBoat;
 import engine.users.UserManager;
 import jakarta.servlet.ServletException;
@@ -14,12 +13,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
 
-import static battleField.constants.Constants.DESIRED_UBOAT;
-import static battleField.constants.Constants.USERNAME;
+import static parameters.ConstantParams.DESIRED_UBOAT;
 
-@WebServlet(name = "AlliesRegisterToUBoat", urlPatterns = {"/allies/registerToUBoat"})
+@WebServlet(name = "AlliesRegisterToUBoat", urlPatterns = {"/allies/register-to-uboat"})
 public class AlliesRegisterToUBoat extends HttpServlet {
 
     @Override
@@ -45,11 +42,11 @@ public class AlliesRegisterToUBoat extends HttpServlet {
                 if (uBoatUserManager.isUserExists(uBoatName)) {
                     UBoat uBoat = (UBoat) uBoatUserManager.getEntityObject(uBoatName);
                     if(uBoat.isFull()) {
-                        out.println("trying to register a full contest");
+                        out.println("can't register to a full contest");
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     }
                     if(uBoat.isCompetitionOn().getValue()){
-                        out.println("trying to register a running contest");
+                        out.println("can't register to a running contest");
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     } else {
                         uBoat.addParticipant(ally);

@@ -1,9 +1,9 @@
 package DTO.agent;
 
 public class WorkStatusDTO {
-    private final int candidatesProduced;
-    private final int missionDone;
-    private final int missionLeftInQueue;
+    private int candidatesProduced;
+    private int missionDone;
+    private int missionLeftInQueue;
 
     public WorkStatusDTO(){
         this.candidatesProduced = 0;
@@ -16,6 +16,12 @@ public class WorkStatusDTO {
         this.missionLeftInQueue = missionsLeft;
     }
 
+    public void reset(){
+        this.candidatesProduced = 0;
+        this.missionDone = 0;
+        this.missionLeftInQueue = 0;
+    }
+
     public int getMissionLeftInQueue() {
         return missionLeftInQueue;
     }
@@ -26,5 +32,9 @@ public class WorkStatusDTO {
 
     public int getMissionDone() {
         return missionDone;
+    }
+
+    public int getTotalMissions() {
+        return missionDone + missionLeftInQueue;
     }
 }
