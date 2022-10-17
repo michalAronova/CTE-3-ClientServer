@@ -44,10 +44,11 @@ public class ActiveContestsListServlet extends HttpServlet{
         UBoatUserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
 
         //create contestDTO for each
-        List<Contest> allContests =  generateContestListFromUBoats(uBoatUserManager.getReadyUBoats());
+        List<Contest> allContests = generateContestListFromUBoats(uBoatUserManager.getReadyUBoats());
         //pass json of list of contest DTOs
         String json = gson.toJson(allContests);
         resp.setStatus(HttpServletResponse.SC_OK);
+        System.out.println(json);
         out.println(json);
         out.flush();
     }

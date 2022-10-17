@@ -55,7 +55,7 @@ public class ContestDetailsController {
     public void update(Contest contest){
         battleName.set(contest.getBattleFieldName());
         uboatName.set(contest.getuBoatName());
-        isActive.set(contest.isIsActive());
+        isActive.set(contest.getActive());
         difficulty.set(contest.getDifficulty());
         inGame.set(contest.getTeamsInContest());
         required.set(contest.getTotalRequiredTeams());
