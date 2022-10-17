@@ -5,7 +5,9 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
-public class DMProgress {
+import java.io.Serializable;
+
+public class DMProgress implements Serializable {
     private final DoubleProperty total;
     private final DoubleProperty produced;
     private final DoubleProperty completed;

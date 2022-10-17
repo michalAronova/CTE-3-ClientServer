@@ -121,7 +121,7 @@
                                           </ScrollPane>
                                       </items>
                                     </SplitPane>
-                                    <Button fx:id="ReadyButton" mnemonicParsing="false" onAction="#onReadyClicked" text="Ready!" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                                    <Button fx:id="readyButton" mnemonicParsing="false" onAction="#onReadyClicked" text="Ready!" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                                        <font>
                                           <Font name="System Bold" size="16.0" />
                                        </font>

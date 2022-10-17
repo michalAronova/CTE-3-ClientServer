@@ -147,8 +147,4 @@ public class CodeConfigComponentController {
         rotorConfigComponentController.setComponent(rotorsRequired, totalRotorAmount, keys);
     }
 
-    public void changeTheme(Object cssPrefix) {
-        rotorConfigComponentController.changeTheme(cssPrefix);
-        plugsComponentController.changeTheme(cssPrefix);
-    }
 }

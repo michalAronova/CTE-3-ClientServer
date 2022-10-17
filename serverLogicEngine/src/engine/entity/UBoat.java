@@ -241,4 +241,10 @@ public class UBoat implements Entity{
         }
         return ret;
     }
+
+    public String encryptMsg(String msg){
+        input = msg;
+        output = engine.processMsg(msg);
+        return output;
+    }
 }

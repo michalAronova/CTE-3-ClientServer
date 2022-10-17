@@ -5,7 +5,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class ActiveAgentDTO {
+import java.io.Serializable;
+
+public class ActiveAgentDTO implements Serializable {
     private final StringProperty name;
     private final IntegerProperty totalMissions;
     private final IntegerProperty pendingMissions;

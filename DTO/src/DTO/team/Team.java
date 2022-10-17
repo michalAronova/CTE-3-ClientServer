@@ -1,6 +1,8 @@
 package DTO.team;
 
-public class Team {
+import java.io.Serializable;
+
+public class Team implements Serializable {
    private final String name;
    private final int agentAmount;
    private final int missionSize;

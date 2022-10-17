@@ -1,7 +1,9 @@
 package battleField.servlets.uBoatServlets;
 
+import DTO.MachineDetails;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
+import com.google.gson.Gson;
 import engine.entity.UBoat;
 import engine.users.UBoatUserManager;
 import exceptions.XMLException.InvalidXMLException;
@@ -49,19 +51,22 @@ public class LoadServlet extends HttpServlet {
         for (Part part : parts) {
             boatFromSession.getEngine().loadDataFromXML(part.getInputStream());
             try{
-                if(uBoatUserManager.isBattleFieldExist(boatFromSession.getBattleFieldName())){
+                if(!uBoatUserManager.addBattleFieldName(boatFromSession.getBattleFieldName())){
+                    //returns TRUE if the name didn't already exist
+                    //hence, if this returns FALSE - the name existed, and should handle! (ERROR)
                     boatFromSession.getEngine().unloadEngine();
                     throw new InvalidXMLException(INVALIDFILE, "Battle field name already exists in server!");
                 }
-                //TODO:
-                //also send (JSON?) of the following details:
-                //machine details -> fill the component
-                //dictionary words -> fillDictionaryTable(List<Word> words)
-                out.println("engine loaded");
+                resp.setContentType("application/json");
+                MachineDetails details = boatFromSession.getEngine().getDetails();
+                Gson gson = new Gson();
+                String detailsJson = gson.toJson(details);
+                out.println(detailsJson);
+                out.flush();
             }
             catch(InvalidXMLException e){
-                resp.sendError(SC_BAD_REQUEST, e.getMessage());
-                out.println(e.getMessage());
+                resp.sendError(SC_BAD_REQUEST);
+                out.print(e.getMessage());
             }
             finally{
                 out.close();

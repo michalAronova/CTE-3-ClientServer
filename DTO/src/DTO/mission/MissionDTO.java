@@ -5,11 +5,12 @@ import DTO.missionResult.MissionResult;
 import javafx.beans.property.BooleanProperty;
 import javafx.util.Pair;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.function.BiConsumer;
 
-public class MissionDTO {
+public class MissionDTO implements Serializable {
     private final String machineEncoded;
     private final List<Character> startPositions;
     private final double missionSize;

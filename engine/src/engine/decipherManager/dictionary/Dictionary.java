@@ -9,7 +9,6 @@ public class Dictionary {
     private Set<String> words;
     private List<String> excluded;
 
-
     public Dictionary(CTEDictionary cteDictionary){
         String cteWords = cteDictionary.getWords();
         String cteExcluded = cteDictionary.getExcludeChars();

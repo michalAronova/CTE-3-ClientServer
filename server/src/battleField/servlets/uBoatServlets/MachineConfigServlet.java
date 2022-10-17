@@ -16,9 +16,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Collection;
 
+import static engine.ServerEngine.getStringFromInputStream;
 import static exceptions.XMLException.XMLExceptionMsg.INVALIDFILE;
 import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
@@ -32,18 +34,27 @@ public class MachineConfigServlet extends HttpServlet {
         UBoatUserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
 
         response.setStatus(SC_OK);
-        response.setContentType("text/plain");
+        response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
         Gson gson = new Gson();
         Collection<Part> parts = request.getParts();
 
         for (Part part : parts) {
+            String partString = getStringFromInputStream(part.getInputStream());
+            System.out.println(partString);
             try{
-                CodeObj code = gson.fromJson(part.getInputStream().toString(), CodeObj.class);
+                CodeObj code = gson.fromJson(partString, CodeObj.class);
                 uBoatUserManager.getEntityObject(usernameFromSession).getEngine().setMachine(code);
-                System.out.println("woohoo, code configured!");
-                out.println("code configured");
+                CodeObj codeFromEngine = uBoatUserManager.getEntityObject(usernameFromSession).getEngine().getInitialCode();
+
+                //parse code
+                String json = gson.toJson(codeFromEngine);
+
+                //put in body
+                response.setStatus(SC_OK);
+                out.println(json);
+                out.flush();
             }
             catch(JsonSyntaxException e){
                 response.sendError(SC_BAD_REQUEST);
@@ -55,4 +66,5 @@ public class MachineConfigServlet extends HttpServlet {
             }
         }
     }
+
 }

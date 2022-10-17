@@ -19,7 +19,6 @@
                </VBox.margin>
             </Label>
             <fx:include fx:id="chooseNameComponent" source="../../../clientUtils/clientUtils/chooseNameComponent/chooseNameComponent.fxml" />
-
          </children>
       </VBox>
   </content>

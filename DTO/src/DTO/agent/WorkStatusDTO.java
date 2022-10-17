@@ -1,6 +1,8 @@
 package DTO.agent;
 
-public class WorkStatusDTO {
+import java.io.Serializable;
+
+public class WorkStatusDTO implements Serializable {
     private int candidatesProduced;
     private int missionDone;
     private int missionLeftInQueue;

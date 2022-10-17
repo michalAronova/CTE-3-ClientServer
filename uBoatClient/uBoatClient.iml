@@ -14,5 +14,6 @@
     <orderEntry type="module" module-name="DTO" />
     <orderEntry type="module" module-name="enigmaMachine" />
     <orderEntry type="module" module-name="constants" />
+    <orderEntry type="library" name="gson-2.1" level="project" />
   </component>
 </module>

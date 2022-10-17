@@ -1,9 +1,12 @@
 package battleField.servlets.uBoatServlets;
 
+import DTO.processResponse.ProcessResponse;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
+import com.google.gson.Gson;
 import engine.entity.UBoat;
 import engine.users.UBoatUserManager;
+import exceptions.InputException.InputException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -40,10 +43,22 @@ public class ProcessMsgServlet extends HttpServlet {
                 out.close();
                 return;
             }
-            String output = uBoat.getEngine().processMsg(message);
-            out.println(output);
-            response.setStatus(SC_OK);
-            out.close();
+            try {
+                String output = uBoat.encryptMsg(message);
+                Gson gson = new Gson();
+                String processResponse = gson
+                        .toJson(new ProcessResponse(output, uBoat.getEngine().getUpdatedCode()));
+
+                out.println(processResponse);
+                response.setStatus(SC_OK);
+            }
+            catch(InputException e){
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.println(e.getMessage());
+            }
+            finally {
+                out.close();
+            }
         }
     }
 }
