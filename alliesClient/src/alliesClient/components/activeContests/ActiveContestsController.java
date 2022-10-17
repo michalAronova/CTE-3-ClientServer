@@ -96,5 +96,10 @@ public class ActiveContestsController {
     public StringProperty errorMessageProperty() {
         return errorMessage;
     }
+
+    public void replaceAll(List<Contest> contests){
+        dataList.clear();
+        dataList.addAll(contests);
+    }
 }
 
