@@ -41,8 +41,13 @@ public class CandidatesComponentController {
         allyColumn.setVisible(false);
     }
 
+    public void changeColumnToAgent(){
+        allyColumn.setText("Agent");
+    }
+
     public void addMissionResult(MissionResult missionResult, boolean isForAllyDisplay){
         List<Candidate> candidates = Candidate.getListFromMissionResult(missionResult, isForAllyDisplay);
+        dataList.addAll(candidates);
     }
     public void addMultiple(List<MissionResult> missionResults, boolean isForAllyDisplay){
         missionResults.forEach((result) -> addMissionResult(result, isForAllyDisplay));

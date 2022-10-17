@@ -70,6 +70,8 @@ public class AlliesMainController implements MainAppController {
             activeContestsController.setMainApplicationController(this);
             agentDisplayController.setMainApplicationController(this);
             candidatesComponentController.setMainApplicationController(this);
+            candidatesComponentController.changeColumnToAgent();
+            
             activeTeamsController.setMainApplicationController(this);
             contestDetailsController.setMainApplicationController(this);
             activeAgentsDisplayController.setMainApplicationController(this);
