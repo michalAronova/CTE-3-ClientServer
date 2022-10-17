@@ -2,7 +2,9 @@ package DTO.contest;
 
 import javafx.beans.property.*;
 
-public class Contest {
+import java.io.Serializable;
+
+public class Contest implements Serializable {
     private StringProperty battleFieldName;
     private StringProperty uBoatName;
     private BooleanProperty isActive;

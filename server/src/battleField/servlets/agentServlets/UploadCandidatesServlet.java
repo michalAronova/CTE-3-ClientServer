@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 
+import static engine.ServerEngine.getStringFromInputStream;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 
 @WebServlet(name = "UploadCandidatesServlet", urlPatterns = {"/agent/upload/candidates"})
@@ -42,7 +43,7 @@ public class UploadCandidatesServlet extends HttpServlet {
 
         for (Part part : parts) {
             Gson gson = new Gson();
-            String json = part.getInputStream().toString();
+            String json = getStringFromInputStream(part.getInputStream());
             MissionResult result = gson.fromJson(json, MissionResult.class);
             ally.addResult(result);
         }

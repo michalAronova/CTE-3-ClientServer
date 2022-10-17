@@ -1,6 +1,6 @@
 package uBoatClient.components.machineDetails;
 
-import DTO.techSpecs.TechSpecs;
+import DTO.MachineDetails;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
@@ -20,47 +20,19 @@ public class MachineDetailsController {
     @FXML private Label machineDetailsTitleLabel;
     private UBoatMainController mainApplicationController;
 
-    private final String myStyleSheet = "machineDetails";
-
     @FXML
     public void initialize(){
-
+        messagesProcessedData.setText("");
     }
 
     public void setMainApplicationController(UBoatMainController mainApplicationController) {
         this.mainApplicationController = mainApplicationController;
     }
 
-    public void fileLoaded(TechSpecs machineDetails){
+    public void fileLoaded(MachineDetails machineDetails){
         rotorInUseData.setText(String.format("%d",machineDetails.getRotorsInUse()));
         totalRotorsData.setText(String.format("%d",machineDetails.getTotalRotors()));
         totalReflectorsData.setText(String.format("%d",machineDetails.getReflectorsCount()));
-        messagesProcessedData.setText(String.format("%d",machineDetails.getProcessedMsg()));
     }
 
-    private ParallelTransition createAnimationForTitle(){
-        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(2000), machineDetailsTitleLabel);
-        scaleTransition.setToX(2f);
-        scaleTransition.setToY(2f);
-        scaleTransition.setCycleCount(2);
-        scaleTransition.setAutoReverse(true);
-
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(2000), machineDetailsTitleLabel);
-        translateTransition.setByX(100f);
-        translateTransition.setCycleCount(2);
-        translateTransition.setAutoReverse(true);
-        ParallelTransition pt = new ParallelTransition(scaleTransition, translateTransition);
-        pt.setAutoReverse(true);
-
-        return pt;
-    }
-
-    public void changeTheme(Object cssPrefix) {
-        machineDetails.getStylesheets().clear();
-        if(cssPrefix != null){
-            String css = cssPrefix + myStyleSheet;
-            machineDetails.getStylesheets()
-                    .add(getClass().getClassLoader().getResource(String.format("%s.css", css)).toExternalForm());
-        }
-    }
 }

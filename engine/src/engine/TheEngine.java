@@ -1,5 +1,6 @@
 package engine;
 
+import DTO.MachineDetails;
 import DTO.codeHistory.CodeHistory;
 import DTO.codeHistory.Translation;
 import DTO.codeObj.CodeObj;
@@ -159,6 +160,11 @@ public class TheEngine implements Engine {
             throw new ObjectInputException("Invalid input: not a recognized character",
                                                     stock.getKeyBoard().getAsObjList(), new ArrayList<>(invalid));
         }
+        if(!dictionary.areAllWordsInDictionary(msg)){
+            throw new InputException("You may only translate words from the dictionary!");
+        }
+        msg = dictionary.removeExcludedChars(msg);
+
         long startTime = System.nanoTime();
         for(Character c : msg.toCharArray()){
             sb.append(machine.process(c));
@@ -260,6 +266,11 @@ public class TheEngine implements Engine {
     public TechSpecs showTechSpecs() {
         return new TechSpecs(stock.getRotorMap().size(), stock.getRotorsCount(),
                 stock.getReflectorMap().size(), processedMsgsCnt, initialCode, getUpdatedCode());
+    }
+
+    public MachineDetails getDetails(){
+        return new MachineDetails(stock.getRotorMap().size(), stock.getRotorsCount(),
+                stock.getReflectorMap().size(), dictionary.getWords(), getKeyBoardList());
     }
 
     @Override

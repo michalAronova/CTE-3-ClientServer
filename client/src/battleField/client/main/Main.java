@@ -295,34 +295,4 @@ public class Main {
             }
         });
     }
-
-
-
-//    public static void puller(DecipherManager DM){
-//        List<Runnable> missions = new LinkedList<>();
-//        System.out.println("Using thread: "+ Thread.currentThread().getName());
-////        try {
-////            System.out.println(Thread.currentThread().getName()+" going to sleep");
-////            Thread.sleep(3000);
-////        } catch (InterruptedException e) {
-////            System.out.println(Thread.currentThread().getName()+"was interrupted during sleep");
-////        }
-//
-//        while (!Thread.currentThread().isInterrupted()){
-//            int missionPullAmount = 5;
-//            synchronized (DMLock){
-//                while(!DM.getWorkQueue().isEmpty() && missionPullAmount > 0){
-//                    --missionPullAmount;
-//                    try {
-//                        missions.add(DM.getWorkQueue().take());
-//                    } catch (InterruptedException e) {
-//                        System.out.println("interrupted...");
-//                    }
-//                }
-//            }
-//
-//            System.out.println("pulled "+ missions.size()+" missions!");
-//            missions.clear();
-//        }
-//    }
 }

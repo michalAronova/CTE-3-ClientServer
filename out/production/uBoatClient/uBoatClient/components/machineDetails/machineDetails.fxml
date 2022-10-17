@@ -46,7 +46,7 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
       </Label>
-      <Label styleClass="itemLabel" text="Messages processed:" GridPane.rowIndex="4">
+      <Label styleClass="itemLabel" text="" GridPane.rowIndex="4">
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>

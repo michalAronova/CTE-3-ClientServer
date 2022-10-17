@@ -5,7 +5,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class SimpleAgentDTO {
+import java.io.Serializable;
+
+public class SimpleAgentDTO implements Serializable {
     private final StringProperty name;
     private final IntegerProperty threadCount;
     private final IntegerProperty missionPull;

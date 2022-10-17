@@ -38,8 +38,10 @@ public class UBoatUserManager extends UserManager{
         }
     }
 
-    public void addBattleFieldName(String battleFieldName){
-        battleFieldNames.add(battleFieldName.toUpperCase());
+    public synchronized boolean addBattleFieldName(String battleFieldName){
+        //returns TRUE if the name didn't already exist
+        //hence, if this returns false - the name existed, and should handle! (ERROR)
+        return battleFieldNames.add(battleFieldName.toUpperCase());
     }
 
     public synchronized boolean isBattleFieldExist(String battleFieldName) {

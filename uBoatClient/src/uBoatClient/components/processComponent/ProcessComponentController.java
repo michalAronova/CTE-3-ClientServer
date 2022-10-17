@@ -37,7 +37,7 @@ public class ProcessComponentController {
     public ToggleButton getSingleToggle() { return singleToggle; }
     @FXML public void initialize(){
         errorLabel.setOpacity(0);
-        errorLabel.getStyleClass().add("error-message");
+        errorLabel.setStyle("-fx-text-fill: red");
         errorTransition = createErrorTransition();
         resultTextField.setEditable(false);
         resultTextField.setOnMouseClicked(e -> userTextField.requestFocus());

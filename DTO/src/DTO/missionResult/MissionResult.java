@@ -11,7 +11,6 @@ public class MissionResult implements Serializable {
     private final String allyName;
     private final String agentName;
 
-
     public MissionResult(List<Pair<String, CodeObj>> candidates, String agentName, String allyName) {
         this.candidates = candidates;
         this.agentName = agentName;

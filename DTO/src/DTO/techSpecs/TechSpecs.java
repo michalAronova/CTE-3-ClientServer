@@ -2,9 +2,10 @@ package DTO.techSpecs;
 
 import DTO.codeObj.CodeObj;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class TechSpecs {
+public class TechSpecs implements Serializable {
 
     private final int totalRotors;
     private final int rotorsInUse;
