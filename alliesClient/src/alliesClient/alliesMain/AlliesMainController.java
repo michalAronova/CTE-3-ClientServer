@@ -1,8 +1,10 @@
 package alliesClient.alliesMain;
 
 import DTO.contest.Contest;
+import DTO.team.Team;
 import alliesClient.alliesApp.AlliesAppController;
 import alliesClient.components.missionSizeChooser.MissionSizeChooserController;
+import alliesClient.components.rivalAlliesRefresher.RivalAlliesRefresher;
 import clientUtils.MainAppController;
 import clientUtils.activeTeams.ActiveTeamsComponentController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
@@ -24,9 +26,12 @@ import util.Constants;
 import util.http.HttpClientUtil;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Timer;
 
 import static parameters.ConstantParams.DESIRED_UBOAT;
 import static util.Constants.GSON_INSTANCE;
+import static util.Constants.REFRESH_RATE;
 
 public class AlliesMainController implements MainAppController {
     @FXML private GridPane contestOnGrid;
@@ -49,6 +54,8 @@ public class AlliesMainController implements MainAppController {
 
     private Contest chosenContest;
     private BooleanProperty isCompetitionOn;
+    private RivalAlliesRefresher refresher;
+    private Timer timer;
 
     public AlliesMainController(){
         isCompetitionOn = new SimpleBooleanProperty(false);
@@ -83,13 +90,18 @@ public class AlliesMainController implements MainAppController {
 
     public void chooseContest(String boatName) {
         registerToUBoatRequest(boatName);
+        //startAlliesRivalsRefresher();
         if(chosenContest != null){
             competitionTabPane.getSelectionModel().select(contestTab);
+            //startAlliesRivalsRefresher();
             /*//TODO:update contest in UI maybe move to registerToUboat
             Platform.runLater(() -> {
                         codeObjDisplayController.onCodeChosen(currentCode);
                     });
              */
+        }
+        else{
+            System.out.println("not registered yet");
         }
         //dispatch request to server...
         //on success, switch to the contest tab and fill the data there
@@ -139,5 +151,16 @@ public class AlliesMainController implements MainAppController {
         //and notify that this ally is ready for battle!
         //start the requests for information to fill the various tables in the contest tab
     }
-
+    public void startAlliesRivalsRefresher() {
+        System.out.println("here");
+        refresher = new RivalAlliesRefresher(this::replaceAll, chosenContest.getActive() );
+        timer = new Timer();
+        timer.schedule(refresher, REFRESH_RATE, REFRESH_RATE);
+    }
+    public void replaceAll(List<Team> teams){
+        activeTeamsController.getDataList().clear();
+        activeTeamsController.getDataList().addAll(teams);
+        //contestDetailsController.setInGameLabel(String.format("%d / %d", teams.size(), chosenContest.getTotalRequiredTeams()));
+        contestDetailsController.setInGameAndRequired(teams.size(), chosenContest.getTotalRequiredTeams());
+    }
 }

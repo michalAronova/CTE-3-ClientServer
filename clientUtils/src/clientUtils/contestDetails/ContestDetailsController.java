@@ -64,5 +64,17 @@ public class ContestDetailsController {
     public void setMainApplicationController(MainAppController mainApplicationController){
         this.mainApplicationController = mainApplicationController;
     }
+
+    public Label getInGameLabel() {
+        return inGameLabel;
+    }
+
+    public void setInGameLabel(String data) {
+        inGameLabel.setText(data);
+    }
+    public void setInGameAndRequired(int inGame, int required){
+        this.inGame.set(inGame);
+        this.required.set(required);
+    }
 }
 
