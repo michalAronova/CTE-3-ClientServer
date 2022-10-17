@@ -48,4 +48,8 @@ public class ActiveTeamsComponentController {
         dataList.addAll(teams);
     }
 
+    public void replaceTeams(List<Team> teams) {
+        dataList.clear();
+        dataList.addAll(teams);
+    }
 }

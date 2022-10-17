@@ -43,9 +43,9 @@ public class UBoatCandidatesServlet extends HttpServlet {
             results = boat.getResults(clientCandidatesVersion);
         }
 
-        ResultAndVersion rav = new ResultAndVersion(results, serverCandidatesVersion);
+        //ResultAndVersion rav = new ResultAndVersion(results, serverCandidatesVersion);
         Gson gson = new Gson();
-        String jsonResponse = gson.toJson(rav);
+        String jsonResponse = gson.toJson(results);
         logServerMessage("Server Candidate version: " + serverCandidatesVersion +
                 ", User '" + username + " ("+ EntityEnum.UBOAT +
                 ")' Client Candidate version: " + clientCandidatesVersion);

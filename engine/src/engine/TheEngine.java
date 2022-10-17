@@ -270,7 +270,8 @@ public class TheEngine implements Engine {
 
     public MachineDetails getDetails(){
         return new MachineDetails(stock.getRotorMap().size(), stock.getRotorsCount(),
-                stock.getReflectorMap().size(), dictionary.getWords(), getKeyBoardList());
+                stock.getReflectorMap().size(), dictionary.getWords(), getKeyBoardList(),
+                battleFieldName, alliesRequired, getDifficulty().name());
     }
 
     @Override

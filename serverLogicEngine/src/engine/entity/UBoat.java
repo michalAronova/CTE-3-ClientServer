@@ -108,7 +108,11 @@ public class UBoat implements Entity{
 
     public synchronized List<Team> getDTOParticipants(){
         List<Team> teams = new LinkedList<>();
-        participants.forEach((username, ally) -> teams.add(ally.asTeamDTO()));
+        participants.forEach((username, ally) -> {
+            if(name2ready.get(username)){ //only return READY allies to display...
+                teams.add(ally.asTeamDTO());
+            }
+        });
         return teams;
     }
     public List<MissionResult> getCandidates() {
@@ -179,20 +183,18 @@ public class UBoat implements Entity{
     private void start() {
         for (Allies ally: participants.values()) {
             setAlliesParams(ally);
-            //TODO: initiate work in the allies
-//            new Thread(() -> ally.start(input, (result) -> {
-//                try {
-//                    //resultQueue.put(result);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }), "Allies "+ally.getUsername()+" starting thread");
+
+            new Thread(() -> ally.start(input, (result) -> {
+                synchronized (candidatesList){
+                    candidatesList.add(result);
+                }
+            }), "Allies "+ally.getUsername()+" starting thread");
         }
     }
 
     public void updateCompetitionStart() {
         setCompetitionOn(true);
-        //participants.forEach((allyName, ally) -> ally.setIsCompetitionOn(true));
+        //participants.forEach((allyName, ally) -> ally.setCompetitionOn(true));
     }
 
     public void addResult(MissionResult result) {
