@@ -5,12 +5,12 @@ import javafx.beans.property.*;
 import java.io.Serializable;
 
 public class Contest implements Serializable {
-    private String battleFieldName;
-    private String uBoatName;
-    private Boolean isActive;
-    private String difficulty;
-    private Integer totalRequiredTeams;
-    private Integer teamsInContest;
+    private final String battleFieldName;
+    private final String uBoatName;
+    private final Boolean isActive;
+    private final String difficulty;
+    private final Integer totalRequiredTeams;
+    private final Integer teamsInContest;
 
     public Contest(String battleFieldName, String uBoatName, Boolean isActive,
                    String difficulty, Integer totalRequiredTeams, Integer teamsInContest) {
