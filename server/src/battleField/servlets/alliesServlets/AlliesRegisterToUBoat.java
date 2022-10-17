@@ -28,7 +28,6 @@ public class AlliesRegisterToUBoat extends HttpServlet {
 
         PrintWriter out = response.getWriter();
         UserManager alliesUserManager = ServletUtils.getAlliesUserManager(getServletContext());
-        out.println(SessionUtils.getEntity(request));
 
         //get the ally entity from session
         String usernameFromSession = SessionUtils.getUsername(request);
@@ -51,14 +50,13 @@ public class AlliesRegisterToUBoat extends HttpServlet {
                     if(uBoat.isCompetitionOn().getValue()){
                         out.println("can't register to a running contest");
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    } else {
+                    }
+                    else {
                         uBoat.addParticipant(ally);
                         ally.setUBoat(uBoat);
                         Gson gson = new Gson();
-                        out.println(ally.getUsername() + " registered to " + uBoat.getUsername());
-                        Contest contest = new Contest(uBoat.getBattleFieldName(), uBoat.getUsername(),
-                                                uBoat.isCompetitionOn().getValue(), uBoat.getEngine().getDifficulty().name(),
-                                                uBoat.getAlliesRequired(), uBoat.getParticipants().size());
+                        Contest contest = uBoat.getAsDTO();
+
                         String json = gson.toJson(contest);
                         //put in body
                         response.setStatus(SC_OK);

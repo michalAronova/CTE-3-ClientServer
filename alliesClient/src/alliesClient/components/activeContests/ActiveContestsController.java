@@ -3,6 +3,7 @@ package alliesClient.components.activeContests;
 import DTO.contest.Contest;
 import alliesClient.alliesMain.AlliesMainController;
 import clientUtils.MainAppController;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -52,7 +53,7 @@ public class ActiveContestsController implements Closeable {
         uBoatColumn.setCellValueFactory(param ->
                 new SimpleStringProperty(String.valueOf(param.getValue().getuBoatName())));
         statusColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(param.getValue().isIsActive() ? active : awaiting));
+                new SimpleStringProperty(param.getValue().getActive() ? active : awaiting));
         levelColumn.setCellValueFactory(param ->
                 new SimpleStringProperty(param.getValue().getDifficulty()));
         inGameColumn.setCellValueFactory(param ->
@@ -67,11 +68,11 @@ public class ActiveContestsController implements Closeable {
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
                     Contest rowData = row.getItem();
-                    if(!rowData.isIsActive()) {
-                        chosenContest.set(rowData.getBattleFieldName());
+                    if(!rowData.getActive()) {
+                        chosenContest.set(rowData.getuBoatName());
                         errorMessage.set("");
                     }
-                    else if(rowData.getTotalRequiredTeams() == rowData.getTeamsInContest()){
+                    else if(rowData.getTotalRequiredTeams().equals(rowData.getTeamsInContest())){
                         errorMessage.set("Error: this contest is full");
                     }
                     else{

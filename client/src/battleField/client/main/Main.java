@@ -1,6 +1,7 @@
 package battleField.client.main;
 
 import DTO.codeObj.CodeObj;
+import DTO.contest.Contest;
 import DTO.mission.MissionDTO;
 import DTO.team.Team;
 import com.google.gson.reflect.TypeToken;
@@ -12,6 +13,7 @@ import util.http.HttpClientUtil;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import static util.Constants.GSON_INSTANCE;
@@ -22,30 +24,43 @@ public class Main {
     private static final Object DMLock = new Object();
 
     public static void main(String[] args) {
-        registerUBoat();
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        registerUBoat();
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        registerAllies();
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        registerAllies();
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        Contest contest = new Contest("pearl", "name", true, "hard", 3, 2);
+        Contest contest2 = new Contest("pearl", "name", true, "hard", 3, 2);
+        List<Contest> allContests = new ArrayList<>();
+        allContests.add(contest);
+        allContests.add(contest2);
+        String json = GSON_INSTANCE.toJson(allContests);
+        System.out.println("JSON-----------------");
+        System.out.println(json);
+        Type listType = new TypeToken<List<Contest>>() { }.getType();
+        List<Contest> contests = GSON_INSTANCE.fromJson(json, listType);
+        System.out.println("JAVA-----------------");
+        System.out.println(contests);
+
+//        registerUBoat();
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//        registerUBoat();
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//        registerAllies();
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//        registerAllies();
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
         // **load XML**
 //        loadXMLRequest();
 //        try {

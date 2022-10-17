@@ -2,6 +2,7 @@ package alliesClient.components.activeContests;
 
 import DTO.contest.Contest;
 import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -41,7 +42,7 @@ public class ContestListRefresher extends TimerTask {
                 String jsonArrayOfContest = response.body().string();
                 Type listType = new TypeToken<List<Contest>>() { }.getType();
                 List<Contest> contests = GSON_INSTANCE.fromJson(jsonArrayOfContest, listType);
-                usersListConsumer.accept(contests);
+                Platform.runLater(() -> usersListConsumer.accept(contests));
             }
 
             @Override

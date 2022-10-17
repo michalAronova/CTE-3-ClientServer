@@ -179,7 +179,7 @@ public class UBoat implements Entity{
     private void start() {
         for (Allies ally: participants.values()) {
             setAlliesParams(ally);
-
+            //TODO: initiate work in the allies
 //            new Thread(() -> ally.start(input, (result) -> {
 //                try {
 //                    //resultQueue.put(result);

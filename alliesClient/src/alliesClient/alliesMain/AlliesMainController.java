@@ -99,7 +99,7 @@ public class AlliesMainController implements MainAppController {
 
     public void registerToUBoatRequest(String boatName) {
         String finalUrl = HttpUrl
-                .parse(Constants.PROCESS)
+                .parse(Constants.REGISTER_TO_UBOAT)
                 .newBuilder()
                 .addQueryParameter(DESIRED_UBOAT, boatName)
                 .build()
