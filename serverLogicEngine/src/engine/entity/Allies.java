@@ -28,13 +28,13 @@ public class Allies implements Entity {
     private UBoat uBoat;
     //private final Map<String, Agent> name2Agent;
 
-    private Map<String, SimpleAgentDTO> agentName2data;
+    private final Map<String, SimpleAgentDTO> agentName2data;
 
     // wait-list for agents joining during a contest here
-    private Map<String, SimpleAgentDTO> waitingAgents;
+    private final Map<String, SimpleAgentDTO> waitingAgents;
 
     private Boolean isWinner;
-    private BooleanProperty isCompetitionOn;
+    private final BooleanProperty isCompetitionOn;
 
     private final BlockingQueue<MissionResult> resultQueue;
     private final List<MissionResult> resultList;
@@ -89,18 +89,18 @@ public class Allies implements Entity {
     }
 
     public void start(String encryption, Consumer<MissionResult> transferMissionResultToUBoat){
-        new Thread(new ResultListener(resultQueue, transferMissionResultToUBoat),
-                "Allies "+username+" Result Listener").start();
-        DM.isWorkQueueCreated().addListener((observable, oldValue, newValue) -> {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            if(newValue){
-                addWorkQueueToAgents();
-            }
-        });
+//        new Thread(new ResultListener(resultQueue, transferMissionResultToUBoat),
+//                "Allies "+username+" Result Listener").start();
+//        DM.isWorkQueueCreated().addListener((observable, oldValue, newValue) -> {
+////            try {
+////                Thread.sleep(3000);
+////            } catch (InterruptedException e) {
+////                throw new RuntimeException(e);
+////            }
+//            if(newValue){
+//                addWorkQueueToAgents();
+//            }
+//        });
         DM.manageAgents(encryption); //start creating missions
     }
 

@@ -6,6 +6,7 @@ import DTO.processResponse.ProcessResponse;
 import clientUtils.MainAppController;
 import clientUtils.activeTeams.ActiveTeamsComponentController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
+import javafx.beans.property.*;
 import okhttp3.*;
 import uBoatClient.components.codeConfigurationComponent.CodeConfigComponentController;
 import uBoatClient.components.codeObjDisplayComponent.CodeObjDisplayComponentController;
@@ -13,27 +14,28 @@ import uBoatClient.components.dictionaryComponent.DictionaryComponentController;
 import uBoatClient.components.machineDetails.MachineDetailsController;
 import uBoatClient.components.processComponent.ProcessComponentController;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.jetbrains.annotations.NotNull;
+import uBoatClient.refreshers.ActiveTeamsRefresher;
+import uBoatClient.refreshers.CandidatesRefresher;
 import uBoatClient.uBoatApp.UBoatAppController;
 import util.Constants;
 import util.http.HttpClientUtil;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.util.Timer;
 
 import static parameters.ConstantParams.MSG_TO_PROCESS;
 import static util.Constants.GSON_INSTANCE;
+import static util.Constants.REFRESH_RATE;
 
-public class UBoatMainController implements MainAppController{
+public class UBoatMainController implements MainAppController, Closeable {
     @FXML private Button continueButton;
     @FXML private Button readyButton;
     @FXML private VBox mainVBox;
@@ -60,13 +62,24 @@ public class UBoatMainController implements MainAppController{
     private final BooleanProperty isFileLoaded;
     private final StringProperty filePath;
     private final StringProperty xmlErrorMessage;
-
     private CodeObj currentCode;
+    private int requiredTeams;
+    private IntegerProperty teamsLeftForStart;
+    private BooleanProperty isReady;
+    private BooleanProperty isCompetitionOn;
+
+    private ActiveTeamsRefresher activeTeamsRefresher;
+
+    private Timer teamsTimer;
+    private CandidatesRefresher candidatesRefresher;
+    private Timer candidatesTimer;
 
     public UBoatMainController(){
         isFileLoaded = new SimpleBooleanProperty(false);
         filePath = new SimpleStringProperty("");
         xmlErrorMessage = new SimpleStringProperty("");
+        isReady = new SimpleBooleanProperty(false);
+        isCompetitionOn = new SimpleBooleanProperty(false);
     }
     @FXML
     public void initialize() {
@@ -82,6 +95,10 @@ public class UBoatMainController implements MainAppController{
             candidatesComponentController.setMainApplicationController(this);
             activeTeamsComponentController.setMainApplicationController(this);
         }
+
+        readyButton.disableProperty().bind(isReady);
+        dictionaryComponentController.disableProperty().bind(isReady);
+        processComponentController.disableProperty().bind(isReady);
 
         competitionTabPane.disableProperty().bind(isFileLoaded.not());
         loadFileButton.disableProperty().bind(isFileLoaded);
@@ -114,9 +131,7 @@ public class UBoatMainController implements MainAppController{
                     String str = responseBody.string();
                     if (response.code() == 200) {
                         System.out.println(str);
-                        Platform.runLater(() -> {
-                            readyButton.setDisable(true);
-                        });
+                        Platform.runLater(() -> isReady.set(true));
                     }
                     else {
                         System.out.println(str);
@@ -251,6 +266,15 @@ public class UBoatMainController implements MainAppController{
                     else {
                         MachineDetails details = GSON_INSTANCE
                                 .fromJson(body, MachineDetails.class);
+                        requiredTeams = details.getRequiredTeams();
+                        teamsLeftForStart = new SimpleIntegerProperty(details.getRequiredTeams());
+                        teamsLeftForStart.addListener((observable, oldValue, newValue) -> {
+                            if(newValue.intValue() == 0){
+                                isCompetitionOn.set(true);
+                            }
+                        });
+                        startTeamsRefresher();
+                        startCandidatesRefresher();
 
                         Platform.runLater(() -> {
                             xmlErrorLabel.setStyle("-fx-text-fill: green");
@@ -268,6 +292,26 @@ public class UBoatMainController implements MainAppController{
             }
         });
     }
+
+    private void startTeamsRefresher() {
+        activeTeamsRefresher = new ActiveTeamsRefresher(
+                ((teams) -> {
+                    activeTeamsComponentController.replaceTeams(teams);
+                    teamsLeftForStart.set(requiredTeams - teams.size());
+                }),
+                isReady, isCompetitionOn);
+        teamsTimer = new Timer();
+        teamsTimer.schedule(activeTeamsRefresher, REFRESH_RATE, REFRESH_RATE);
+    }
+
+    private void startCandidatesRefresher(){
+        candidatesRefresher = new CandidatesRefresher(
+                (candidates) -> candidatesComponentController.addMultiple(candidates, false),
+                isCompetitionOn);
+        candidatesTimer = new Timer();
+        candidatesTimer.schedule(candidatesRefresher, REFRESH_RATE, REFRESH_RATE);
+    }
+
     private void configManualRequest(CodeObj code){
         String finalUrl = HttpUrl
                 .parse(Constants.MANUAL_CONFIG)
@@ -331,6 +375,26 @@ public class UBoatMainController implements MainAppController{
                 System.out.println("failed");
             }
         });
+    }
+
+    public int getTeamsLeftForStart() {
+        return teamsLeftForStart.get();
+    }
+
+    public IntegerProperty teamsLeftForStartProperty() {
+        return teamsLeftForStart;
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (activeTeamsRefresher != null && teamsTimer != null) {
+            activeTeamsRefresher.cancel();
+            teamsTimer.cancel();
+        }
+        if (candidatesRefresher != null && candidatesTimer != null) {
+            candidatesRefresher.cancel();
+            candidatesTimer.cancel();
+        }
     }
 }
 

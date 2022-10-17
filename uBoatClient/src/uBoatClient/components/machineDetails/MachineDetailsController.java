@@ -13,16 +13,18 @@ import uBoatClient.uBoatMain.UBoatMainController;
 public class MachineDetailsController {
 
     @FXML public GridPane machineDetails;
+    @FXML private Label battleFieldLabel;
+    @FXML private Label requiredTeamsLabel;
+    @FXML private Label difficultyLabel;
     @FXML private Label rotorInUseData;
     @FXML private Label totalRotorsData;
     @FXML private Label totalReflectorsData;
-    @FXML private Label messagesProcessedData;
     @FXML private Label machineDetailsTitleLabel;
     private UBoatMainController mainApplicationController;
 
     @FXML
     public void initialize(){
-        messagesProcessedData.setText("");
+
     }
 
     public void setMainApplicationController(UBoatMainController mainApplicationController) {
@@ -33,6 +35,9 @@ public class MachineDetailsController {
         rotorInUseData.setText(String.format("%d",machineDetails.getRotorsInUse()));
         totalRotorsData.setText(String.format("%d",machineDetails.getTotalRotors()));
         totalReflectorsData.setText(String.format("%d",machineDetails.getReflectorsCount()));
+        battleFieldLabel.setText(machineDetails.getBattleField());
+        requiredTeamsLabel.setText(String.format("%d",machineDetails.getRequiredTeams()));
+        difficultyLabel.setText(machineDetails.getDifficulty());
     }
 
 }

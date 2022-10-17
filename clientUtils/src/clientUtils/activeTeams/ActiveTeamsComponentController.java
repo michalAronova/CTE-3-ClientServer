@@ -10,8 +10,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 
@@ -26,8 +24,8 @@ public class ActiveTeamsComponentController {
     @FXML private TableColumn<Team, String> missionSizeColumn;
 
     private final ObservableList<Team> dataList = FXCollections.observableArrayList();
-    private MainAppController mainApplicationController;
 
+    private MainAppController mainApplicationController;
 
     @FXML
     public void initialize(){
@@ -53,6 +51,10 @@ public class ActiveTeamsComponentController {
         dataList.addAll(teams);
     }
 
+    public void replaceTeams(List<Team> teams) {
+        dataList.clear();
+        dataList.addAll(teams);
+    }
     public ObservableList<Team> getDataList() {
         return dataList;
     }

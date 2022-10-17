@@ -1,6 +1,9 @@
 package uBoatClient.components.processComponent;
 
 import javafx.animation.FadeTransition;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -27,6 +30,7 @@ public class ProcessComponentController {
     private StringBuilder resultText;
     private FadeTransition errorTransition;
     private String myStyleSheet = "processComponent";
+    private BooleanProperty disabledProperty;
 
     public Boolean isBruteForceProcess() { return bruteForceProcess; }
     public void setBruteForceProcess(Boolean bruteForceProcess) {
@@ -35,6 +39,10 @@ public class ProcessComponentController {
 
     private Boolean bruteForceProcess;
     public ToggleButton getSingleToggle() { return singleToggle; }
+
+    public ProcessComponentController(){
+        disabledProperty = new SimpleBooleanProperty(false);
+    }
     @FXML public void initialize(){
         errorLabel.setOpacity(0);
         errorLabel.setStyle("-fx-text-fill: red");
@@ -55,6 +63,10 @@ public class ProcessComponentController {
         processButton.setOnAction(e -> handleProcessButton());
         resetButton.setOnAction(e -> handleResetButton());
         clearButton.setOnAction(e -> clearAllFields());
+
+        processButton.disableProperty().bind(disabledProperty);
+        resetButton.disableProperty().bind(disabledProperty);
+        userTextField.disableProperty().bind(disabledProperty);
     }
 
     private FadeTransition createErrorTransition() {
@@ -102,4 +114,7 @@ public class ProcessComponentController {
         userTextField.setText(userTextField.getText() + rowData +" ");
     }
 
+    public BooleanProperty disableProperty() {
+        return disabledProperty;
+    }
 }

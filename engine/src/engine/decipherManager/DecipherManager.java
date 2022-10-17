@@ -58,9 +58,10 @@ public class DecipherManager {
 
     private BiConsumer<Integer, Long> updateTotalMissionDone;
 
-    private BooleanProperty workQueueCreated;
+    private final BooleanProperty workQueueCreated;
     private double totalMissionDone;
     private double totalMissionProduced;
+
     public DecipherManager(Dictionary dictionary, Machine machine,
                            Stock stock, Difficulty difficulty, CodeObj machineCode, String encryption){
         this.dictionary = dictionary;

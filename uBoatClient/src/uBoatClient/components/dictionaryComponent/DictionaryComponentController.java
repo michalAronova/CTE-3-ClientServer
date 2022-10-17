@@ -1,5 +1,7 @@
 package uBoatClient.components.dictionaryComponent;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,9 +30,15 @@ public class DictionaryComponentController {
 
     private UBoatMainController mainApplicationController;
     private String myStyleSheet = "dictionary";
+    private BooleanProperty disabledProperty;
+
+    public DictionaryComponentController(){
+        disabledProperty = new SimpleBooleanProperty(false);
+    }
 
     @FXML
     public void initialize(){
+        rootVBox.disableProperty().bind(disabledProperty);
         wordColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue()));
 
         FilteredList<String> filteredData = new FilteredList<>(dataList, b -> true);
@@ -69,6 +77,10 @@ public class DictionaryComponentController {
     public void fillDictionaryTable(List<String> words){
         dataList.clear();
         dataList.addAll(words);
+    }
+
+    public BooleanProperty disableProperty() {
+        return disabledProperty;
     }
 }
 

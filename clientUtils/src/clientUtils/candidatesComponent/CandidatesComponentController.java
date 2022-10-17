@@ -37,16 +37,19 @@ public class CandidatesComponentController {
         this.mainApplicationController = mainApplicationController;
     }
 
-    public void addToTable(AlliesCandidates alliesCandidates){
-        List<Candidate> candidates = Candidate.getListFromAlliesCandidates(alliesCandidates);
-        dataList.addAll(candidates);
-    }
-
     public void hideAllyColumn(){
         allyColumn.setVisible(false);
     }
 
+    public void changeColumnToAgent(){
+        allyColumn.setText("Agent");
+    }
+
     public void addMissionResult(MissionResult missionResult, boolean isForAllyDisplay){
         List<Candidate> candidates = Candidate.getListFromMissionResult(missionResult, isForAllyDisplay);
+        dataList.addAll(candidates);
+    }
+    public void addMultiple(List<MissionResult> missionResults, boolean isForAllyDisplay){
+        missionResults.forEach((result) -> addMissionResult(result, isForAllyDisplay));
     }
 }

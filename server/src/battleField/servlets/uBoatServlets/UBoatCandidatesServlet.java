@@ -43,9 +43,8 @@ public class UBoatCandidatesServlet extends HttpServlet {
             results = boat.getResults(clientCandidatesVersion);
         }
 
-        ResultAndVersion rav = new ResultAndVersion(results, serverCandidatesVersion);
         Gson gson = new Gson();
-        String jsonResponse = gson.toJson(rav);
+        String jsonResponse = gson.toJson(results);
         logServerMessage("Server Candidate version: " + serverCandidatesVersion +
                 ", User '" + username + " ("+ EntityEnum.UBOAT +
                 ")' Client Candidate version: " + clientCandidatesVersion);
@@ -61,13 +60,4 @@ public class UBoatCandidatesServlet extends HttpServlet {
         System.out.println(message);
     }
 
-    private static class ResultAndVersion {
-        final private List<MissionResult> results;
-        final private int version;
-
-        public ResultAndVersion(List<MissionResult> results, int version) {
-            this.results = results;
-            this.version = version;
-        }
-    }
 }
