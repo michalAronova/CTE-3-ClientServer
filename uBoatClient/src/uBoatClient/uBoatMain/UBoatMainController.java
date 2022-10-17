@@ -29,7 +29,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class UBoatMainController implements MainAppController{
-    public Button continueButton;
+    @FXML private Button continueButton;
     @FXML private Button readyButton;
     @FXML private VBox mainVBox;
     @FXML private Label usernameLabel;

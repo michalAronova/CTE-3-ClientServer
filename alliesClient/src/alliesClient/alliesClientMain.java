@@ -11,6 +11,8 @@ import util.http.HttpClientUtil;
 import java.io.IOException;
 import java.net.URL;
 
+import static util.Constants.ALLIES_APP_FXML_RESOURCE_LOCATION;
+
 public class alliesClientMain extends Application {
     private AlliesMainController alliesAppController;
 
@@ -19,7 +21,7 @@ public class alliesClientMain extends Application {
 
         primaryStage.setTitle("Allies");
 
-        URL loginPage = getClass().getResource("/alliesClient/alliesApp/alliesApp.fxml");
+        URL loginPage = getClass().getResource(ALLIES_APP_FXML_RESOURCE_LOCATION);
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(loginPage);

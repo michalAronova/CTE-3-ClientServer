@@ -64,6 +64,9 @@ public class ActiveContestsController {
                         chosenContest.set(rowData.getBattleFieldName());
                         errorMessage.set("");
                     }
+                    else if(rowData.getTotalRequiredTeams() == rowData.getTeamsInContest()){
+                        errorMessage.set("Error: this contest is full");
+                    }
                     else{
                         errorMessage.set("Error: can't join an active contest");
                     }

@@ -18,6 +18,14 @@ import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import okhttp3.*;
+import org.jetbrains.annotations.NotNull;
+import util.Constants;
+import util.http.HttpClientUtil;
+
+import java.io.IOException;
+
+import static parameters.ConstantParams.DESIRED_UBOAT;
 
 public class AlliesMainController implements MainAppController {
     @FXML private GridPane contestOnGrid;
@@ -70,12 +78,42 @@ public class AlliesMainController implements MainAppController {
         }
     }
 
-    public void chooseContest(String value) {
+    public void chooseContest(String boatName) {
+        chosenContest = registerToUBoatRequest(boatName);
+
         //dispatch request to server...
         //on success, switch to the contest tab and fill the data there
         //should get contest data back in response ?
         //chosenContest = ?
     }
+
+    public Contest registerToUBoatRequest(String boatName) {
+        String finalUrl = HttpUrl
+                .parse(Constants.PROCESS)
+                .newBuilder()
+                .addQueryParameter(DESIRED_UBOAT, boatName)
+                .build()
+                .toString();
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.code() == 200) {
+                        String str = responseBody.string();
+                        System.out.println("Output: " + str);
+                    } else {
+                        System.out.println("Error! " + responseBody.string());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("failed");
+            }
+        });
+    }
+
 
     public boolean isOngoingContest() {
         return ongoingContest.get();
