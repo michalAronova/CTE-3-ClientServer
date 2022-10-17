@@ -49,8 +49,5 @@ public class ContestListRefresher extends TimerTask {
                 System.out.println("failed");
             }
         });
-        }
-
     }
-
 }

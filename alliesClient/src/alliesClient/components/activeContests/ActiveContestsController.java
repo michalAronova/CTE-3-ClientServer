@@ -11,12 +11,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 
 import static util.Constants.REFRESH_RATE;
 
-public class ActiveContestsController {
+public class ActiveContestsController implements Closeable {
     @FXML private Label errorLabel;
     @FXML private TableView<Contest> contestTableView;
     @FXML private TableColumn<Contest, String> battleFieldColumn;
@@ -35,6 +37,8 @@ public class ActiveContestsController {
     private final ObservableList<Contest> dataList = FXCollections.observableArrayList();
 
     private AlliesMainController mainApplicationController;
+    private Timer timer;
+    private ContestListRefresher refresher;
 
     public ActiveContestsController(){
         chosenContest = new SimpleStringProperty("");
@@ -84,6 +88,7 @@ public class ActiveContestsController {
 
     public void setMainApplicationController(AlliesMainController mainApplicationController){
         this.mainApplicationController = mainApplicationController;
+        startListRefresher();
     }
 
     public void addSingleContest(Contest contest){
@@ -109,15 +114,18 @@ public class ActiveContestsController {
     }
 
     public void startListRefresher() {
-        ContestListRefresher refresher = new ContestListRefresher(thi)
-
-        chatAreaRefresher = new ChatAreaRefresher(
-                chatVersion,
-                autoUpdate,
-                httpStatusUpdate::updateHttpLine,
-                this::updateChatLines);
+        refresher = new ContestListRefresher(this::replaceAll, mainApplicationController.isCompetitionOnProperty());
         timer = new Timer();
-        timer.schedule(chatAreaRefresher, REFRESH_RATE, REFRESH_RATE);
+        timer.schedule(refresher, REFRESH_RATE, REFRESH_RATE);
+    }
+
+    @Override
+    public void close() throws IOException {
+        dataList.clear();
+        if (refresher != null && timer != null) {
+            refresher.cancel();
+            timer.cancel();
+        }
     }
 }
 

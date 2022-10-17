@@ -1,9 +1,6 @@
 package alliesClient.components.missionSizeChooser;
 
 import alliesClient.alliesMain.AlliesMainController;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -48,7 +45,7 @@ public class MissionSizeChooserController {
 
     public void setAlliesMainController(AlliesMainController alliesMainController) {
         this.alliesMainController = alliesMainController;
-        vBoxRoot.visibleProperty().bind(alliesMainController.ongoingContestProperty().not());
+        vBoxRoot.visibleProperty().bind(alliesMainController.isCompetitionOnProperty().not());
     }
 
     public void onReadyClicked(ActionEvent actionEvent) {

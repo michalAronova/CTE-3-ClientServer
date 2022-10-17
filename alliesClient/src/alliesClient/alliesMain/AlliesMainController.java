@@ -1,6 +1,5 @@
 package alliesClient.alliesMain;
 
-import DTO.codeObj.CodeObj;
 import DTO.contest.Contest;
 import alliesClient.alliesApp.AlliesAppController;
 import alliesClient.components.missionSizeChooser.MissionSizeChooserController;
@@ -14,8 +13,6 @@ import alliesClient.components.agentDisplay.AgentDisplayController;
 import alliesClient.components.missionsProgress.MissionsProgressController;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -51,10 +48,10 @@ public class AlliesMainController implements MainAppController {
     private AlliesAppController alliesAppController;
 
     private Contest chosenContest;
-    private BooleanProperty ongoingContest;
+    private BooleanProperty isCompetitionOn;
 
     public AlliesMainController(){
-        ongoingContest = new SimpleBooleanProperty(false);
+        isCompetitionOn = new SimpleBooleanProperty(false);
     }
 
     public void setMainController(AlliesAppController alliesAppController) {
@@ -123,12 +120,12 @@ public class AlliesMainController implements MainAppController {
     }
 
 
-    public boolean isOngoingContest() {
-        return ongoingContest.get();
+    public boolean getIsCompetitionOn() {
+        return isCompetitionOn.get();
     }
 
-    public BooleanProperty ongoingContestProperty() {
-        return ongoingContest;
+    public BooleanProperty isCompetitionOnProperty() {
+        return isCompetitionOn;
     }
 
     public void missionSizeChosen(int missionSize) {
@@ -137,4 +134,5 @@ public class AlliesMainController implements MainAppController {
         //and notify that this ally is ready for battle!
         //start the requests for information to fill the various tables in the contest tab
     }
+
 }
