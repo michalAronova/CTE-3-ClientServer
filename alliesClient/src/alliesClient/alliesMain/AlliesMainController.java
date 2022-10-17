@@ -85,6 +85,11 @@ public class AlliesMainController implements MainAppController {
         registerToUBoatRequest(boatName);
         if(chosenContest != null){
             competitionTabPane.getSelectionModel().select(contestTab);
+            /*//TODO:update contest in UI maybe move to registerToUboa
+            Platform.runLater(() -> {
+                        codeObjDisplayController.onCodeChosen(currentCode);
+                    });
+             */
         }
         //dispatch request to server...
         //on success, switch to the contest tab and fill the data there
