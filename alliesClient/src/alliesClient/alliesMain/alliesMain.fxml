@@ -20,7 +20,7 @@
             <Label text="( Allies )" />
          </children>
       </HBox>
-      <TabPane tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="competitionTabPane" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Dashboard">
             <content>
@@ -43,7 +43,7 @@
                   </ScrollPane>
             </content>
           </Tab>
-          <Tab text="Contest">
+          <Tab fx:id="contestTab" text="Contest">
             <content>
                   <ScrollPane fitToHeight="true" fitToWidth="true">
                      <content>

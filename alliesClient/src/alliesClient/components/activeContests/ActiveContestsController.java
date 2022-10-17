@@ -12,6 +12,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import java.util.List;
+import java.util.Timer;
+
+import static util.Constants.REFRESH_RATE;
 
 public class ActiveContestsController {
     @FXML private Label errorLabel;
@@ -98,6 +101,18 @@ public class ActiveContestsController {
 
     public StringProperty errorMessageProperty() {
         return errorMessage;
+    }
+
+    public void startListRefresher() {
+        ContestListRefresher refresher = new ContestListRefresher(thi)
+
+        chatAreaRefresher = new ChatAreaRefresher(
+                chatVersion,
+                autoUpdate,
+                httpStatusUpdate::updateHttpLine,
+                this::updateChatLines);
+        timer = new Timer();
+        timer.schedule(chatAreaRefresher, REFRESH_RATE, REFRESH_RATE);
     }
 }
 

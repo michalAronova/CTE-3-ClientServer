@@ -1,5 +1,6 @@
 package alliesClient.alliesMain;
 
+import DTO.codeObj.CodeObj;
 import DTO.contest.Contest;
 import alliesClient.alliesApp.AlliesAppController;
 import alliesClient.components.missionSizeChooser.MissionSizeChooserController;
@@ -17,6 +18,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.GridPane;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +29,7 @@ import util.http.HttpClientUtil;
 import java.io.IOException;
 
 import static parameters.ConstantParams.DESIRED_UBOAT;
+import static util.Constants.GSON_INSTANCE;
 
 public class AlliesMainController implements MainAppController {
     @FXML private GridPane contestOnGrid;
@@ -42,6 +46,8 @@ public class AlliesMainController implements MainAppController {
     @FXML private ActiveAgentsDisplayController activeAgentsDisplayController;
     @FXML private MissionsProgressController missionsProgressController;
     @FXML private MissionSizeChooserController missionSizeChooserController;
+    @FXML private TabPane competitionTabPane;
+    @FXML private Tab contestTab;
     private AlliesAppController alliesAppController;
 
     private Contest chosenContest;
@@ -79,15 +85,17 @@ public class AlliesMainController implements MainAppController {
     }
 
     public void chooseContest(String boatName) {
-        chosenContest = registerToUBoatRequest(boatName);
-
+        registerToUBoatRequest(boatName);
+        if(chosenContest != null){
+            competitionTabPane.getSelectionModel().select(contestTab);
+        }
         //dispatch request to server...
         //on success, switch to the contest tab and fill the data there
         //should get contest data back in response ?
         //chosenContest = ?
     }
 
-    public Contest registerToUBoatRequest(String boatName) {
+    public void registerToUBoatRequest(String boatName) {
         String finalUrl = HttpUrl
                 .parse(Constants.PROCESS)
                 .newBuilder()
@@ -99,8 +107,8 @@ public class AlliesMainController implements MainAppController {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     if (response.code() == 200) {
-                        String str = responseBody.string();
-                        System.out.println("Output: " + str);
+                        chosenContest = GSON_INSTANCE.fromJson(responseBody.string(), Contest.class);
+                        System.out.println(chosenContest);
                     } else {
                         System.out.println("Error! " + responseBody.string());
                     }

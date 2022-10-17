@@ -1,7 +1,9 @@
 package battleField.servlets.alliesServlets;
 
+import DTO.contest.Contest;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
+import com.google.gson.Gson;
 import engine.entity.Allies;
 import engine.entity.UBoat;
 import engine.users.UserManager;
@@ -14,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static parameters.ConstantParams.DESIRED_UBOAT;
 
 @WebServlet(name = "AlliesRegisterToUBoat", urlPatterns = {"/allies/register-to-uboat"})
@@ -51,8 +54,16 @@ public class AlliesRegisterToUBoat extends HttpServlet {
                     } else {
                         uBoat.addParticipant(ally);
                         ally.setUBoat(uBoat);
+                        Gson gson = new Gson();
                         out.println(ally.getUsername() + " registered to " + uBoat.getUsername());
-                        response.setStatus(HttpServletResponse.SC_OK);
+                        Contest contest = new Contest(uBoat.getBattleFieldName(), uBoat.getUsername(),
+                                                uBoat.isCompetitionOn().getValue(), uBoat.getEngine().getDifficulty().name(),
+                                                uBoat.getAlliesRequired(), uBoat.getParticipants().size());
+                        String json = gson.toJson(contest);
+                        //put in body
+                        response.setStatus(SC_OK);
+                        out.println(json);
+                        out.flush();
                     }
                 } else {
                     out.println("no such uBoat exists");

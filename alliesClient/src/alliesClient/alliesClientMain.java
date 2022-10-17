@@ -1,5 +1,6 @@
 package alliesClient;
 
+import alliesClient.alliesApp.AlliesAppController;
 import alliesClient.alliesMain.AlliesMainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -14,7 +15,7 @@ import java.net.URL;
 import static util.Constants.ALLIES_APP_FXML_RESOURCE_LOCATION;
 
 public class alliesClientMain extends Application {
-    private AlliesMainController alliesAppController;
+    private AlliesAppController alliesAppController;
 
     @Override
     public void start(Stage primaryStage) {

@@ -12,5 +12,6 @@
     <orderEntry type="module" module-name="exceptions" />
     <orderEntry type="library" name="okHttp" level="project" />
     <orderEntry type="module" module-name="constants" />
+    <orderEntry type="library" name="gson-2.1" level="project" />
   </component>
 </module>
