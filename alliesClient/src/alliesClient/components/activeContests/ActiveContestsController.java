@@ -103,6 +103,11 @@ public class ActiveContestsController {
         return errorMessage;
     }
 
+    public void replaceAll(List<Contest> contests){
+        dataList.clear();
+        dataList.addAll(contests);
+    }
+
     public void startListRefresher() {
         ContestListRefresher refresher = new ContestListRefresher(thi)
 
