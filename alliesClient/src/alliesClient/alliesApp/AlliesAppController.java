@@ -6,6 +6,7 @@ import clientUtils.chooseNameComponent.ChooseNameComponentController;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +24,7 @@ import util.http.HttpClientUtil;
 import java.io.IOException;
 import java.net.URL;
 
+import static parameters.ConstantParams.USERNAME;
 import static util.Constants.ALLIES_MAIN_FXML_RESOURCE_LOCATION;
 
 public class AlliesAppController implements LoginController {
@@ -36,6 +38,7 @@ public class AlliesAppController implements LoginController {
 
     public AlliesAppController(){
         isValidUsername = new SimpleBooleanProperty(false);
+        usernameProperty = new SimpleStringProperty("");
     }
 
     @FXML
@@ -52,6 +55,7 @@ public class AlliesAppController implements LoginController {
                 switchToMain();
             }
         });
+
     }
 
     private void switchToMain() {
@@ -62,7 +66,6 @@ public class AlliesAppController implements LoginController {
             Node main = fxmlLoader.load();
             alliesMainController = fxmlLoader.getController();
             alliesMainController.setMainController(this);
-            alliesMainController.initialize();
             vBox.getChildren().clear();
             vBox.getChildren().add(main);
         } catch (IOException e) {
@@ -81,7 +84,7 @@ public class AlliesAppController implements LoginController {
         String finalUrl = HttpUrl
                 .parse(Constants.ALLIES_LOGIN_PAGE)
                 .newBuilder()
-                .addQueryParameter("username", username)
+                .addQueryParameter(USERNAME, username)
                 .build()
                 .toString();
 
