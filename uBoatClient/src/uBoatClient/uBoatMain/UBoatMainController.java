@@ -101,6 +101,36 @@ public class UBoatMainController implements MainAppController{
     @FXML
     public void onReadyClicked(ActionEvent event) {
         //dispatch to server...
+        String finalUrl = HttpUrl
+                .parse(Constants.UBOAT_READY)
+                .newBuilder()
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    String str = responseBody.string();
+                    if (response.code() == 200) {
+                        System.out.println(str);
+                        Platform.runLater(() -> {
+                            readyButton.setDisable(true);
+                        });
+                    }
+                    else {
+                        System.out.println(str);
+                        Platform.runLater(() -> {
+
+                        });
+                    }
+                }
+            }
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("failed");
+            }
+        });
     }
 
     public void setMainController(UBoatAppController uBoatAppController) {
