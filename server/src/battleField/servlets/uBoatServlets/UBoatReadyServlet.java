@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet(name = "UBoatReadyServlet", urlPatterns = {"/uboat/ready"})
 public class UBoatReadyServlet extends HttpServlet {
@@ -19,16 +20,19 @@ public class UBoatReadyServlet extends HttpServlet {
         //get ally from ses
         UBoatUserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
         String usernameFromSession = SessionUtils.getUsername(request);
-        UBoat uBoat  = (UBoat) uBoatUserManager.getEntityObject(usernameFromSession);
+
         synchronized (this) {
-            if (uBoatUserManager.isReady(usernameFromSession)) {
-                String errorMessage = "Username " + usernameFromSession + " already ready..";
-                // stands for unauthorized as there is already such user with this name
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getOutputStream().print(errorMessage);
-                System.out.println(errorMessage);
-            } else {
-                uBoatUserManager.addReadyUBoat(usernameFromSession);
+            try(PrintWriter out = response.getWriter()) {
+                if (uBoatUserManager.isReady(usernameFromSession)) {
+                    String errorMessage = "Username " + usernameFromSession + " already ready..";
+                    // stands for unauthorized as there is already such user with this name
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    out.print(errorMessage);
+                    System.out.println(errorMessage);
+                } else {
+                    uBoatUserManager.addReadyUBoat(usernameFromSession);
+                    out.print("UBoat "+ usernameFromSession+" is ready!");
+                }
             }
         }
     }
