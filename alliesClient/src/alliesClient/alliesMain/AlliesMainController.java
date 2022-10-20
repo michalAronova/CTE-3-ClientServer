@@ -8,7 +8,7 @@ import alliesClient.components.activeAgentsDisplay.ActiveAgentsRefresher;
 import alliesClient.components.missionSizeChooser.MissionSizeChooserController;
 import alliesClient.components.missionsProgress.MissionsProgressRefresher;
 import alliesClient.refreshers.CandidatesRefresher;
-import alliesClient.refreshers.IsCompetitionOnRefresher;
+import alliesClient.refreshers.IsWinnerFoundRefresher;
 import alliesClient.refreshers.RivalAlliesRefresher;
 import clientUtils.MainAppController;
 import clientUtils.activeTeams.ActiveTeamsComponentController;
@@ -65,7 +65,7 @@ public class AlliesMainController implements MainAppController {
     private CandidatesRefresher candidatesRefresher;
     private ActiveAgentsRefresher activeAgentsRefresher;
     private MissionsProgressRefresher missionProgressRefresher;
-    private IsCompetitionOnRefresher competitionOnRefresher;
+    private IsWinnerFoundRefresher competitionOnRefresher;
     private Timer rivalAlliesTimer;
     private Timer candidatesTimer;
     private Timer agentsTimer;
@@ -113,7 +113,7 @@ public class AlliesMainController implements MainAppController {
         if(chosenContest != null){
             competitionTabPane.getSelectionModel().select(contestTab);
             startAlliesRivalsRefresher();
-            /*//TODO:update contest in UI maybe move to registerToUboat
+            /*
             Platform.runLater(() -> {
                         codeObjDisplayController.onCodeChosen(currentCode);
                     });
@@ -172,7 +172,7 @@ public class AlliesMainController implements MainAppController {
         //start the requests for information to fill the various tables in the contest tab
     }
     public void startAlliesRivalsRefresher() {
-        rivalAlliesRefresher = new RivalAlliesRefresher(this::replaceAll, registeredToContest );
+        rivalAlliesRefresher = new RivalAlliesRefresher(this::replaceAllRivals, registeredToContest );
         rivalAlliesTimer = new Timer();
         rivalAlliesTimer.schedule(rivalAlliesRefresher, REFRESH_RATE, REFRESH_RATE);
     }
@@ -195,9 +195,16 @@ public class AlliesMainController implements MainAppController {
         candidatesTimer.schedule(candidatesRefresher, REFRESH_RATE, REFRESH_RATE);
     }
 
-    public void replaceAll(List<Team> teams){
+    public void replaceAllRivals(List<Team> teams){
         activeTeamsController.replaceTeams(teams);
         contestDetailsController.update(chosenContest);
+        checkIsCompetitionOn();
+    }
+
+    private void checkIsCompetitionOn() {
+        if(chosenContest.getTotalRequiredTeams().equals(chosenContest.getTeamsInContest())){
+            isCompetitionOn.set(true);
+        }
     }
 
     private void startAgentsRefresher(){
@@ -211,14 +218,14 @@ public class AlliesMainController implements MainAppController {
         isAllyReady.set(ready);
     }
 
-    public void handleCompetitionStatus(String winnerFound){
+    public void handleWinnerFound(String winnerFound){
         //TODO
             //pop relavnt message to user with OK option
             //reset data of contest
     }
 
     private void startCompetitionOnRefresher(){
-        competitionOnRefresher = new IsCompetitionOnRefresher(this::handleCompetitionStatus, isCompetitionOn);
+        competitionOnRefresher = new IsWinnerFoundRefresher(this::handleWinnerFound, isCompetitionOn);
         CompetitionOnTimer = new Timer();
         CompetitionOnTimer.schedule(activeAgentsRefresher, REFRESH_RATE, REFRESH_RATE);
     }
@@ -226,6 +233,7 @@ public class AlliesMainController implements MainAppController {
         return chosenContest;
     }
     public void updateChosenContestDisplay(Contest contest) {
+        chosenContest.setByContest(contest);
         contestDetailsController.update(contest);
     }
 }

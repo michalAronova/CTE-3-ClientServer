@@ -5,12 +5,12 @@ import javafx.beans.property.*;
 import java.io.Serializable;
 
 public class Contest implements Serializable {
-    private final String battleFieldName;
-    private final String uBoatName;
-    private final Boolean isActive;
-    private final String difficulty;
-    private final Integer totalRequiredTeams;
-    private final Integer teamsInContest;
+    private String battleFieldName;
+    private String uBoatName;
+    private Boolean isActive;
+    private String difficulty;
+    private Integer totalRequiredTeams;
+    private Integer teamsInContest;
 
     public Contest(String battleFieldName, String uBoatName, Boolean isActive,
                    String difficulty, Integer totalRequiredTeams, Integer teamsInContest) {
@@ -56,5 +56,14 @@ public class Contest implements Serializable {
                 ", totalRequiredTeams=" + totalRequiredTeams +
                 ", teamsInContest=" + teamsInContest +
                 '}';
+    }
+
+    public void setByContest(Contest contest) {
+        this.battleFieldName = contest.getBattleFieldName();
+        this.uBoatName = contest.getuBoatName();
+        this.isActive = contest.getActive();
+        this.difficulty = contest.getDifficulty();
+        this.totalRequiredTeams = contest.getTotalRequiredTeams();
+        this.teamsInContest = contest.getTeamsInContest();
     }
 }

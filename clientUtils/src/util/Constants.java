@@ -56,7 +56,6 @@ public class Constants {
     public final static String MY_AGENTS = FULL_SERVER_PATH + "/allies/my-agents";
     public final static String RIVAL_ALLIES = FULL_SERVER_PATH + "/allies/rivals";
     public final static String IS_WINNER_FOUND = FULL_SERVER_PATH + "/allies/winner/found";
-
     //agent
     public final static String AGENT_LOGIN_PAGE = FULL_SERVER_PATH + "/signup/agent/login";
     public final static String PULL_MISSIONS = FULL_SERVER_PATH + "/agent/pull";

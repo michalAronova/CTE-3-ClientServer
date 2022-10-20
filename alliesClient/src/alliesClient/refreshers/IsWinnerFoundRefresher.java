@@ -13,12 +13,12 @@ import java.util.function.Consumer;
 
 import static util.Constants.*;
 
-public class IsCompetitionOnRefresher extends TimerTask {
-    private final Consumer<String> updateCompetitionOn;
+public class IsWinnerFoundRefresher extends TimerTask {
+    private final Consumer<String> updateWinnerFound;
     private final BooleanProperty isCompetitionOn;
 
-    public IsCompetitionOnRefresher(Consumer<String> updateCompetitionOn, BooleanProperty isCompetitionOn) {
-        this.updateCompetitionOn = updateCompetitionOn;
+    public IsWinnerFoundRefresher(Consumer<String> updateWinnerFound, BooleanProperty isCompetitionOn) {
+        this.updateWinnerFound = updateWinnerFound;
         this.isCompetitionOn = isCompetitionOn;
     }
 
@@ -33,7 +33,7 @@ public class IsCompetitionOnRefresher extends TimerTask {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String responseBodyString = response.body().string();
                 if(!responseBodyString.equals("")){ //responseBodyString is the name of the winner
-                    updateCompetitionOn.accept(responseBodyString);
+                    updateWinnerFound.accept(responseBodyString);
                 }
             }
 

@@ -2,8 +2,6 @@ package alliesClient.components.activeContests;
 
 import DTO.contest.Contest;
 import alliesClient.alliesMain.AlliesMainController;
-import clientUtils.MainAppController;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -89,7 +87,7 @@ public class ActiveContestsController implements Closeable {
 
     public void setMainApplicationController(AlliesMainController mainApplicationController){
         this.mainApplicationController = mainApplicationController;
-        startListRefresher();
+        startContestsListRefresher();
     }
 
     public void addSingleContest(Contest contest){
@@ -112,6 +110,7 @@ public class ActiveContestsController implements Closeable {
     public void replaceAll(List<Contest> contests){
         dataList.clear();
         dataList.addAll(contests);
+        //update current cho
         if(mainApplicationController.getChosenContest() != null){
             for (Contest contest : contests) {
                 if (contest.getBattleFieldName().equals(mainApplicationController.getChosenContest().getBattleFieldName())) {
@@ -121,7 +120,7 @@ public class ActiveContestsController implements Closeable {
         }
     }
 
-    public void startListRefresher() {
+    public void startContestsListRefresher() {
         refresher = new ContestListRefresher(this::replaceAll, mainApplicationController.isCompetitionOnProperty());
         timer = new Timer();
         timer.schedule(refresher, REFRESH_RATE, REFRESH_RATE);
