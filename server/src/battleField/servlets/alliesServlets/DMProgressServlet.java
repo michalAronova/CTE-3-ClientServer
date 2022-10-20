@@ -19,7 +19,7 @@ import java.io.PrintWriter;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 
-@WebServlet(name = "DMProgressServlet", urlPatterns = {"/allies/DM-Progress"})
+@WebServlet(name = "DMProgressServlet", urlPatterns = {"/allies/DM-progress"})
 public class DMProgressServlet extends HttpServlet {
     //get the ally entity from session
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

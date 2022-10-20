@@ -38,7 +38,7 @@
                   </Label>
                </children>
             </VBox>
-            <fx:include fx:id="contestDetails" minWidth="200.0" source="../../../../clientUtils/src/clientUtils/contestDetails/contestDetails.fxml" GridPane.columnIndex="1" />
+            <fx:include fx:id="contestDetails" minWidth="200.0" source="../../../clientUtils/clientUtils/contestDetails/contestDetails.fxml" GridPane.columnIndex="1" />
             <ScrollPane GridPane.columnIndex="1" GridPane.rowIndex="1">
               <content>
                 <AnchorPane>
@@ -59,7 +59,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <fx:include fx:id="candidatesComponent" source="../../../../clientUtils/src/clientUtils/candidatesComponent/candidatesComponent.fxml" />
+                              <fx:include fx:id="candidatesComponent" source="../../../clientUtils/clientUtils/candidatesComponent/candidatesComponent.fxml" />
                            </children>
                         </VBox>
                      </children>

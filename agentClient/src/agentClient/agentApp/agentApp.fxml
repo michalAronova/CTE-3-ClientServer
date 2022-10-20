@@ -34,7 +34,7 @@
                 <RowConstraints vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <fx:include fx:id="chooseNameComponent" source="../../../../clientUtils/src/clientUtils/chooseNameComponent/chooseNameComponent.fxml" />
+                  <fx:include fx:id="chooseNameComponent" source="../../../clientUtils/clientUtils/chooseNameComponent/chooseNameComponent.fxml" />
                   <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                      <children>
                         <Label text="Thread count: " />
