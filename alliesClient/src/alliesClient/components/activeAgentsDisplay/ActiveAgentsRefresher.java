@@ -25,7 +25,6 @@ public class ActiveAgentsRefresher extends TimerTask {
     private final Consumer<Map<String, SimpleAgentDTO>> resultListConsumer;
     private final BooleanProperty isAllyReady;
 
-
     public ActiveAgentsRefresher(Consumer<Map<String, SimpleAgentDTO>> resultListConsumer, BooleanProperty isAllyReady) {
         this.resultListConsumer = resultListConsumer;
         this.isAllyReady = isAllyReady;

@@ -112,6 +112,13 @@ public class ActiveContestsController implements Closeable {
     public void replaceAll(List<Contest> contests){
         dataList.clear();
         dataList.addAll(contests);
+        if(mainApplicationController.getChosenContest() != null){
+            for (Contest contest : contests) {
+                if (contest.getBattleFieldName().equals(mainApplicationController.getChosenContest().getBattleFieldName())) {
+                    mainApplicationController.updateChosenContestDisplay(contest);
+                }
+            }
+        }
     }
 
     public void startListRefresher() {

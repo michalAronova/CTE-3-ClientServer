@@ -253,4 +253,8 @@ public class Allies implements Entity {
         }
         return totalMission;
     }
+
+    public void handleCompetitionEnds() {
+        //TODO
+    }
 }

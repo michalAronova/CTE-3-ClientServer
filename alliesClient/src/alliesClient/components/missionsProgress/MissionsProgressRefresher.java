@@ -1,5 +1,6 @@
-package alliesClient.refreshers;
+package alliesClient.components.missionsProgress;
 
+import DTO.dmProgress.DMProgress;
 import DTO.team.Team;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
@@ -19,29 +20,27 @@ import java.util.function.Consumer;
 
 import static util.Constants.*;
 
-public class RivalAlliesRefresher extends TimerTask {
+public class MissionsProgressRefresher extends TimerTask {
 
-    private final Consumer<List<Team>> rivalListConsumer;
-    private final BooleanProperty registeredToContest;
+    private final Consumer<DMProgress> DMProgressConsumer;
+    private final BooleanProperty isCompetitionOn;
 
-    public RivalAlliesRefresher(Consumer<List<Team>> rivalListConsumer, BooleanProperty registeredToContest) {
-        this.rivalListConsumer = rivalListConsumer;
-        this.registeredToContest = registeredToContest;
+    public MissionsProgressRefresher(Consumer<DMProgress> DMProgressConsumer, BooleanProperty isCompetitionOn) {
+        this.DMProgressConsumer = DMProgressConsumer;
+        this.isCompetitionOn = isCompetitionOn;
     }
-
     @Override
     public void run() {
-        //start after registration to a contest
-        if (!registeredToContest.get()) {
+        //start after competition starts
+        if (!isCompetitionOn.get()) {
             return;
         }
-        HttpClientUtil.runAsync(RIVAL_ALLIES, new Callback() {
+        HttpClientUtil.runAsync(DM_PROGRESS, new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String jsonAlliesList = response.body().string();
-                Type listType = new TypeToken<List<Team>>() { }.getType();
-                List<Team> rivalTeams = GSON_INSTANCE.fromJson(jsonAlliesList, listType);
-                Platform.runLater(() -> rivalListConsumer.accept(rivalTeams));
+                DMProgress status = GSON_INSTANCE.fromJson(jsonAlliesList, DMProgress.class);
+                Platform.runLater(() -> DMProgressConsumer.accept(status));
             }
 
             @Override

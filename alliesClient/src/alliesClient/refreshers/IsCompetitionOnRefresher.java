@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.jetbrains.annotations.NotNull;
 import util.http.HttpClientUtil;
 
@@ -19,29 +20,28 @@ import java.util.function.Consumer;
 
 import static util.Constants.*;
 
-public class RivalAlliesRefresher extends TimerTask {
+public class IsCompetitionOnRefresher extends TimerTask {
+    private final Consumer<String> updateCompetitionOn;
+    private final BooleanProperty isCompetitionOn;
 
-    private final Consumer<List<Team>> rivalListConsumer;
-    private final BooleanProperty registeredToContest;
-
-    public RivalAlliesRefresher(Consumer<List<Team>> rivalListConsumer, BooleanProperty registeredToContest) {
-        this.rivalListConsumer = rivalListConsumer;
-        this.registeredToContest = registeredToContest;
+    public IsCompetitionOnRefresher(Consumer<String> updateCompetitionOn, BooleanProperty isCompetitionOn) {
+        this.updateCompetitionOn = updateCompetitionOn;
+        this.isCompetitionOn = isCompetitionOn;
     }
 
     @Override
     public void run() {
-        //start after registration to a contest
-        if (!registeredToContest.get()) {
+        //start after contest begins
+        if (!isCompetitionOn.get()) {
             return;
         }
-        HttpClientUtil.runAsync(RIVAL_ALLIES, new Callback() {
+        HttpClientUtil.runAsync(IS_COMPETITION_ON, new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                String jsonAlliesList = response.body().string();
-                Type listType = new TypeToken<List<Team>>() { }.getType();
-                List<Team> rivalTeams = GSON_INSTANCE.fromJson(jsonAlliesList, listType);
-                Platform.runLater(() -> rivalListConsumer.accept(rivalTeams));
+                String responseBodyString = response.body().string();
+                if(!responseBodyString.equals("")){ //responseBodyString is the name of the winner
+                    updateCompetitionOn.accept(responseBodyString);
+                }
             }
 
             @Override

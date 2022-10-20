@@ -48,9 +48,10 @@ public class Constants {
     public final static String ALLIES_LOGIN_PAGE = FULL_SERVER_PATH + "/signup/allies/login";
     public final static String ALLIES_READY = FULL_SERVER_PATH + "/allies/ready";
     public final static String REGISTER_TO_UBOAT = FULL_SERVER_PATH + "/allies/register-to-uboat";
-    public final static String DM_PROGRESS = FULL_SERVER_PATH + "/allies/DM-Progress";
+    public final static String DM_PROGRESS = FULL_SERVER_PATH + "/allies/DM-progress";
     public final static String MY_AGENTS = FULL_SERVER_PATH + "/allies/my-agents";
     public final static String RIVAL_ALLIES = FULL_SERVER_PATH + "/allies/rivals";
+    public final static String IS_COMPETITION_ON = FULL_SERVER_PATH + "/allies/competition-on";
 
     //agent
     public final static String AGENT_LOGIN_PAGE = FULL_SERVER_PATH + "/signup/agent/login";
