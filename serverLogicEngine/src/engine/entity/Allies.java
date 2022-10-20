@@ -25,7 +25,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
 public class Allies implements Entity {
-    private String username;
+    private final String username;
     private DecipherManager DM;
     private UBoat uBoat;
     //private final Map<String, Agent> name2Agent;
@@ -65,7 +65,7 @@ public class Allies implements Entity {
             }
             else{ //competition started
                 dmInfo = new DMInfo(true, uBoat.getAsDTO(), uBoat.getEngine().getKeyBoardList(),
-                        new ArrayList<>(uBoat.getEngine().getDictionary().getWords()));
+                        uBoat.getEngine().getDictionary().getWords());
                 //now when agents request to know if competition started, they can request this DTO
                 //note that the method START is called from the uboat's START method!
             }
@@ -101,19 +101,6 @@ public class Allies implements Entity {
     }
 
     public void start(String encryption){
-//            , Consumer<MissionResult> transferMissionResultToUBoat){
-//        new Thread(new ResultListener(resultQueue, transferMissionResultToUBoat),
-//                "Allies "+username+" Result Listener").start();
-//        DM.isWorkQueueCreated().addListener((observable, oldValue, newValue) -> {
-////            try {
-////                Thread.sleep(3000);
-////            } catch (InterruptedException e) {
-////                throw new RuntimeException(e);
-////            }
-//            if(newValue){
-//                addWorkQueueToAgents();
-//            }
-//        });
         createMissionsTask = new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {
@@ -145,20 +132,6 @@ public class Allies implements Entity {
         DM = new DecipherManager(dictionary, machine, stock, difficulty, code, input);
     }
 
-    private void addWorkQueueToAgents() {
-        //method will need to change as Allies will no longer hold reference to its Agents!
-//        for(Agent agent: name2Agent.values()){
-//            agent.decipher((result) -> {
-//                try {
-//                    System.out.println(result.getEntityName()+" found result *********************************************");
-//                    resultQueue.put(result);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            });
-//        }
-    }
-
     public List<MissionDTO> pullMissions(int missionPullAmount) {
         List<MissionDTO> missions = new ArrayList<>();
         synchronized (DM.getWorkQueue()){
@@ -176,16 +149,13 @@ public class Allies implements Entity {
 
     public synchronized void removeAllAgents(){
         agentName2data.clear();
+        waitingAgents.clear();
     }
 
     public synchronized void drainWaiters(){
         waitingAgents.forEach((name, DTO) -> agentName2data.put(name, new SimpleAgentDTO(DTO)));
         waitingAgents.clear();
     }
-
-//    public List<MissionResult> getResultList(){
-//        return resultList;
-//    }
 
     private void onCompetitionFinished(){
         if(createMissionsTask != null){
@@ -196,6 +166,7 @@ public class Allies implements Entity {
         drainWaiters();
         resultList.clear();
         removeUBoat();
+        dmInfo = noCompetitionDMInfo;
         DM = null;
     }
 
@@ -271,7 +242,6 @@ public class Allies implements Entity {
 
     public void updateAgentWorkStatus(String agentName, WorkStatusDTO workStatus) {
         agentName2data.get(agentName).setWorkStatus(workStatus);
-
     }
 
     public double getTotalMissionDone() {
@@ -282,9 +252,5 @@ public class Allies implements Entity {
             }
         }
         return totalMission;
-    }
-
-    public void handleCompetitionEnds() {
-        //TODO
     }
 }

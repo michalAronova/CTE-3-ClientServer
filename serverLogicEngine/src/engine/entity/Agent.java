@@ -34,7 +34,6 @@ import static util.http.HttpClientUtil.HTTP_CLIENT;
 public class Agent implements Entity {
 
     private final String username;
-    private Engine engine;
     private final Allies myAllies;
     private final int threadCount;
     private final int missionAmountPull;
@@ -52,9 +51,9 @@ public class Agent implements Entity {
     private IntegerProperty missionsDone;
 
     private KeyBoard keyboard;
-    private Dictionary dictionary;
+    private Set<String> dictionary;
 
-    private List<MissionResult> resultList;
+    private final List<MissionResult> resultList;
     private int totalMissionDone = 0;
     private int totalCandidatesFound = 0;
     public Agent(String username, Allies myAllies, int threadCount, int missionAmountPull) {
@@ -125,8 +124,6 @@ public class Agent implements Entity {
         });
     }
 
-
-
     private List<Character> speedometer(List<Character> characters) {
         List<Character> updated = new ArrayList<>(characters);
         List<Character> keys = keyboard.getAsCharList();
@@ -170,7 +167,7 @@ public class Agent implements Entity {
 
     @Override
     public Engine getEngine() {
-        return engine;
+        return null;
     }
 
     public EntityEnum getEntity(){

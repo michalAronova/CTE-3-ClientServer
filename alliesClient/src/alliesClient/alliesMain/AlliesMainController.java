@@ -196,8 +196,7 @@ public class AlliesMainController implements MainAppController {
     }
 
     public void replaceAll(List<Team> teams){
-        activeTeamsController.getDataList().clear();
-        activeTeamsController.getDataList().addAll(teams);
+        activeTeamsController.replaceTeams(teams);
         contestDetailsController.update(chosenContest);
     }
 

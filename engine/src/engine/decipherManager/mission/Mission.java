@@ -15,6 +15,7 @@ import javafx.util.Pair;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -25,7 +26,7 @@ public class Mission implements Runnable {
     private final Machine machine;
     private final double missionSize;
     private final String toDecrypt;
-    private final Dictionary dictionary;
+    private final Set<String> dictionary;
     private List<Character> currentPositions;
     private final Speedometer speedometer;
 
@@ -53,7 +54,7 @@ public class Mission implements Runnable {
     }*/
 
     public Mission(Machine machine, List<Character> startPositions, double missionSize,
-                   String toDecrypt, Dictionary dictionary, Speedometer speedometer,
+                   String toDecrypt, Set<String> dictionary, Speedometer speedometer,
                    IntegerProperty missionsDone, BlockingQueue<MissionResult> resultQueue,
                    BlockingQueue<Runnable> workQueue, BooleanProperty isEmptyQueue,
                    String allyName, String agentName){
@@ -94,7 +95,7 @@ public class Mission implements Runnable {
             boolean isCandidate = true;
             for (String word: Arrays.stream(words).collect(Collectors.toList())) {
             //  2. compare to dictionary
-                if(!dictionary.isInDictionary(word)){
+                if(!dictionary.contains(word)){
                     isCandidate = false;
                     break;
                 }

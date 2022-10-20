@@ -56,5 +56,4 @@ public class ActiveTeamsComponentController {
     public void clear() {
         dataList.clear();
     }
-
 }

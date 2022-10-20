@@ -26,7 +26,6 @@ public class ActiveTeamsRefresher extends TimerTask {
     private final BooleanProperty isReady;
     private final BooleanProperty isCompetitionOn;
 
-
     public ActiveTeamsRefresher(Consumer<List<Team>> teamsListConsumer, BooleanProperty isReady, BooleanProperty isCompetitionOn) {
         this.teamsListConsumer = teamsListConsumer;
         this.isReady = isReady;

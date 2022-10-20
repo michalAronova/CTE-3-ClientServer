@@ -16,28 +16,27 @@ import javafx.util.Pair;
 import java.util.*;
 
 public class UBoat implements Entity{
-    private String username;
-    private Engine engine;
-    private Map<String,Allies> participants;
-    private Map<String, Boolean> name2ready;
+    private final String username;
+    private final Engine engine;
+    private final Map<String,Allies> participants;
+    private final Map<String, Boolean> name2ready;
     private final List<MissionResult> candidatesList;
     private String input;
     private String output;
-    private boolean isFull;
-    private boolean engineLoaded;
 
-    private BooleanProperty competitionOn;
+    private final BooleanProperty competitionOn;
 
-    private IntegerProperty counterReady;
+    private final IntegerProperty counterReady;
 
-    private StringProperty winner;
-    private BooleanProperty winnerFound;
+    private final StringProperty winner;
+    private final BooleanProperty winnerFound;
 
     public UBoat(String username){
         this.username = username;
         this.engine = new TheEngine();
         participants = new HashMap<>();
-        isFull = false;
+        name2ready = new HashMap<>();
+
         counterReady = new SimpleIntegerProperty(0);
         competitionOn = new SimpleBooleanProperty();
         counterReady.addListener((observable, oldValue, newValue) -> {
@@ -45,21 +44,9 @@ public class UBoat implements Entity{
                 updateCompetitionStart();
             }
         });
-        name2ready = new HashMap<>();
         candidatesList = new LinkedList<>();
         winner = new SimpleStringProperty("");
         winnerFound = new SimpleBooleanProperty(false);
-
-        winnerFound.addListener((observable, oldValue, newValue) -> {
-            if(newValue){
-                //a winner was found
-                updateVictory(winner.getValue());
-            }
-        });
-    }
-
-    public void setEngineLoaded(boolean engineLoaded) {
-        this.engineLoaded = engineLoaded;
     }
 
     @Override
@@ -84,7 +71,6 @@ public class UBoat implements Entity{
     public synchronized void addParticipant(Allies ally){
         participants.put(ally.getUsername(), ally);
         name2ready.put(ally.getUsername(), false);
-        isFull = participants.size() == engine.getAlliesRequired();
     }
 
     public Map<String, Boolean> getName2ready() {
@@ -97,12 +83,10 @@ public class UBoat implements Entity{
     public synchronized void removeParticipant(String username){
         participants.remove(username);
         name2ready.remove(username);
-        isFull = participants.size() == engine.getAlliesRequired();
     }
 
     public synchronized void removeAllParticipants(){
         participants.clear();
-        isFull = false;
     }
 
     public void setAlliesParams(Allies ally){
@@ -123,16 +107,6 @@ public class UBoat implements Entity{
         });
         return teams;
     }
-//    public List<MissionResult> getCandidates() {
-//        for (Allies ally: participants.values()) {
-//            candidatesList.addAll(ally.getResultList());
-//        }
-//        return candidatesList;
-//    }
-
-    public boolean isFull() {
-        return isFull;
-    }
 
     public String getBattleFieldName(){
         return engine.getBattleFieldName();
@@ -146,13 +120,6 @@ public class UBoat implements Entity{
         return engine.getBattleLevel();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UBoat)) return false;
-        UBoat uBoat = (UBoat) o;
-        return username.equals(uBoat.username);
-    }
 
     public BooleanProperty isCompetitionOn() {
         return competitionOn;
@@ -177,40 +144,10 @@ public class UBoat implements Entity{
 
     public void updateVictory(String winner) {
         competitionOn.set(false);
+        counterReady.set(0);
         participants.forEach((name, ally) -> {
-            //ally.setIsCompetitionOn(false);
             ally.setIsWinner(name.equals(winner));
         });
-        winnerFound.set(false);
-    }
-    public void updateAllyReady(String ally){
-        name2ready.replace(ally, true);
-        counterReady.set(counterReady.get() + 1);
-    }
-
-
-    private void start() {
-        for (Allies ally: participants.values()) {
-            setAlliesParams(ally); //created the DM
-
-            new Thread(() -> ally.start(input
-//                    ,(result) -> {
-//                        synchronized (candidatesList){
-//                            candidatesList.add(result);
-//                        }
-//                    })
-            ), "Allies "+ally.getUsername()+" starting thread");
-        }
-    }
-
-    public void updateCompetitionStart() {
-        winner.set("");
-
-        setCompetitionOn(true);
-        start();
-        //above boolean property is BINDED to the allies boolean property
-        //hence do not need the below line!
-        //participants.forEach((allyName, ally) -> ally.setCompetitionOn(true));
     }
 
     public void addResult(MissionResult result) {
@@ -220,9 +157,34 @@ public class UBoat implements Entity{
                 if(candidate.getKey().equals(input)){
                     winner.set(result.getAllyName());
                     winnerFound.set(true);
+                    updateVictory(result.getAllyName());
                 }
             }
         }
+    }
+
+    public void updateAllyReady(String ally){
+        name2ready.replace(ally, true);
+        counterReady.set(counterReady.get() + 1);
+    }
+
+    private void start() {
+        for (Allies ally: participants.values()) {
+            setAlliesParams(ally); //created the DM
+
+            new Thread(() -> ally.start(output), "Allies "+ally.getUsername()+" starting thread");
+        }
+    }
+
+    private void clearForNewContest() {
+        winnerFound.set(false);
+        winner.set("");
+        setCompetitionOn(true);
+    }
+
+    public void updateCompetitionStart() {
+        clearForNewContest();
+        start();
     }
 
     public boolean isWinnerFound() {
@@ -264,5 +226,12 @@ public class UBoat implements Entity{
         input = msg;
         output = engine.processMsg(msg);
         return output;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UBoat)) return false;
+        UBoat uBoat = (UBoat) o;
+        return username.equals(uBoat.username);
     }
 }

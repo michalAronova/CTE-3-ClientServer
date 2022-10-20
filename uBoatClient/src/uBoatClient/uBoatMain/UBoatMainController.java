@@ -336,6 +336,7 @@ public class UBoatMainController implements MainAppController, Closeable {
                         MachineDetails details = GSON_INSTANCE
                                 .fromJson(body, MachineDetails.class);
                         requiredTeams = details.getRequiredTeams();
+
                         teamsLeftForStart = new SimpleIntegerProperty(details.getRequiredTeams());
                         teamsLeftForStart.addListener((observable, oldValue, newValue) -> {
                             if(newValue.intValue() == 0){
