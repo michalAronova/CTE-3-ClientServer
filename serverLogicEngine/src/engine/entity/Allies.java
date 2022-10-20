@@ -3,6 +3,7 @@ package engine.entity;
 import DTO.agent.SimpleAgentDTO;
 import DTO.agent.WorkStatusDTO;
 import DTO.codeObj.CodeObj;
+import DTO.dmInfo.DMInfo;
 import DTO.mission.MissionDTO;
 import DTO.missionResult.MissionResult;
 import DTO.team.Team;
@@ -16,6 +17,7 @@ import engine.stock.Stock;
 import enigmaMachine.Machine;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.concurrent.Task;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -36,9 +38,13 @@ public class Allies implements Entity {
     private Boolean isWinner;
     private final BooleanProperty isCompetitionOn;
 
-    private final BlockingQueue<MissionResult> resultQueue;
     private final List<MissionResult> resultList;
     private int missionSize;
+
+    private final DMInfo noCompetitionDMInfo = new DMInfo(false, null, null, null);
+    private DMInfo dmInfo = noCompetitionDMInfo;
+
+    Task<Boolean> createMissionsTask;
 
     private final Object DMLock = new Object();
 
@@ -47,21 +53,27 @@ public class Allies implements Entity {
         //name2Agent = new HashMap<>();
         agentName2data = new HashMap<>();
         waitingAgents = new HashMap<>();
-        resultQueue = new LinkedBlockingQueue<>();
         resultList = new LinkedList<>();
         uBoat = null;
         isCompetitionOn = new SimpleBooleanProperty(false);
         isCompetitionOn.addListener(((observable, oldValue, newValue) -> {
             if(!newValue){ //competition finished //TODO
+                onCompetitionFinished();
                 //method to be called upon end of game
                 //need to know if im the winner
                 //things that need to happen when the game ends
             }
             else{ //competition started
-                //send info to agents: dictionary and keyboard (and that competition started)
-                //active servlet?
+                dmInfo = new DMInfo(true, uBoat.getAsDTO(), uBoat.getEngine().getKeyBoardList(),
+                        new ArrayList<>(uBoat.getEngine().getDictionary().getWords()));
+                //now when agents request to know if competition started, they can request this DTO
+                //note that the method START is called from the uboat's START method!
             }
         }));
+    }
+
+    public DMInfo getDmInfo() {
+        return dmInfo;
     }
 
     public Team asTeamDTO(){
@@ -88,7 +100,8 @@ public class Allies implements Entity {
         this.uBoat = null;
     }
 
-    public void start(String encryption, Consumer<MissionResult> transferMissionResultToUBoat){
+    public void start(String encryption){
+//            , Consumer<MissionResult> transferMissionResultToUBoat){
 //        new Thread(new ResultListener(resultQueue, transferMissionResultToUBoat),
 //                "Allies "+username+" Result Listener").start();
 //        DM.isWorkQueueCreated().addListener((observable, oldValue, newValue) -> {
@@ -101,7 +114,15 @@ public class Allies implements Entity {
 //                addWorkQueueToAgents();
 //            }
 //        });
-        DM.manageAgents(encryption); //start creating missions
+        createMissionsTask = new Task<Boolean>() {
+            @Override
+            protected Boolean call() throws Exception {
+                DM.manageAgents(encryption); //start creating missions
+                return true;
+            }
+        };
+
+        new Thread(createMissionsTask, "Mission creation Task for "+username).start();
     }
 
     public synchronized void addAgentData(SimpleAgentDTO simpleAgentDTO) {
@@ -162,11 +183,20 @@ public class Allies implements Entity {
         waitingAgents.clear();
     }
 
-    public List<MissionResult> getResultList(){
-        synchronized (resultQueue){
-            resultQueue.drainTo(resultList);
+//    public List<MissionResult> getResultList(){
+//        return resultList;
+//    }
+
+    private void onCompetitionFinished(){
+        if(createMissionsTask != null){
+            createMissionsTask.cancel();
         }
-        return resultList;
+
+        agentName2data.forEach((name, agent) -> agent.resetWorkStatus());
+        drainWaiters();
+        resultList.clear();
+        removeUBoat();
+        DM = null;
     }
 
     @Override

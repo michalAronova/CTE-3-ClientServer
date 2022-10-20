@@ -8,6 +8,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import static util.Constants.CHOOSE_NAME_FXML_RESOURCE_LOCATION;
 import static util.Constants.UBOAT_MAIN_FXML_RESOURCE_LOCATION;
 
 public class UBoatAppController implements LoginController {
@@ -34,6 +36,7 @@ public class UBoatAppController implements LoginController {
     private BooleanProperty isValidUsername;
     private StringProperty usernameProperty;
     private BooleanProperty isFileSelectedProperty;
+
 
     public UBoatAppController(){
         isValidUsername = new SimpleBooleanProperty(false);
@@ -65,11 +68,8 @@ public class UBoatAppController implements LoginController {
             Node main = fxmlLoader.load();
             uBoatMainController = fxmlLoader.getController();
             uBoatMainController.setMainController(this);
-            //uBoatMainController.initialize();
             vBox.getChildren().clear();
             vBox.getChildren().add(main);
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -122,5 +122,25 @@ public class UBoatAppController implements LoginController {
                 );
             }
         });
+    }
+
+    public void loggedOut() {
+        usernameProperty.set("");
+        isFileSelectedProperty.set(false);
+        isValidUsername.set(false);
+        uBoatMainController = null;
+
+        URL mainPageUrl = getClass().getResource(CHOOSE_NAME_FXML_RESOURCE_LOCATION);
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(mainPageUrl);
+            Node chooseNameNode = fxmlLoader.load();
+            chooseNameComponentController = fxmlLoader.getController();
+            chooseNameComponentController.setParentController(this);
+            vBox.getChildren().clear();
+            vBox.getChildren().add(chooseNameNode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -6,6 +6,7 @@ import DTO.processResponse.ProcessResponse;
 import clientUtils.MainAppController;
 import clientUtils.activeTeams.ActiveTeamsComponentController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import okhttp3.*;
 import uBoatClient.components.codeConfigurationComponent.CodeConfigComponentController;
@@ -22,6 +23,7 @@ import javafx.stage.FileChooser;
 import org.jetbrains.annotations.NotNull;
 import uBoatClient.refreshers.ActiveTeamsRefresher;
 import uBoatClient.refreshers.CandidatesRefresher;
+import uBoatClient.refreshers.ContestFinishedRefresher;
 import uBoatClient.uBoatApp.UBoatAppController;
 import util.Constants;
 import util.http.HttpClientUtil;
@@ -65,14 +67,19 @@ public class UBoatMainController implements MainAppController, Closeable {
     private CodeObj currentCode;
     private int requiredTeams;
     private IntegerProperty teamsLeftForStart;
-    private BooleanProperty isReady;
-    private BooleanProperty isCompetitionOn;
+    private final BooleanProperty isReady;
+    private final BooleanProperty isCompetitionOn;
+    private final StringProperty winnerName;
+    private final BooleanProperty hasInput;
 
+    //refreshers and timers
     private ActiveTeamsRefresher activeTeamsRefresher;
 
     private Timer teamsTimer;
     private CandidatesRefresher candidatesRefresher;
     private Timer candidatesTimer;
+    private ContestFinishedRefresher contestFinishedRefresher;
+    private Timer finishedTimer;
 
     public UBoatMainController(){
         isFileLoaded = new SimpleBooleanProperty(false);
@@ -80,7 +87,19 @@ public class UBoatMainController implements MainAppController, Closeable {
         xmlErrorMessage = new SimpleStringProperty("");
         isReady = new SimpleBooleanProperty(false);
         isCompetitionOn = new SimpleBooleanProperty(false);
+        hasInput = new SimpleBooleanProperty(false);
+        winnerName = new SimpleStringProperty("");
+
+        isCompetitionOn.addListener((observable, oldValue, newValue) -> {
+            if(!newValue){
+                //-> a contest has ended
+                cleanupAfterContestFinished();
+            }
+        });
+
+        startContestFinishedRefresher();
     }
+
     @FXML
     public void initialize() {
         if(codeObjDisplayController != null && processComponentController != null
@@ -96,7 +115,20 @@ public class UBoatMainController implements MainAppController, Closeable {
             activeTeamsComponentController.setMainApplicationController(this);
         }
 
-        readyButton.disableProperty().bind(isReady);
+        //can't logout during competition (without bonus)
+        logoutButton.disableProperty().bind(isCompetitionOn);
+        //the code configuration component is disabled during competition
+        //so user can't change code mid-competition
+        codeConfigController.getRoot().disableProperty().bind(isCompetitionOn);
+
+        //user may only click ready when it is not ready AND it has input
+        readyButton.disableProperty().bind(Bindings
+                                        .createBooleanBinding(()->
+                                            isReady.getValue() || !hasInput.getValue(),
+                                                        isReady, hasInput));
+
+        //dictionary and process are unavailable when the uboat is already ready
+        //and will become available again when it is not ready
         dictionaryComponentController.disableProperty().bind(isReady);
         processComponentController.disableProperty().bind(isReady);
 
@@ -111,9 +143,46 @@ public class UBoatMainController implements MainAppController, Closeable {
         entityLabel.setText("UBOAT");
     }
 
+    private void cleanupAfterContestFinished() {
+        showWinnerAlert();
+        winnerName.set("");
+
+        isReady.set(false);
+        candidatesComponentController.clear();
+        activeTeamsComponentController.clear();
+        teamsLeftForStart.set(requiredTeams);
+    }
+
+    private void showWinnerAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("We have a winner!");
+        alert.setHeaderText(null);
+        alert.setContentText("And the winner is... "+ winnerName.getValue()+"!");
+        alert.showAndWait();
+    }
+
     @FXML
     public void onLogoutClicked(ActionEvent event) {
         //dispatch to server...
+        String finalUrl = HttpUrl
+                .parse(Constants.LOGOUT)
+                .newBuilder()
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    close();
+                    uBoatAppController.loggedOut();
+                }
+            }
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("failed");
+            }
+        });
     }
     @FXML
     public void onReadyClicked(ActionEvent event) {
@@ -293,6 +362,11 @@ public class UBoatMainController implements MainAppController, Closeable {
         });
     }
 
+    private void startContestFinishedRefresher() {
+        contestFinishedRefresher = new ContestFinishedRefresher(isCompetitionOn, winnerName);
+        finishedTimer = new Timer();
+        finishedTimer.schedule(contestFinishedRefresher, REFRESH_RATE, REFRESH_RATE);
+    }
     private void startTeamsRefresher() {
         activeTeamsRefresher = new ActiveTeamsRefresher(
                 ((teams) -> {
@@ -386,7 +460,7 @@ public class UBoatMainController implements MainAppController, Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close(){
         if (activeTeamsRefresher != null && teamsTimer != null) {
             activeTeamsRefresher.cancel();
             teamsTimer.cancel();
@@ -395,6 +469,18 @@ public class UBoatMainController implements MainAppController, Closeable {
             candidatesRefresher.cancel();
             candidatesTimer.cancel();
         }
+        if (contestFinishedRefresher != null && finishedTimer != null) {
+            contestFinishedRefresher.cancel();
+            finishedTimer.cancel();
+        }
+    }
+
+    public boolean hasInput() {
+        return hasInput.get();
+    }
+
+    public BooleanProperty hasInputProperty() {
+        return hasInput;
     }
 }
 

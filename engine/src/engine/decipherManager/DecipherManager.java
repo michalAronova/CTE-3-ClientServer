@@ -410,5 +410,6 @@ public class DecipherManager {
     public double getTotalMissionDone() {
         return totalMissionDone;
     }
+
 }
 

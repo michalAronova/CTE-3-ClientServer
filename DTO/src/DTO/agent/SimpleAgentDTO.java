@@ -8,22 +8,22 @@ import javafx.beans.property.StringProperty;
 import java.io.Serializable;
 
 public class SimpleAgentDTO implements Serializable {
-    private final StringProperty name;
-    private final IntegerProperty threadCount;
-    private final IntegerProperty missionPull;
+    private final String name;
+    private final int threadCount;
+    private final int missionPull;
     private WorkStatusDTO workStatus;
 
     public SimpleAgentDTO(String name, int threadCount, int missionPull) {
-        this.name = new SimpleStringProperty(name);
-        this.threadCount = new SimpleIntegerProperty(threadCount);
-        this.missionPull = new SimpleIntegerProperty(missionPull);
+        this.name = name;
+        this.threadCount = threadCount;
+        this.missionPull = missionPull;
         this.workStatus = new WorkStatusDTO();
     }
 
     public SimpleAgentDTO(SimpleAgentDTO dto) {
-        this.name = new SimpleStringProperty(dto.getName());
-        this.threadCount = new SimpleIntegerProperty(dto.getThreadCount());
-        this.missionPull = new SimpleIntegerProperty(dto.getMissionPull());
+        this.name = dto.getName();
+        this.threadCount = dto.getThreadCount();
+        this.missionPull = dto.getMissionPull();
     }
 
     public void resetWorkStatus(){
@@ -31,28 +31,17 @@ public class SimpleAgentDTO implements Serializable {
     }
 
     public String getName() {
-        return name.get();
-    }
-
-    public StringProperty nameProperty() {
         return name;
     }
 
     public int getThreadCount() {
-        return threadCount.get();
-    }
-
-    public IntegerProperty threadCountProperty() {
         return threadCount;
     }
 
     public int getMissionPull() {
-        return missionPull.get();
-    }
-
-    public IntegerProperty missionPullProperty() {
         return missionPull;
     }
+
     public void setWorkStatus(WorkStatusDTO workStatus){
         this.workStatus = workStatus;
     }

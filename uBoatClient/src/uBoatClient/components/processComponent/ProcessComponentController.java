@@ -4,6 +4,7 @@ import javafx.animation.FadeTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -30,7 +31,7 @@ public class ProcessComponentController {
     private StringBuilder resultText;
     private FadeTransition errorTransition;
     private String myStyleSheet = "processComponent";
-    private BooleanProperty disabledProperty;
+    private final BooleanProperty disabledProperty;
 
     public Boolean isBruteForceProcess() { return bruteForceProcess; }
     public void setBruteForceProcess(Boolean bruteForceProcess) {
@@ -67,6 +68,7 @@ public class ProcessComponentController {
         processButton.disableProperty().bind(disabledProperty);
         resetButton.disableProperty().bind(disabledProperty);
         userTextField.disableProperty().bind(disabledProperty);
+        clearButton.disableProperty().bind(disabledProperty);
     }
 
     private FadeTransition createErrorTransition() {
@@ -79,6 +81,7 @@ public class ProcessComponentController {
     }
 
     private void clearAllFields() {
+        mainApplicationController.hasInputProperty().set(false);
         userTextField.clear();
         resultText.delete(0, resultText.length());
         resultTextField.clear();
@@ -94,10 +97,11 @@ public class ProcessComponentController {
 
     private void handleProcessButton() {
         mainApplicationController.onProcessButtonPressed(userTextField.getText());
-        userTextField.clear();
+        //userTextField.clear();
     }
 
     public void showOutput(String output) {
+        mainApplicationController.hasInputProperty().set(true);
         resultTextField.setText(output);
     }
 
@@ -117,4 +121,5 @@ public class ProcessComponentController {
     public BooleanProperty disableProperty() {
         return disabledProperty;
     }
+
 }

@@ -1,5 +1,6 @@
 package battleField.servlets.uBoatServlets;
 
+import DTO.contestStatus.ContestStatus;
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
 import com.google.gson.Gson;
@@ -13,31 +14,22 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
 
-@WebServlet(name = "ContestStartedServlet", urlPatterns = {"/uboat/contest/start"})
-public class ContestStartedServlet extends HttpServlet {
+@WebServlet(name = "ContestFinishedServlet", urlPatterns = {"/uboat/contest/finish"})
+public class ContestFinishedServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("application/json");
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
 
         //get the uBoat entity from session
-        String usernameFromSession = SessionUtils.getUsername(request);
+        String usernameFromSession = SessionUtils.getUsername(req);
         UBoatUserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
         UBoat uBoat = (UBoat) uBoatUserManager.getEntityObject(usernameFromSession);
         synchronized (this) {
-            try(PrintWriter out = response.getWriter()) {
-                out.print(new Gson().toJson(uBoat.isCompetitionOn().getValue()));
+            try(PrintWriter out = resp.getWriter()) {
+                ContestStatus status = new ContestStatus(uBoat.isCompetitionOn().getValue(), uBoat.getWinner());
+                out.print(new Gson().toJson(status));
             }
         }
-    }
-
-    private int countReadyAllies(UBoat uBoat) {
-        int count = 0;
-        for (boolean isReady : uBoat.getName2ready().values()) {
-            if (isReady) { count++; }
-        }
-        return count;
     }
 }

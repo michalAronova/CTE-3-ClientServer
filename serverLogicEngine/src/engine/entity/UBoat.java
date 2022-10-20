@@ -10,6 +10,7 @@ import engine.decipherManager.Difficulty;
 import javafx.beans.property.*;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.concurrent.Task;
 import javafx.util.Pair;
 
 import java.util.*;
@@ -41,13 +42,20 @@ public class UBoat implements Entity{
         competitionOn = new SimpleBooleanProperty();
         counterReady.addListener((observable, oldValue, newValue) -> {
             if(newValue.intValue() == engine.getAlliesRequired()){ //all allies ready to start
-                start();
+                updateCompetitionStart();
             }
         });
         name2ready = new HashMap<>();
         candidatesList = new LinkedList<>();
         winner = new SimpleStringProperty("");
         winnerFound = new SimpleBooleanProperty(false);
+
+        winnerFound.addListener((observable, oldValue, newValue) -> {
+            if(newValue){
+                //a winner was found
+                updateVictory(winner.getValue());
+            }
+        });
     }
 
     public void setEngineLoaded(boolean engineLoaded) {
@@ -115,12 +123,12 @@ public class UBoat implements Entity{
         });
         return teams;
     }
-    public List<MissionResult> getCandidates() {
-        for (Allies ally: participants.values()) {
-            candidatesList.addAll(ally.getResultList());
-        }
-        return candidatesList;
-    }
+//    public List<MissionResult> getCandidates() {
+//        for (Allies ally: participants.values()) {
+//            candidatesList.addAll(ally.getResultList());
+//        }
+//        return candidatesList;
+//    }
 
     public boolean isFull() {
         return isFull;
@@ -168,11 +176,12 @@ public class UBoat implements Entity{
     }
 
     public void updateVictory(String winner) {
+        competitionOn.set(false);
         participants.forEach((name, ally) -> {
             //ally.setIsCompetitionOn(false);
             ally.setIsWinner(name.equals(winner));
         });
-        competitionOn.set(false);
+        winnerFound.set(false);
     }
     public void updateAllyReady(String ally){
         name2ready.replace(ally, true);
@@ -182,18 +191,25 @@ public class UBoat implements Entity{
 
     private void start() {
         for (Allies ally: participants.values()) {
-            setAlliesParams(ally);
+            setAlliesParams(ally); //created the DM
 
-            new Thread(() -> ally.start(input, (result) -> {
-                synchronized (candidatesList){
-                    candidatesList.add(result);
-                }
-            }), "Allies "+ally.getUsername()+" starting thread");
+            new Thread(() -> ally.start(input
+//                    ,(result) -> {
+//                        synchronized (candidatesList){
+//                            candidatesList.add(result);
+//                        }
+//                    })
+            ), "Allies "+ally.getUsername()+" starting thread");
         }
     }
 
     public void updateCompetitionStart() {
+        winner.set("");
+
         setCompetitionOn(true);
+        start();
+        //above boolean property is BINDED to the allies boolean property
+        //hence do not need the below line!
         //participants.forEach((allyName, ally) -> ally.setCompetitionOn(true));
     }
 

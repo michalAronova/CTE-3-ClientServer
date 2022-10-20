@@ -41,7 +41,6 @@ public class CodeConfigComponentController {
     private UBoatMainController mainApplicationController;
 
 
-
     public CodeConfigComponentController(){
         rotorsFilled = new SimpleBooleanProperty(false);
     }
@@ -147,4 +146,7 @@ public class CodeConfigComponentController {
         rotorConfigComponentController.setComponent(rotorsRequired, totalRotorAmount, keys);
     }
 
+    public VBox getRoot(){
+        return rootVBox;
+    }
 }

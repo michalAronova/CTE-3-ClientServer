@@ -52,4 +52,8 @@ public class CandidatesComponentController {
     public void addMultiple(List<MissionResult> missionResults, boolean isForAllyDisplay){
         missionResults.forEach((result) -> addMissionResult(result, isForAllyDisplay));
     }
+
+    public void clear() {
+        dataList.clear();
+    }
 }
