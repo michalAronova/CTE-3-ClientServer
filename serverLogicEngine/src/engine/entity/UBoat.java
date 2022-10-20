@@ -227,6 +227,11 @@ public class UBoat implements Entity{
         output = engine.processMsg(msg);
         return output;
     }
+
+    public boolean isFull(){
+        return participants.size() == engine.getAlliesRequired();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
