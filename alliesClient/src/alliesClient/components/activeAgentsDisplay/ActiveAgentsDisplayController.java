@@ -13,6 +13,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 import java.util.List;
+import java.util.Map;
 
 public class ActiveAgentsDisplayController {
     @FXML private Label encryptionLabel;
@@ -60,8 +61,8 @@ public class ActiveAgentsDisplayController {
         dataList.add(agent);
     }
 
-    public void addMultipleAgents(List<SimpleAgentDTO> agents){
-        dataList.addAll(agents);
+    public void addMultipleAgents(Map<String, SimpleAgentDTO> agents){
+        dataList.addAll(agents.values());
     }
 
     public String getEncryption() {

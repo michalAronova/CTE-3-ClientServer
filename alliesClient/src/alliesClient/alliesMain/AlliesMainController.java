@@ -3,8 +3,10 @@ package alliesClient.alliesMain;
 import DTO.contest.Contest;
 import DTO.team.Team;
 import alliesClient.alliesApp.AlliesAppController;
+import alliesClient.components.activeAgentsDisplay.ActiveAgentsRefresher;
 import alliesClient.components.missionSizeChooser.MissionSizeChooserController;
-import alliesClient.components.rivalAlliesRefresher.RivalAlliesRefresher;
+import alliesClient.refreshers.CandidatesRefresher;
+import alliesClient.refreshers.RivalAlliesRefresher;
 import clientUtils.MainAppController;
 import clientUtils.activeTeams.ActiveTeamsComponentController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
@@ -54,11 +56,17 @@ public class AlliesMainController implements MainAppController {
 
     private Contest chosenContest;
     private BooleanProperty isCompetitionOn;
+    private BooleanProperty isAllyReady;
     private RivalAlliesRefresher refresher;
     private Timer timer;
+    private CandidatesRefresher candidatesRefresher;
+    private Timer candidatesTimer;
+    private ActiveAgentsRefresher activeAgentsRefresher;
+    private Timer agentsTimer;
 
     public AlliesMainController(){
         isCompetitionOn = new SimpleBooleanProperty(false);
+        isAllyReady = new SimpleBooleanProperty(false);
     }
 
     public void setMainController(AlliesAppController alliesAppController) {
@@ -159,10 +167,30 @@ public class AlliesMainController implements MainAppController {
         timer = new Timer();
         timer.schedule(refresher, REFRESH_RATE, REFRESH_RATE);
     }
+
+    private void startCandidatesRefresher(){
+        candidatesRefresher = new CandidatesRefresher(
+                (candidates) -> candidatesComponentController.addMultiple(candidates, true),
+                isCompetitionOn);
+        candidatesTimer = new Timer();
+        candidatesTimer.schedule(candidatesRefresher, REFRESH_RATE, REFRESH_RATE);
+    }
+
     public void replaceAll(List<Team> teams){
         activeTeamsController.getDataList().clear();
         activeTeamsController.getDataList().addAll(teams);
         //contestDetailsController.setInGameLabel(String.format("%d / %d", teams.size(), chosenContest.getTotalRequiredTeams()));
-        contestDetailsController.setInGameAndRequired(teams.size(), chosenContest.getTotalRequiredTeams());
+        contestDetailsController.update(chosenContest);
+    }
+
+    private void startAgentsRefresher(){
+        activeAgentsRefresher = new ActiveAgentsRefresher(
+                (myAgents) -> activeAgentsDisplayController.addMultipleAgents(myAgents), isAllyReady);
+        agentsTimer = new Timer();
+        agentsTimer.schedule(activeAgentsRefresher, REFRESH_RATE, REFRESH_RATE);
+    }
+
+    public void setIsAllyReady(boolean ready) {
+        isAllyReady.set(ready);
     }
 }

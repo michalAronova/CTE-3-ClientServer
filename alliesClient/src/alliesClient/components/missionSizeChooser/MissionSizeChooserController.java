@@ -51,6 +51,7 @@ public class MissionSizeChooserController {
     public void onReadyClicked(ActionEvent actionEvent) {
         try {
             alliesMainController.missionSizeChosen(Integer.parseInt(missionsSizeTextField.getText()));
+            alliesMainController.setIsAllyReady(true);
         }
         catch(NumberFormatException e){
             errorMessage.set("Error: Size must be a positive number");

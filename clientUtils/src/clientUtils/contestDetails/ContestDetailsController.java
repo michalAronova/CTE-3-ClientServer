@@ -72,9 +72,5 @@ public class ContestDetailsController {
     public void setInGameLabel(String data) {
         inGameLabel.setText(data);
     }
-    public void setInGameAndRequired(int inGame, int required){
-        this.inGame.set(inGame);
-        this.required.set(required);
-    }
 }
 

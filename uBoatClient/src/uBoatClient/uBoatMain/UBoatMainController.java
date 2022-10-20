@@ -274,7 +274,7 @@ public class UBoatMainController implements MainAppController, Closeable {
                             }
                         });
                         startTeamsRefresher();
-                        startCandidatesRefresher();
+                        //startCandidatesRefresher();
 
                         Platform.runLater(() -> {
                             xmlErrorLabel.setStyle("-fx-text-fill: green");
