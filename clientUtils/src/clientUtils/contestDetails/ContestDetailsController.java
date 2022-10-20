@@ -15,13 +15,12 @@ public class ContestDetailsController {
     @FXML private Label difficultyLabel;
     @FXML private Label inGameLabel;
 
-    private StringProperty battleName;
-    private StringProperty uboatName;
-    private BooleanProperty isActive;
-    private StringProperty activeOrIdle;
-    private StringProperty difficulty;
-    private IntegerProperty inGame;
-    private IntegerProperty required;
+    private final StringProperty battleName;
+    private final StringProperty uboatName;
+    private final StringProperty activeOrIdle;
+    private final StringProperty difficulty;
+    private final IntegerProperty inGame;
+    private final IntegerProperty required;
 
     private final String noData = "---";
     private final String active = "active";
@@ -32,7 +31,6 @@ public class ContestDetailsController {
     public ContestDetailsController() {
         battleName = new SimpleStringProperty(noData);
         uboatName = new SimpleStringProperty(noData);
-        isActive = new SimpleBooleanProperty(false);
         activeOrIdle = new SimpleStringProperty(noData);
         difficulty = new SimpleStringProperty(noData);
         inGame = new SimpleIntegerProperty(0);
@@ -42,12 +40,7 @@ public class ContestDetailsController {
     @FXML public void initialize(){
         battleNameLabel.textProperty().bind(battleName);
         uboatNameLabel.textProperty().bind(uboatName);
-
-        isActive.addListener((observable, oldValue, newValue) -> {
-            activeOrIdle.set(newValue ? active : idle);
-        });
         statusLabel.textProperty().bind(activeOrIdle);
-
         difficultyLabel.textProperty().bind(difficulty);
         inGameLabel.textProperty().bind(Bindings.format("%d / %d", inGame, required));
     }
@@ -55,7 +48,7 @@ public class ContestDetailsController {
     public void update(Contest contest){
         battleName.set(contest.getBattleFieldName());
         uboatName.set(contest.getuBoatName());
-        isActive.set(contest.getActive());
+        activeOrIdle.set(contest.getActive() ? active : idle);
         difficulty.set(contest.getDifficulty());
         inGame.set(contest.getTeamsInContest());
         required.set(contest.getTotalRequiredTeams());

@@ -35,12 +35,16 @@ public class ActiveTeamsRefresher extends TimerTask {
     @Override
     public void run() {
         if (isCompetitionOn.get()) {
+            System.out.println("returned from active teams refresher because competition on");
             return;
         }
 
         if(!isReady.get()){
+            System.out.println("returned from active teams refresher because not ready");
             return;
         }
+
+        System.out.println("in active teams refresher");
 
         HttpClientUtil.runAsync(PARTICIPANTS, new Callback() {
             @Override
@@ -49,6 +53,7 @@ public class ActiveTeamsRefresher extends TimerTask {
                     String alliesJsonList = responseBody.string();
                     Type listType = new TypeToken<List<Team>>() { }.getType();
                     List<Team> teams = GSON_INSTANCE.fromJson(alliesJsonList, listType);
+                    System.out.println("teams: "+ teams);
                     Platform.runLater(() -> teamsListConsumer.accept(teams));
                 }
             }
