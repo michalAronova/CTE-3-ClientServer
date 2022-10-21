@@ -1,21 +1,17 @@
-package engine.entity;
+package agentClient.agentLogic;
 
-import DTO.codeObj.CodeObj;
 import DTO.mission.MissionDTO;
 import DTO.missionResult.MissionResult;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import engine.Engine;
-import engine.decipherManager.dictionary.Dictionary;
 import engine.decipherManager.mission.Mission;
 import engine.decipherManager.resultListener.ResultListener;
-import engine.decipherManager.speedometer.Speedometer;
 import enigmaMachine.Machine;
 import enigmaMachine.keyBoard.KeyBoard;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.concurrent.Task;
 import okhttp3.*;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.jetbrains.annotations.NotNull;
@@ -26,15 +22,14 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Consumer;
 
 import static util.Constants.GSON_INSTANCE;
 import static util.http.HttpClientUtil.HTTP_CLIENT;
 
-public class Agent implements Entity {
+public class Agent {
 
     private final String username;
-    private final Allies myAllies;
+    private final String myAllies;
     private final int threadCount;
     private final int missionAmountPull;
 
@@ -52,11 +47,12 @@ public class Agent implements Entity {
 
     private KeyBoard keyboard;
     private Set<String> dictionary;
+    Task<Boolean> decipherTask;
 
     private final List<MissionResult> resultList;
     private int totalMissionDone = 0;
     private int totalCandidatesFound = 0;
-    public Agent(String username, Allies myAllies, int threadCount, int missionAmountPull) {
+    public Agent(String username, String myAllies, int threadCount, int missionAmountPull) {
         this.username = username;
         this.myAllies = myAllies;
         this.threadCount = threadCount;
@@ -64,7 +60,7 @@ public class Agent implements Entity {
         missionsDone = new SimpleIntegerProperty(0);
         resultList = new LinkedList<>();
 
-        //create result queue and register listener thread
+        //create result queue
         resultQueue = new LinkedBlockingQueue<>();
 
         //create work queue and thread pool of agents
@@ -85,11 +81,39 @@ public class Agent implements Entity {
         });
     }
 
-    public void decipher() {
+    public void updateByContest(List<Character> keys, Set<String> words){
+        this.keyboard = new KeyBoard(charListToString(keys));
+        this.dictionary = words;
+    }
+
+    public String charListToString(List<Character> keys){
+        StringBuilder sb = new StringBuilder();
+        keys.forEach(sb::append);
+        return sb.toString();
+    }
+
+    public void start(){
+        isCompetitionOn.set(true);
+        decipherTask = new Task<Boolean>() {
+            @Override
+            protected Boolean call() throws Exception {
+                decipher();
+                return true;
+            }
+        };
+    }
+
+    public void stop(){
+        decipherTask.cancel();
+        isCompetitionOn.set(false);
+    }
+
+    private void decipher() {
         missionsDone.set(0);
         isCompetitionOn.set(true);
         threadExecutor.prestartAllCoreThreads();
-        new Thread(new ResultListener(resultQueue, this::transferMissionResult),
+
+        new Thread(new ResultListener(resultQueue, this::transferMissionResult).addBooleanToProceed(isCompetitionOn),
                 "Agent " + username + " Result Listener").start();
         new Thread(this::pullMissionsFromAlly, "Pull Thread for " + username).start();
     }
@@ -161,20 +185,6 @@ public class Agent implements Entity {
     }
 
     @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public Engine getEngine() {
-        return null;
-    }
-
-    public EntityEnum getEntity(){
-        return EntityEnum.AGENT;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Agent)) return false;
@@ -189,14 +199,7 @@ public class Agent implements Entity {
 
     @Override
     public String toString() {
-        return "Agent "+ username +" in team "+myAllies.getUsername();
-    }
-
-    public void bindWorkAndResultQueues(BlockingQueue<Runnable> alliesWorkQueue,
-                                        Consumer<MissionResult> transferMissionResult) {
-//        new Thread(new MissionTaker(alliesWorkQueue, workQueue, resultQueue, missionAmountPull),
-//                "Agent "+username+" MissionDTO Taker").start();
-//        decipher(transferMissionResult);
+        return "Agent "+ username +" in team "+myAllies;
     }
 
     public boolean isEmptyQueue() {
@@ -225,7 +228,7 @@ public class Agent implements Entity {
                     try {
                         Mission mission = new Mission(deepCopyMachine(missionDTO.getMachineEncoded()), missionDTO.getStartPositions(),
                                 missionDTO.getMissionSize(), missionDTO.getToDecrypt(), dictionary, this::speedometer,
-                                missionsDone, resultQueue, workQueue, isEmptyQueue, myAllies.getUsername(), username);
+                                missionsDone, resultQueue, workQueue, isEmptyQueue, myAllies, username);
                         workQueue.put(mission);
                     } catch (InterruptedException e) {
                         System.out.println(Thread.currentThread().getName() + " was interrupted");
@@ -274,19 +277,6 @@ public class Agent implements Entity {
             e.printStackTrace();
         }
         return missionDTOS;
-    }
-
-    private void jsonTester(List<Mission> missions){
-        System.out.println("--------------- JSON TESTER ---------------");
-        Gson gson = new Gson();
-        //Type missionListType = new TypeToken<List<MissionDTO>>() { }.getType();
-        String missionsToJson = gson.toJson(missions);
-        System.out.println("Json string below:");
-        System.out.println(missionsToJson + System.lineSeparator());
-
-        //List<MissionDTO> missionFromJson = gson.fromJson(missionsToJson, missionListType);
-        //System.out.println(missionFromJson);
-        System.out.println("--------------------------------------------");
     }
 
     public boolean isCompetitionOn() {

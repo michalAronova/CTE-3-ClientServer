@@ -148,6 +148,7 @@ public class AgentAppController implements LoginController, Closeable {
         RadioButton ally = new RadioButton(allyUsername);
         ally.setToggleGroup(allies);
         ally.setUserData(allyUsername);
+        allyname2toggle.put(allyUsername, ally);
         allyRadioButtonVBox.getChildren().add(ally);
     }
     @FXML void onRegisterClicked(ActionEvent event) {
@@ -196,7 +197,7 @@ public class AgentAppController implements LoginController, Closeable {
                 try (ResponseBody responseBody = response.body()) {
                     if (response.code() == 200) {
                         Platform.runLater(() -> {
-                            usernameProperty().set(username);
+                            agentMainController.createAgent(username, ally, threadCount, missionPull);
                             isValidAgent.set(true);
                         });
                     }

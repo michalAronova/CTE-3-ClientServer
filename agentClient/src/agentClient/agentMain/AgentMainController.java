@@ -1,6 +1,10 @@
 package agentClient.agentMain;
 
 import agentClient.agentApp.AgentAppController;
+import agentClient.agentLogic.Agent;
+import agentClient.refreshers.AllyApprovedRefresher;
+import agentClient.refreshers.CheckForContestRefresher;
+import agentClient.refreshers.CheckForFinishRefresher;
 import clientUtils.MainAppController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
 import clientUtils.contestDetails.ContestDetailsController;
@@ -8,7 +12,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import sun.management.Agent;
 
 import java.io.Closeable;
 
@@ -24,6 +27,7 @@ public class AgentMainController implements MainAppController, Closeable {
 
     private AgentAppController agentAppController;
 
+    //properties
     private final StringProperty alliesName;
     private final IntegerProperty totalCandidates;
     private final IntegerProperty inQueue;
@@ -32,7 +36,14 @@ public class AgentMainController implements MainAppController, Closeable {
     private final BooleanProperty finished;
     private final BooleanProperty inContest;
 
+    //refreshers and timers
+    CheckForContestRefresher checkForContestRefresher;
+    CheckForFinishRefresher checkForFinishRefresher;
+
+    AllyApprovedRefresher allyApprovedRefresher;
+    //Agent object
     private Agent agent;
+
     public AgentMainController(){
         alliesName = new SimpleStringProperty("");
         totalCandidates = new SimpleIntegerProperty(0);
@@ -43,6 +54,10 @@ public class AgentMainController implements MainAppController, Closeable {
         inContest = new SimpleBooleanProperty(false);
     }
 
+    public void createAgent(String username, String myAllies, int threadCount, int missionAmountPull){
+        agent = new Agent(username, myAllies, threadCount, missionAmountPull);
+    }
+
     public void setMainController(AgentAppController agentAppController) {
         this.agentAppController = agentAppController;
         this.usernameLabel.textProperty().bind(agentAppController.usernameProperty());
@@ -50,7 +65,6 @@ public class AgentMainController implements MainAppController, Closeable {
 
     @FXML
     public void initialize() {
-        System.out.println("agent main controller initialized");
         if(contestDetailsController != null && candidatesComponentController != null){
             contestDetailsController.setMainApplicationController(this);
             candidatesComponentController.setMainApplicationController(this);
@@ -63,7 +77,12 @@ public class AgentMainController implements MainAppController, Closeable {
         pulledLabel.textProperty().bind(Bindings.format("%d", pulled));
         CompletedLabel.textProperty().bind(Bindings.format("%d", completed));
 
+        startRefreshers();
         //do something with finished and in contest properties ?
+    }
+
+    private void startRefreshers() {
+
     }
 
     public String getAlliesName() {
