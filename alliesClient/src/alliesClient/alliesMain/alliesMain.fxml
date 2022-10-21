@@ -22,7 +22,7 @@
       </HBox>
       <TabPane fx:id="competitionTabPane" tabClosingPolicy="UNAVAILABLE">
         <tabs>
-          <Tab text="Dashboard">
+          <Tab fx:id="dashboardTab" text="Dashboard">
             <content>
                   <ScrollPane fitToHeight="true" fitToWidth="true">
                      <content>

@@ -18,6 +18,7 @@ import alliesClient.components.activeAgentsDisplay.ActiveAgentsDisplayController
 import alliesClient.components.activeContests.ActiveContestsController;
 import alliesClient.components.agentDisplay.AgentDisplayController;
 import alliesClient.components.missionsProgress.MissionsProgressController;
+import com.google.gson.JsonSyntaxException;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
@@ -43,6 +44,7 @@ public class AlliesMainController implements MainAppController {
     @FXML private Label usernameLabel;
 
     //dashboard tab
+    @FXML private Tab dashboardTab;
     @FXML private ActiveContestsController activeContestsController;
     @FXML private AgentDisplayController agentDisplayController;
 
@@ -54,8 +56,8 @@ public class AlliesMainController implements MainAppController {
     @FXML private MissionsProgressController missionsProgressController;
     @FXML private MissionSizeChooserController missionSizeChooserController;
     @FXML private TabPane competitionTabPane;
-    @FXML private Tab contestTab;
     private AlliesAppController alliesAppController;
+    @FXML private Tab contestTab;
 
     private Contest chosenContest;
     private BooleanProperty registeredToContest;
@@ -95,7 +97,6 @@ public class AlliesMainController implements MainAppController {
             agentDisplayController.setMainApplicationController(this);
             candidatesComponentController.setMainApplicationController(this);
             candidatesComponentController.changeColumnToAgent();
-            
             activeTeamsController.setMainApplicationController(this);
             contestDetailsController.setMainApplicationController(this);
             activeAgentsDisplayController.setMainApplicationController(this);
@@ -106,29 +107,25 @@ public class AlliesMainController implements MainAppController {
             System.out.println("null component in allies main");
         }
         chosenContest = null;
+        contestTab.setDisable(true);
     }
 
     public void chooseContest(String boatName) {
         registerToUBoatRequest(boatName);
-        if(chosenContest != null){
+
+        /*if(chosenContest != null){
+            contestTab.setDisable(false);
             competitionTabPane.getSelectionModel().select(contestTab);
-            startAlliesRivalsRefresher();
-            /*
-            Platform.runLater(() -> {
-                        codeObjDisplayController.onCodeChosen(currentCode);
-                    });
-             */
+            dashboardTab.setDisable(true);
+            startRivalAlliesRefresher();
         }
         else{
             System.out.println("not registered yet");
-        }
-        //dispatch request to server...
-        //on success, switch to the contest tab and fill the data there
-        //should get contest data back in response ?
-        //chosenContest = ?
+        }*/
     }
 
     public void registerToUBoatRequest(String boatName) {
+        System.out.println("boat name: " + boatName);
         String finalUrl = HttpUrl
                 .parse(Constants.REGISTER_TO_UBOAT)
                 .newBuilder()
@@ -139,12 +136,25 @@ public class AlliesMainController implements MainAppController {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
+                    String stringFromBody = responseBody.string();
                     if (response.code() == 200) {
-                        chosenContest = GSON_INSTANCE.fromJson(responseBody.string(), Contest.class);
+                        try {
+                            chosenContest = GSON_INSTANCE.fromJson(stringFromBody, Contest.class);
+                        }
+                        catch(IllegalStateException | JsonSyntaxException exception) {
+                            System.out.println("*********************");
+                            System.out.println("response body:");
+                            System.out.println(stringFromBody);
+                            System.out.println("*********************");
+                        }
                         registeredToContest.set(true);
                         System.out.println(chosenContest);
+                        contestTab.setDisable(false);
+                        competitionTabPane.getSelectionModel().select(contestTab);
+                        dashboardTab.setDisable(true);
+                        startRivalAlliesRefresher();
                     } else {
-                        System.out.println("Error! " + responseBody.string());
+                        System.out.println("Error! " + stringFromBody);
                     }
                 }
             }
@@ -195,7 +205,7 @@ public class AlliesMainController implements MainAppController {
         //and notify that this ally is ready for battle!
         //start the requests for information to fill the various tables in the contest tab
     }
-    public void startAlliesRivalsRefresher() {
+    public void startRivalAlliesRefresher() {
         rivalAlliesRefresher = new RivalAlliesRefresher(this::replaceAllRivals, registeredToContest );
         rivalAlliesTimer = new Timer();
         rivalAlliesTimer.schedule(rivalAlliesRefresher, REFRESH_RATE, REFRESH_RATE);
@@ -226,7 +236,7 @@ public class AlliesMainController implements MainAppController {
     }
 
     private void checkIsCompetitionOn() {
-        if(chosenContest.getTotalRequiredTeams().equals(chosenContest.getTeamsInContest())){
+        if(activeTeamsController.getActiveTeamsAmount() == chosenContest.getTotalRequiredTeams()){
             isCompetitionOn.set(true);
         }
     }
@@ -246,9 +256,12 @@ public class AlliesMainController implements MainAppController {
         //TODO
             //pop relavnt message to user with OK option
             //reset data of contest
+        //chosenContest = null;
+        //contestTab.setDisable(true);
     }
 
-    private void startCompetitionOnRefresher(){
+
+    private void startWinnerFoundRefresher(){
         competitionOnRefresher = new IsWinnerFoundRefresher(this::handleWinnerFound, isCompetitionOn);
         CompetitionOnTimer = new Timer();
         CompetitionOnTimer.schedule(activeAgentsRefresher, REFRESH_RATE, REFRESH_RATE);

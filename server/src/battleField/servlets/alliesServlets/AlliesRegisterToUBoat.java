@@ -24,7 +24,7 @@ public class AlliesRegisterToUBoat extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("application/json");
 
         PrintWriter out = response.getWriter();
         UserManager alliesUserManager = ServletUtils.getAlliesUserManager(getServletContext());
@@ -47,7 +47,7 @@ public class AlliesRegisterToUBoat extends HttpServlet {
                         out.println("can't register to a full contest");
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     }
-                    if(uBoat.isCompetitionOn().getValue()){
+                    else if(uBoat.isCompetitionOn().getValue()){
                         out.println("can't register to a running contest");
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     }
@@ -56,7 +56,7 @@ public class AlliesRegisterToUBoat extends HttpServlet {
                         ally.setUBoat(uBoat);
                         Gson gson = new Gson();
                         Contest contest = uBoat.getAsDTO();
-
+                        System.out.println("chosen contest" + contest);
                         String json = gson.toJson(contest);
                         //put in body
                         response.setStatus(SC_OK);

@@ -53,6 +53,9 @@ public class ActiveTeamsComponentController {
         dataList.addAll(teams);
     }
 
+    public int getActiveTeamsAmount(){
+        return dataList.size();
+    }
     public void clear() {
         dataList.clear();
     }
