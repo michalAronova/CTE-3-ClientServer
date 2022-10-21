@@ -4,7 +4,6 @@ import DTO.contest.Contest;
 import DTO.dmProgress.DMProgress;
 import DTO.team.Team;
 import alliesClient.alliesApp.AlliesAppController;
-import alliesClient.components.activeAgentsDisplay.ActiveAgentsRefresher;
 import alliesClient.components.missionSizeChooser.MissionSizeChooserController;
 import alliesClient.components.missionsProgress.MissionsProgressRefresher;
 import alliesClient.refreshers.CandidatesRefresher;
@@ -63,16 +62,14 @@ public class AlliesMainController implements MainAppController {
     private BooleanProperty registeredToContest;
     private BooleanProperty isCompetitionOn;
     private BooleanProperty isAllyReady;
+
+    //refreshers and timers
     private RivalAlliesRefresher rivalAlliesRefresher;
     private CandidatesRefresher candidatesRefresher;
-    private ActiveAgentsRefresher activeAgentsRefresher;
-    private MissionsProgressRefresher missionProgressRefresher;
-    private IsWinnerFoundRefresher competitionOnRefresher;
+    private IsWinnerFoundRefresher isWinnerFoundRefresher;
     private Timer rivalAlliesTimer;
     private Timer candidatesTimer;
-    private Timer agentsTimer;
-    private Timer missionProgressTimer;
-    private Timer CompetitionOnTimer;
+    private Timer winnerFoundTimer;
 
     public AlliesMainController(){
         isCompetitionOn = new SimpleBooleanProperty(false);
@@ -108,26 +105,18 @@ public class AlliesMainController implements MainAppController {
         }
         chosenContest = null;
         contestTab.setDisable(true);
+        activeContestsController.disableProperty().bind(registeredToContest);
+
     }
 
     public void chooseContest(String boatName) {
         registerToUBoatRequest(boatName);
-
-        /*if(chosenContest != null){
-            contestTab.setDisable(false);
-            competitionTabPane.getSelectionModel().select(contestTab);
-            dashboardTab.setDisable(true);
-            startRivalAlliesRefresher();
-        }
-        else{
-            System.out.println("not registered yet");
-        }*/
     }
 
     public void registerToUBoatRequest(String boatName) {
         System.out.println("boat name: " + boatName);
         String finalUrl = HttpUrl
-                .parse(Constants.REGISTER_TO_UBOAT)
+                .parse(REGISTER_TO_UBOAT)
                 .newBuilder()
                 .addQueryParameter(DESIRED_UBOAT, boatName)
                 .build()
@@ -138,20 +127,11 @@ public class AlliesMainController implements MainAppController {
                 try (ResponseBody responseBody = response.body()) {
                     String stringFromBody = responseBody.string();
                     if (response.code() == 200) {
-                        try {
-                            chosenContest = GSON_INSTANCE.fromJson(stringFromBody, Contest.class);
-                        }
-                        catch(IllegalStateException | JsonSyntaxException exception) {
-                            System.out.println("*********************");
-                            System.out.println("response body:");
-                            System.out.println(stringFromBody);
-                            System.out.println("*********************");
-                        }
+                        chosenContest = GSON_INSTANCE.fromJson(stringFromBody, Contest.class);
                         registeredToContest.set(true);
                         System.out.println(chosenContest);
                         contestTab.setDisable(false);
                         competitionTabPane.getSelectionModel().select(contestTab);
-                        dashboardTab.setDisable(true);
                         startRivalAlliesRefresher();
                     } else {
                         System.out.println("Error! " + stringFromBody);
@@ -211,16 +191,6 @@ public class AlliesMainController implements MainAppController {
         rivalAlliesTimer.schedule(rivalAlliesRefresher, REFRESH_RATE, REFRESH_RATE);
     }
 
-    public void updateDMProgress(DMProgress progress){
-        missionsProgressController.setDTO(progress);
-    }
-
-    public void startMissionProgressRefresher() {
-        missionProgressRefresher = new MissionsProgressRefresher(this::updateDMProgress, isCompetitionOn);
-        missionProgressTimer = new Timer();
-        missionProgressTimer.schedule(rivalAlliesRefresher, REFRESH_RATE, REFRESH_RATE);
-    }
-
     private void startCandidatesRefresher(){
         candidatesRefresher = new CandidatesRefresher(
                 (candidates) -> candidatesComponentController.addMultiple(candidates, true),
@@ -240,14 +210,6 @@ public class AlliesMainController implements MainAppController {
             isCompetitionOn.set(true);
         }
     }
-
-    private void startAgentsRefresher(){
-        activeAgentsRefresher = new ActiveAgentsRefresher(
-                (myAgents) -> activeAgentsDisplayController.addMultipleAgents(myAgents), isAllyReady);
-        agentsTimer = new Timer();
-        agentsTimer.schedule(activeAgentsRefresher, REFRESH_RATE, REFRESH_RATE);
-    }
-
     public void setIsAllyReady(boolean ready) {
         isAllyReady.set(ready);
     }
@@ -255,16 +217,18 @@ public class AlliesMainController implements MainAppController {
     public void handleWinnerFound(String winnerFound){
         //TODO
             //pop relavnt message to user with OK option
-            //reset data of contest
+            //reset data of contest after user press OK
         //chosenContest = null;
         //contestTab.setDisable(true);
+        //registeredToContest.set(false);
+
     }
 
 
     private void startWinnerFoundRefresher(){
-        competitionOnRefresher = new IsWinnerFoundRefresher(this::handleWinnerFound, isCompetitionOn);
-        CompetitionOnTimer = new Timer();
-        CompetitionOnTimer.schedule(activeAgentsRefresher, REFRESH_RATE, REFRESH_RATE);
+        isWinnerFoundRefresher = new IsWinnerFoundRefresher(this::handleWinnerFound, isCompetitionOn);
+        winnerFoundTimer = new Timer();
+        winnerFoundTimer.schedule(isWinnerFoundRefresher, REFRESH_RATE, REFRESH_RATE);
     }
     public Contest getChosenContest() {
         return chosenContest;
@@ -273,4 +237,9 @@ public class AlliesMainController implements MainAppController {
         chosenContest.setByContest(contest);
         contestDetailsController.update(contest);
     }
+
+    public BooleanProperty getIsAllyReady() {
+        return isAllyReady;
+    }
+
 }

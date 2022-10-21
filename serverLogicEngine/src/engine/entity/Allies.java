@@ -11,8 +11,6 @@ import engine.Engine;
 import engine.decipherManager.DecipherManager;
 import engine.decipherManager.Difficulty;
 import engine.decipherManager.dictionary.Dictionary;
-import engine.decipherManager.mission.Mission;
-import engine.decipherManager.resultListener.ResultListener;
 import engine.stock.Stock;
 import enigmaMachine.Machine;
 import javafx.beans.property.BooleanProperty;
@@ -20,9 +18,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.Consumer;
 
 public class Allies implements Entity {
     private final String username;
@@ -34,7 +29,6 @@ public class Allies implements Entity {
 
     // wait-list for agents joining during a contest here
     private final Map<String, SimpleAgentDTO> waitingAgents;
-
     private Boolean isWinner;
     private final BooleanProperty isCompetitionOn;
 
@@ -210,9 +204,16 @@ public class Allies implements Entity {
         return "Allies: "+ username;
     }
 
-    public Map<String, SimpleAgentDTO> getMyAgents() {
+    public Map<String, SimpleAgentDTO> getAllAgents() {
+        Map<String, SimpleAgentDTO> allAgents = new HashMap<>();
+        agentName2data.forEach((name, DTO) -> allAgents.put(name, new SimpleAgentDTO(DTO)));
+        waitingAgents.forEach((name, DTO) -> allAgents.put(name, new SimpleAgentDTO(DTO)));
+        return allAgents;
+    }
+    public Map<String, SimpleAgentDTO> getMyActiveAgents() {
         return agentName2data;
     }
+
 
     public UBoat getUBoat() {
         return uBoat;

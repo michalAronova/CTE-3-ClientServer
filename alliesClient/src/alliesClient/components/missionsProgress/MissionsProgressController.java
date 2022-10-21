@@ -10,6 +10,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import java.util.Timer;
+
+import static util.Constants.REFRESH_RATE;
+
 public class MissionsProgressController {
     @FXML private TableView<DMProgress> missionDataTableView;
     @FXML private TableColumn<DMProgress, String> totalColumn;
@@ -18,6 +22,8 @@ public class MissionsProgressController {
     private DMProgress progressDTO;
     private final ObservableList<DMProgress> dataList = FXCollections.observableArrayList();
     private AlliesMainController mainApplicationController;
+    private Timer missionProgressTimer;
+    private MissionsProgressRefresher missionProgressRefresher;
 
     @FXML public void initialize(){
         totalColumn.setCellValueFactory(param ->
@@ -42,6 +48,13 @@ public class MissionsProgressController {
 
     public void setMainApplicationController(AlliesMainController mainApplicationController){
         this.mainApplicationController = mainApplicationController;
+        startMissionProgressRefresher();
+    }
+
+    public void startMissionProgressRefresher() {
+        missionProgressRefresher = new MissionsProgressRefresher(this::setDTO, mainApplicationController.isCompetitionOnProperty());
+        missionProgressTimer = new Timer();
+        missionProgressTimer.schedule(missionProgressRefresher, REFRESH_RATE, REFRESH_RATE);
     }
 }
 

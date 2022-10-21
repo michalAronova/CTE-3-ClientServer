@@ -16,8 +16,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet(name = "MyAgentsListServlet", urlPatterns = {"/allies/my-agents"})
-public class MyAgentsListServlet extends HttpServlet {
+@WebServlet(name = "MyActiveAgentsListServlet", urlPatterns = {"/allies/active/agents"})
+public class MyActiveAgentsListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String usernameFromSession = SessionUtils.getUsername(req);
@@ -40,7 +40,7 @@ public class MyAgentsListServlet extends HttpServlet {
         UserManager userManager = ServletUtils.getAlliesUserManager(getServletContext());
         Allies allies = (Allies) userManager.getEntityObject(usernameFromSession);
         //passing map<string, simpleAgentDTO> as json
-        String json = gson.toJson(allies.getMyAgents());
+        String json = gson.toJson(allies.getMyActiveAgents());
         resp.setStatus(HttpServletResponse.SC_OK);
         out.println(json);
         out.flush();

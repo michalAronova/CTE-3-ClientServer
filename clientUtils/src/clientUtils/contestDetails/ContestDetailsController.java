@@ -25,7 +25,6 @@ public class ContestDetailsController {
     private final String noData = "---";
     private final String active = "active";
     private final String idle = "idle";
-
     private MainAppController mainApplicationController;
 
     public ContestDetailsController() {
@@ -35,6 +34,7 @@ public class ContestDetailsController {
         difficulty = new SimpleStringProperty(noData);
         inGame = new SimpleIntegerProperty(0);
         required = new SimpleIntegerProperty(0);
+
     }
 
     @FXML public void initialize(){
@@ -64,6 +64,10 @@ public class ContestDetailsController {
 
     public void setInGameLabel(String data) {
         inGameLabel.setText(data);
+    }
+
+    public void setDisable(boolean disable) {
+
     }
 }
 

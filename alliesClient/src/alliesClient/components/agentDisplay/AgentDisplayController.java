@@ -1,9 +1,7 @@
 package alliesClient.components.agentDisplay;
 
 import DTO.agent.SimpleAgentDTO;
-import DTO.team.Team;
 import alliesClient.alliesMain.AlliesMainController;
-import clientUtils.MainAppController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,7 +10,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+
+import static util.Constants.REFRESH_RATE;
 
 public class AgentDisplayController {
     @FXML public VBox rootVBox;
@@ -24,6 +25,8 @@ public class AgentDisplayController {
     private final ObservableList<SimpleAgentDTO> dataList = FXCollections.observableArrayList();
 
     private AlliesMainController mainApplicationController;
+    private AllAgentsRefresher allAgentsRefresher;
+    private Timer allAgentsTimer;
 
     @FXML
     public void initialize(){
@@ -39,13 +42,24 @@ public class AgentDisplayController {
 
     public void setMainApplicationController(AlliesMainController mainApplicationController){
         this.mainApplicationController = mainApplicationController;
+        startAllAgentsRefresher();
     }
 
     public void addSingleAgent(SimpleAgentDTO agent){
         dataList.add(agent);
     }
 
-    public void addMultipleAgents(List<SimpleAgentDTO> agents){
-        dataList.addAll(agents);
+    public void addMultipleAgents(Map<String, SimpleAgentDTO> agents){
+        dataList.addAll(agents.values());
+    }
+
+
+    private void startAllAgentsRefresher(){
+        allAgentsRefresher = new AllAgentsRefresher(
+                (myAgents) -> addMultipleAgents(myAgents)
+        );
+        allAgentsTimer = new Timer();
+        allAgentsTimer.schedule(allAgentsRefresher, REFRESH_RATE, REFRESH_RATE);
+
     }
 }

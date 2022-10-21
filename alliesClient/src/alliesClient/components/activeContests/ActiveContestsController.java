@@ -2,6 +2,8 @@ package alliesClient.components.activeContests;
 
 import DTO.contest.Contest;
 import alliesClient.alliesMain.AlliesMainController;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -9,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -18,6 +21,7 @@ import java.util.Timer;
 import static util.Constants.REFRESH_RATE;
 
 public class ActiveContestsController implements Closeable {
+    @FXML public VBox rootVBox;
     @FXML private Label errorLabel;
     @FXML private TableView<Contest> contestTableView;
     @FXML private TableColumn<Contest, String> battleFieldColumn;
@@ -38,14 +42,17 @@ public class ActiveContestsController implements Closeable {
     private AlliesMainController mainApplicationController;
     private Timer timer;
     private ContestListRefresher refresher;
+    private BooleanProperty disabledProperty;
 
     public ActiveContestsController(){
         chosenContestName = new SimpleStringProperty("");
         errorMessage = new SimpleStringProperty("");
+        disabledProperty = new SimpleBooleanProperty(false);
     }
 
     @FXML
     public void initialize(){
+        rootVBox.disableProperty().bind(disabledProperty);
         battleFieldColumn.setCellValueFactory(param ->
                 new SimpleStringProperty(param.getValue().getBattleFieldName()));
         uBoatColumn.setCellValueFactory(param ->
@@ -132,6 +139,10 @@ public class ActiveContestsController implements Closeable {
             refresher.cancel();
             timer.cancel();
         }
+    }
+
+    public BooleanProperty disableProperty() {
+        return disabledProperty;
     }
 }
 

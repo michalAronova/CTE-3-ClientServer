@@ -14,6 +14,9 @@ import javafx.scene.control.TableView;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+
+import static util.Constants.REFRESH_RATE;
 
 public class ActiveAgentsDisplayController {
     @FXML private Label encryptionLabel;
@@ -27,6 +30,8 @@ public class ActiveAgentsDisplayController {
     private final ObservableList<SimpleAgentDTO> dataList = FXCollections.observableArrayList();
 
     private AlliesMainController mainApplicationController;
+    private ActiveAgentsRefresher activeAgentsRefresher;
+    private Timer agentsTimer;
 
     public ActiveAgentsDisplayController(){
         encryption = new SimpleStringProperty("");
@@ -55,6 +60,7 @@ public class ActiveAgentsDisplayController {
 
     public void setMainApplicationController(AlliesMainController mainApplicationController){
         this.mainApplicationController = mainApplicationController;
+        startActiveAgentsRefresher();
     }
 
     public void addSingleAgent(SimpleAgentDTO agent){
@@ -71,6 +77,13 @@ public class ActiveAgentsDisplayController {
 
     public StringProperty encryptionProperty() {
         return encryption;
+    }
+
+    private void startActiveAgentsRefresher(){
+        activeAgentsRefresher = new ActiveAgentsRefresher(
+                (myAgents) -> addMultipleAgents(myAgents), mainApplicationController.getIsAllyReady());
+        agentsTimer = new Timer();
+        agentsTimer.schedule(activeAgentsRefresher, REFRESH_RATE, REFRESH_RATE);
     }
 }
 
