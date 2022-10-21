@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.Timer;
 
 import static parameters.ConstantParams.DESIRED_UBOAT;
-import static util.Constants.GSON_INSTANCE;
-import static util.Constants.REFRESH_RATE;
+import static parameters.ConstantParams.MISSION_SIZE;
+import static util.Constants.*;
 
 public class AlliesMainController implements MainAppController {
     @FXML private GridPane contestOnGrid;
@@ -166,6 +166,30 @@ public class AlliesMainController implements MainAppController {
     }
 
     public void missionSizeChosen(int missionSize) {
+        String finalUrl = HttpUrl
+                .parse(ALLIES_READY)
+                .newBuilder()
+                .addQueryParameter(MISSION_SIZE, String.valueOf(missionSize))
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.code() == 200) {
+                        System.out.println("Ally updated as READY successfully");
+                    }
+                    else {
+                        System.out.println("Error: "+ responseBody.string());
+                    }
+                }
+            }
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("failed");
+            }
+        });
         //dispatch to server
         //both to update mission size
         //and notify that this ally is ready for battle!

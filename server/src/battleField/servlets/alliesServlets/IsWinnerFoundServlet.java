@@ -1,5 +1,4 @@
 package battleField.servlets.alliesServlets;
-
 import battleField.utils.ServletUtils;
 import battleField.utils.SessionUtils;
 import com.google.gson.Gson;
