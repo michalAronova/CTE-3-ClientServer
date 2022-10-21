@@ -20,6 +20,8 @@ import alliesClient.components.missionsProgress.MissionsProgressController;
 import com.google.gson.JsonSyntaxException;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -59,6 +61,7 @@ public class AlliesMainController implements MainAppController {
     @FXML private Tab contestTab;
 
     private Contest chosenContest;
+    private StringProperty encryption;
     private BooleanProperty registeredToContest;
     private BooleanProperty isCompetitionOn;
     private BooleanProperty isAllyReady;
@@ -75,6 +78,7 @@ public class AlliesMainController implements MainAppController {
         isCompetitionOn = new SimpleBooleanProperty(false);
         isAllyReady = new SimpleBooleanProperty(false);
         registeredToContest = new SimpleBooleanProperty(false);
+        encryption = new SimpleStringProperty("");
     }
 
     public void setMainController(AlliesAppController alliesAppController) {
@@ -106,7 +110,8 @@ public class AlliesMainController implements MainAppController {
         chosenContest = null;
         contestTab.setDisable(true);
         activeContestsController.disableProperty().bind(registeredToContest);
-
+        activeAgentsDisplayController.encryptionProperty().bind(encryption);
+        //TODO- initialize encryption agter registration to contest
     }
 
     public void chooseContest(String boatName) {
@@ -128,8 +133,8 @@ public class AlliesMainController implements MainAppController {
                     String stringFromBody = responseBody.string();
                     if (response.code() == 200) {
                         chosenContest = GSON_INSTANCE.fromJson(stringFromBody, Contest.class);
+
                         registeredToContest.set(true);
-                        System.out.println(chosenContest);
                         contestTab.setDisable(false);
                         competitionTabPane.getSelectionModel().select(contestTab);
                         startRivalAlliesRefresher();
@@ -221,6 +226,7 @@ public class AlliesMainController implements MainAppController {
         //chosenContest = null;
         //contestTab.setDisable(true);
         //registeredToContest.set(false);
+        //encryption.set("");
 
     }
 
