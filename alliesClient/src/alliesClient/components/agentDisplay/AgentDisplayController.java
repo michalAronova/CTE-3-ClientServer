@@ -50,6 +50,7 @@ public class AgentDisplayController {
     }
 
     public void addMultipleAgents(Map<String, SimpleAgentDTO> agents){
+        dataList.clear();
         dataList.addAll(agents.values());
     }
 
