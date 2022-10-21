@@ -62,6 +62,7 @@ public class Constants {
     public final static String UPDATE_WORK_STATUS = FULL_SERVER_PATH + "/agent/work-status";
     public final static String UPLOAD_CANDIDATES = FULL_SERVER_PATH + "/agent/upload/candidates";
     public final static String IS_UBOAT_REGISTERED = FULL_SERVER_PATH + "/agent/check-uboat-registered";
+    public final static String IS_CONTEST_FINISHED = FULL_SERVER_PATH + "/agent/contest/finished";
 
     //chat
     public final static String USERS_LIST = FULL_SERVER_PATH + "/userslist";
