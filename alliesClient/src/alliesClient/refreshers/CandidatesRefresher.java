@@ -32,6 +32,7 @@ public class CandidatesRefresher extends TimerTask {
 
     @Override
     public void run() {
+        //start when the competition starts
         if (!isCompetitionOn.get()) {
             return;
         }

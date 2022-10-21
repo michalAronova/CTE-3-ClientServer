@@ -2,8 +2,6 @@ package alliesClient.components.activeContests;
 
 import DTO.contest.Contest;
 import alliesClient.alliesMain.AlliesMainController;
-import clientUtils.MainAppController;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -28,7 +26,7 @@ public class ActiveContestsController implements Closeable {
     @FXML private TableColumn<Contest, String> levelColumn;
     @FXML private TableColumn<Contest, String> inGameColumn;
     @FXML private Label contestNameLabel;
-    private StringProperty chosenContest;
+    private StringProperty chosenContestName;
     private StringProperty errorMessage;
     @FXML private Button readyButton;
 
@@ -42,7 +40,7 @@ public class ActiveContestsController implements Closeable {
     private ContestListRefresher refresher;
 
     public ActiveContestsController(){
-        chosenContest = new SimpleStringProperty("");
+        chosenContestName = new SimpleStringProperty("");
         errorMessage = new SimpleStringProperty("");
     }
 
@@ -69,7 +67,7 @@ public class ActiveContestsController implements Closeable {
                 if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
                     Contest rowData = row.getItem();
                     if(!rowData.getActive()) {
-                        chosenContest.set(rowData.getuBoatName());
+                        chosenContestName.set(rowData.getuBoatName());
                         errorMessage.set("");
                     }
                     else if(rowData.getTotalRequiredTeams().equals(rowData.getTeamsInContest())){
@@ -83,13 +81,13 @@ public class ActiveContestsController implements Closeable {
             return row;
         });
 
-        contestNameLabel.textProperty().bind(chosenContest);
+        contestNameLabel.textProperty().bind(chosenContestName);
         errorLabel.textProperty().bind(errorMessage);
     }
 
     public void setMainApplicationController(AlliesMainController mainApplicationController){
         this.mainApplicationController = mainApplicationController;
-        startListRefresher();
+        startContestsListRefresher();
     }
 
     public void addSingleContest(Contest contest){
@@ -102,14 +100,14 @@ public class ActiveContestsController implements Closeable {
 
     @FXML public void onContestChosen(ActionEvent event) {
         //notify main application controller
-        mainApplicationController.chooseContest(chosenContest.getValue());
+        mainApplicationController.chooseContest(chosenContestName.getValue());
     }
 
     public StringProperty errorMessageProperty() {
         return errorMessage;
     }
 
-    public void replaceAll(List<Contest> contests){
+    public void replaceAllContestsList(List<Contest> contests){
         dataList.clear();
         dataList.addAll(contests);
         if(mainApplicationController.getChosenContest() != null){
@@ -121,8 +119,8 @@ public class ActiveContestsController implements Closeable {
         }
     }
 
-    public void startListRefresher() {
-        refresher = new ContestListRefresher(this::replaceAll, mainApplicationController.isCompetitionOnProperty());
+    public void startContestsListRefresher() {
+        refresher = new ContestListRefresher(this::replaceAllContestsList, mainApplicationController.isCompetitionOnProperty());
         timer = new Timer();
         timer.schedule(refresher, REFRESH_RATE, REFRESH_RATE);
     }
