@@ -4,12 +4,16 @@ import agentClient.agentApp.AgentAppController;
 import clientUtils.MainAppController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
 import clientUtils.contestDetails.ContestDetailsController;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import sun.management.Agent;
 
-public class AgentMainController implements MainAppController {
+import java.io.Closeable;
+
+public class AgentMainController implements MainAppController, Closeable {
+    @FXML private Label usernameLabel;
     @FXML private Label alliesNameLabel;
     @FXML private Label totalCandidatesLabel;
     @FXML private Label inQueueLabel;
@@ -41,15 +45,25 @@ public class AgentMainController implements MainAppController {
 
     public void setMainController(AgentAppController agentAppController) {
         this.agentAppController = agentAppController;
+        this.usernameLabel.textProperty().bind(agentAppController.usernameProperty());
     }
 
     @FXML
     public void initialize() {
+        System.out.println("agent main controller initialized");
         if(contestDetailsController != null && candidatesComponentController != null){
             contestDetailsController.setMainApplicationController(this);
             candidatesComponentController.setMainApplicationController(this);
             candidatesComponentController.hideAllyColumn();
         }
+
+        alliesNameLabel.textProperty().bind(alliesName);
+        totalCandidatesLabel.textProperty().bind(Bindings.format("%d", totalCandidates));
+        inQueueLabel.textProperty().bind(Bindings.format("%d", inQueue));
+        pulledLabel.textProperty().bind(Bindings.format("%d", pulled));
+        CompletedLabel.textProperty().bind(Bindings.format("%d", completed));
+
+        //do something with finished and in contest properties ?
     }
 
     public String getAlliesName() {
@@ -106,5 +120,10 @@ public class AgentMainController implements MainAppController {
 
     public BooleanProperty finishedProperty() {
         return finished;
+    }
+
+    @Override
+    public void close() {
+        //stop all refreshers here
     }
 }

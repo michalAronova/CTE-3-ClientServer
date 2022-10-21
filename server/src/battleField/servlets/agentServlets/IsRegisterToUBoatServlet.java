@@ -52,10 +52,7 @@ public class IsRegisterToUBoatServlet extends HttpServlet {
         //yay my ally registered to competition! return contest details on body
         else {
             UBoat boat = myAllies.getUBoat();
-            Contest contest = new Contest(boat.getBattleFieldName(), boat.getUsername(),
-                                            myAllies.isCompetitionOnProperty().getValue(),
-                                            myAllies.getDM().getDifficulty().name(),
-                                            boat.getAlliesRequired(), boat.getParticipants().size());
+            Contest contest = boat.getAsDTO();
             Gson gson = new Gson();
             String json = gson.toJson(contest);
             resp.setStatus(HttpServletResponse.SC_OK);

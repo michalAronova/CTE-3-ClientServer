@@ -33,9 +33,9 @@ public class UBoatAppController implements LoginController {
     @FXML public ChooseNameComponentController chooseNameComponentController;
 
     @FXML public UBoatMainController uBoatMainController;
-    private BooleanProperty isValidUsername;
-    private StringProperty usernameProperty;
-    private BooleanProperty isFileSelectedProperty;
+    private final BooleanProperty isValidUsername;
+    private final StringProperty usernameProperty;
+    private final BooleanProperty isFileSelectedProperty;
 
 
     public UBoatAppController(){

@@ -42,6 +42,7 @@ public class AgentClientMain extends Application {
     public void stop() { //this handles the clicking on x...
         //uBoatAppController.close(); // chain reaction to shut down everything
         // important to remove user from server
+        agentAppController.close();
         HttpClientUtil.shutdown();
     }
 

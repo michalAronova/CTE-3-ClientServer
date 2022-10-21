@@ -18,12 +18,11 @@ import java.io.IOException;
 public class IsAssignedToContestServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/plain;charset=UTF-8");
+        response.setContentType("application/json");
 
-        //get agent from ses
-//        String usernameFromSession = SessionUtils.getUsername(request);
-//        AgentUserManager agentUserManager = ServletUtils.getAgentUserManager(getServletContext());
-//        Agent agent = agentUserManager.
+        String usernameFromSession = SessionUtils.getUsername(request);
+        AgentUserManager agentUserManager = ServletUtils.getAgentUserManager(getServletContext());
+
 //        synchronized (this){
 //            ally.getUBoat().updateAllyReady(usernameFromSession);
 //        }

@@ -55,4 +55,7 @@ public class ChooseNameComponentController {
     public void hideRegisterButton(){
         registerButton.setVisible(false);
     }
+    public StringProperty textFieldProperty(){
+        return usernameTextField.textProperty();
+    }
 }
