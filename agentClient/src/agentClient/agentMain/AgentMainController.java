@@ -8,12 +8,16 @@ import agentClient.refreshers.CheckForFinishRefresher;
 import clientUtils.MainAppController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
 import clientUtils.contestDetails.ContestDetailsController;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 import java.io.Closeable;
+import java.util.Timer;
+
+import static util.Constants.REFRESH_RATE;
 
 public class AgentMainController implements MainAppController, Closeable {
     @FXML private Label usernameLabel;
@@ -35,12 +39,15 @@ public class AgentMainController implements MainAppController, Closeable {
     private final IntegerProperty completed;
     private final BooleanProperty finished;
     private final BooleanProperty inContest;
-
+    private final BooleanProperty waitForAllyApproval;
     //refreshers and timers
     CheckForContestRefresher checkForContestRefresher;
     CheckForFinishRefresher checkForFinishRefresher;
-
     AllyApprovedRefresher allyApprovedRefresher;
+    private Timer checkForContestTimer;
+    private Timer checkForFinishTimer;
+    private Timer allyApprovedTimer;
+
     //Agent object
     private Agent agent;
 
@@ -52,6 +59,7 @@ public class AgentMainController implements MainAppController, Closeable {
         completed = new SimpleIntegerProperty(0);
         finished = new SimpleBooleanProperty(false);
         inContest = new SimpleBooleanProperty(false);
+        waitForAllyApproval = new SimpleBooleanProperty(false);
     }
 
     public void createAgent(String username, String myAllies, int threadCount, int missionAmountPull){
@@ -70,7 +78,6 @@ public class AgentMainController implements MainAppController, Closeable {
             candidatesComponentController.setMainApplicationController(this);
             candidatesComponentController.hideAllyColumn();
         }
-
         alliesNameLabel.textProperty().bind(alliesName);
         totalCandidatesLabel.textProperty().bind(Bindings.format("%d", totalCandidates));
         inQueueLabel.textProperty().bind(Bindings.format("%d", inQueue));
@@ -82,7 +89,37 @@ public class AgentMainController implements MainAppController, Closeable {
     }
 
     private void startRefreshers() {
+        startCheckForContestRefresher();
+        startCheckForFinishRefresher();
+        startAllyApprovedRefresher();
+    }
 
+    public void startCheckForContestRefresher(){
+//        checkForContestRefresher = new CheckForContestRefresher(inContest, ((contest) -> contestDetailsController.update(contest)),
+//                this::updateDMInfo);
+        checkForContestRefresher = new CheckForContestRefresher(inContest, ((contest) -> contestDetailsController.update(contest)),
+                ((dmInfo) -> {}));
+        checkForContestTimer = new Timer();
+        checkForContestTimer.schedule(checkForContestRefresher, REFRESH_RATE, REFRESH_RATE);
+    }
+
+    private void startCheckForFinishRefresher() {
+        checkForFinishRefresher = new CheckForFinishRefresher(inContest, waitForAllyApproval);
+        checkForFinishTimer = new Timer();
+        checkForFinishTimer.schedule(checkForFinishRefresher, REFRESH_RATE, REFRESH_RATE);
+    }
+
+    private void startAllyApprovedRefresher(){
+        allyApprovedRefresher = new AllyApprovedRefresher(waitForAllyApproval, this::handleAllyOKClicked);
+        allyApprovedTimer = new Timer();
+        allyApprovedTimer.schedule(allyApprovedRefresher, REFRESH_RATE, REFRESH_RATE);
+    }
+
+    private void handleAllyOKClicked() {
+        //TODO
+        Platform.runLater(() -> {
+            //initiate UI?
+        });
     }
 
     public String getAlliesName() {
@@ -145,4 +182,6 @@ public class AgentMainController implements MainAppController, Closeable {
     public void close() {
         //stop all refreshers here
     }
+
+
 }

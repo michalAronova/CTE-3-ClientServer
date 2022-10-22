@@ -11,15 +11,17 @@ public class Contest implements Serializable {
     private String difficulty;
     private Integer totalRequiredTeams;
     private Integer teamsInContest;
+    private String encryption;
 
     public Contest(String battleFieldName, String uBoatName, Boolean isActive,
-                   String difficulty, Integer totalRequiredTeams, Integer teamsInContest) {
+                   String difficulty, Integer totalRequiredTeams, Integer teamsInContest, String encryption) {
         this.battleFieldName = battleFieldName;
         this.uBoatName = uBoatName;
         this.isActive = isActive;
         this.difficulty = difficulty;
         this.totalRequiredTeams = totalRequiredTeams;
         this.teamsInContest = teamsInContest;
+        this.encryption = encryption;
     }
 
     public String getBattleFieldName() {
@@ -37,7 +39,6 @@ public class Contest implements Serializable {
     public String getDifficulty() {
         return difficulty;
     }
-
     public Integer getTotalRequiredTeams() {
         return totalRequiredTeams;
     }
@@ -45,6 +46,7 @@ public class Contest implements Serializable {
     public Integer getTeamsInContest() {
         return teamsInContest;
     }
+    public String getEncryption() {return encryption; }
 
     @Override
     public String toString() {
@@ -55,6 +57,7 @@ public class Contest implements Serializable {
                 ", difficulty=" + difficulty +
                 ", totalRequiredTeams=" + totalRequiredTeams +
                 ", teamsInContest=" + teamsInContest +
+                ", enxryption=" + encryption +
                 '}';
     }
 
@@ -65,5 +68,6 @@ public class Contest implements Serializable {
         this.difficulty = contest.getDifficulty();
         this.totalRequiredTeams = contest.getTotalRequiredTeams();
         this.teamsInContest = contest.getTeamsInContest();
+        this.encryption = contest.encryption;
     }
 }

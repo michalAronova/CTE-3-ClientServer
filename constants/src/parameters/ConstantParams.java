@@ -22,4 +22,6 @@ public class ConstantParams {
     public static final String MISSIONS_LEFT = "missions-left";
     public static final int INT_PARAMETER_ERROR = Integer.MIN_VALUE;
 
+    public static final String ALLY_SET_OK = "allyOkClicked";
+
 }

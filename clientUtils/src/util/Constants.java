@@ -11,7 +11,7 @@ public class Constants {
     public final static int SMALL_REFRESH_RATE = 500;
     public final static int MEDIUM_REFRESH_RATE = 1000;
     public final static String CHAT_LINE_FORMATTING = "%tH:%tM:%tS | %.10s: %s%n";
-
+    public final static String FINAL_MESSAGE = "Contest ended! The winner is: ";
     // fxml locations
     public final static String UBOAT_APP_FXML_RESOURCE_LOCATION = "/uBoatClient/uBoatApp/uBoatApp.fxml";
     public final static String ALLIES_APP_FXML_RESOURCE_LOCATION = "/alliesClient/alliesApp/alliesApp.fxml";
@@ -57,6 +57,8 @@ public class Constants {
     public final static String ALL_AGENTS = FULL_SERVER_PATH + "/allies/all/agents";
     public final static String RIVAL_ALLIES = FULL_SERVER_PATH + "/allies/rivals";
     public final static String IS_WINNER_FOUND = FULL_SERVER_PATH + "/allies/winner/found";
+    public final static String ALLY_OK_CLICK = FULL_SERVER_PATH + "/allies/ok/clicked";
+
     //agent
     public final static String AGENT_LOGIN_PAGE = FULL_SERVER_PATH + "/signup/agent/login";
     public final static String PULL_MISSIONS = FULL_SERVER_PATH + "/agent/pull";
@@ -64,6 +66,7 @@ public class Constants {
     public final static String UPLOAD_CANDIDATES = FULL_SERVER_PATH + "/agent/upload/candidates";
     public final static String IS_UBOAT_REGISTERED = FULL_SERVER_PATH + "/agent/check-uboat-registered";
     public final static String IS_CONTEST_FINISHED = FULL_SERVER_PATH + "/agent/contest/finished";
+    public final static String ALLY_APPROVED = FULL_SERVER_PATH + "/agent/ally/approved";
 
     //chat
     public final static String USERS_LIST = FULL_SERVER_PATH + "/userslist";

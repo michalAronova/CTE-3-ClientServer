@@ -6,6 +6,7 @@ import DTO.processResponse.ProcessResponse;
 import clientUtils.MainAppController;
 import clientUtils.activeTeams.ActiveTeamsComponentController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
+import clientUtils.popUpDialog;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import okhttp3.*;
@@ -34,8 +35,7 @@ import java.io.IOException;
 import java.util.Timer;
 
 import static parameters.ConstantParams.MSG_TO_PROCESS;
-import static util.Constants.GSON_INSTANCE;
-import static util.Constants.REFRESH_RATE;
+import static util.Constants.*;
 
 public class UBoatMainController implements MainAppController, Closeable {
     @FXML private Button continueButton;
@@ -93,6 +93,9 @@ public class UBoatMainController implements MainAppController, Closeable {
         isCompetitionOn.addListener((observable, oldValue, newValue) -> {
             if(!newValue){
                 //-> a contest has ended
+                Platform.runLater(() -> {
+                    new popUpDialog(FINAL_MESSAGE + winnerName.getValue());
+                });
                 cleanupAfterContestFinished();
             }
         });

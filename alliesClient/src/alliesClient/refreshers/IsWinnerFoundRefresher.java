@@ -1,5 +1,6 @@
 package alliesClient.refreshers;
 
+import clientUtils.popUpDialog;
 import javafx.beans.property.BooleanProperty;
 import okhttp3.Call;
 import okhttp3.Callback;

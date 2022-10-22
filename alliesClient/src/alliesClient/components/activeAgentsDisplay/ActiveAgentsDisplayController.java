@@ -1,6 +1,5 @@
 package alliesClient.components.activeAgentsDisplay;
 
-import DTO.agent.ActiveAgentDTO;
 import DTO.agent.SimpleAgentDTO;
 import alliesClient.alliesMain.AlliesMainController;
 import javafx.beans.property.SimpleStringProperty;
@@ -12,7 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 
@@ -39,7 +37,6 @@ public class ActiveAgentsDisplayController {
 
     @FXML public void initialize(){
         encryptionLabel.textProperty().bind(encryption);
-
         agentNameColumn.setCellValueFactory(param ->
                 new SimpleStringProperty(param.getValue().getName()));
         totalMissionsLabel.setCellValueFactory(param ->
@@ -60,6 +57,8 @@ public class ActiveAgentsDisplayController {
 
     public void setMainApplicationController(AlliesMainController mainApplicationController){
         this.mainApplicationController = mainApplicationController;
+        //encryptionLabel.textProperty().bind(mainApplicationController.getEncryptionProperty());
+        //encryption.bind(mainApplicationController.getEncryptionProperty());
         startActiveAgentsRefresher();
     }
 
@@ -86,5 +85,6 @@ public class ActiveAgentsDisplayController {
         agentsTimer = new Timer();
         agentsTimer.schedule(activeAgentsRefresher, REFRESH_RATE, REFRESH_RATE);
     }
+
 }
 

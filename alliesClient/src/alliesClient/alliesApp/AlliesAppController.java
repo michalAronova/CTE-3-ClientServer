@@ -3,6 +3,7 @@ package alliesClient.alliesApp;
 import alliesClient.alliesMain.AlliesMainController;
 import clientUtils.LoginController;
 import clientUtils.chooseNameComponent.ChooseNameComponentController;
+import clientUtils.popUpDialog;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -80,7 +81,6 @@ public class AlliesAppController implements LoginController {
     @Override
     public void onUsernameSelected(String username) {
         System.out.println("dispatch allies login request to server...");
-
         String finalUrl = HttpUrl
                 .parse(Constants.ALLIES_LOGIN_PAGE)
                 .newBuilder()
@@ -110,6 +110,7 @@ public class AlliesAppController implements LoginController {
                     Platform.runLater(() -> {
                         usernameProperty.set(username);
                         isValidUsername.set(true);
+                        alliesMainController.check();
                     });
                 }
             }

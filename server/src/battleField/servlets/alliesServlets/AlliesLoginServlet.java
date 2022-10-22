@@ -17,9 +17,8 @@ import java.io.PrintWriter;
 
 import static parameters.ConstantParams.USERNAME;
 
-    @WebServlet(name = "AlliesLoginServlet", urlPatterns = {"/signup/allies/login"})
+@WebServlet(name = "AlliesLoginServlet", urlPatterns = {"/signup/allies/login"})
 public class AlliesLoginServlet extends HttpServlet {
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=UTF-8");
@@ -66,5 +65,4 @@ public class AlliesLoginServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_OK);
         }
     }
-
 }

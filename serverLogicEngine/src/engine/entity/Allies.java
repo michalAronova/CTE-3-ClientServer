@@ -7,6 +7,7 @@ import DTO.dmInfo.DMInfo;
 import DTO.mission.MissionDTO;
 import DTO.missionResult.MissionResult;
 import DTO.team.Team;
+import com.sun.deploy.util.BlackList;
 import engine.Engine;
 import engine.decipherManager.DecipherManager;
 import engine.decipherManager.Difficulty;
@@ -31,6 +32,7 @@ public class Allies implements Entity {
     private final Map<String, SimpleAgentDTO> waitingAgents;
     private Boolean isWinner;
     private final BooleanProperty isCompetitionOn;
+    private final BooleanProperty okClicked;
 
     private final List<MissionResult> resultList;
     private int missionSize;
@@ -49,6 +51,7 @@ public class Allies implements Entity {
         waitingAgents = new HashMap<>();
         resultList = new LinkedList<>();
         uBoat = null;
+        okClicked = new SimpleBooleanProperty(false);
         isCompetitionOn = new SimpleBooleanProperty(false);
         isCompetitionOn.addListener(((observable, oldValue, newValue) -> {
             if(!newValue){ //competition finished //TODO
@@ -253,5 +256,13 @@ public class Allies implements Entity {
             }
         }
         return totalMission;
+    }
+
+    public void setOKClicked(boolean clicked) {
+        okClicked.set(clicked);
+    }
+
+    public boolean isOkClicked() {
+        return okClicked.get();
     }
 }

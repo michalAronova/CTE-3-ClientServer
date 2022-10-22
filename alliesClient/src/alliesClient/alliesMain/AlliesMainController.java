@@ -1,11 +1,9 @@
 package alliesClient.alliesMain;
 
 import DTO.contest.Contest;
-import DTO.dmProgress.DMProgress;
 import DTO.team.Team;
 import alliesClient.alliesApp.AlliesAppController;
 import alliesClient.components.missionSizeChooser.MissionSizeChooserController;
-import alliesClient.components.missionsProgress.MissionsProgressRefresher;
 import alliesClient.refreshers.CandidatesRefresher;
 import alliesClient.refreshers.IsWinnerFoundRefresher;
 import alliesClient.refreshers.RivalAlliesRefresher;
@@ -17,7 +15,8 @@ import alliesClient.components.activeAgentsDisplay.ActiveAgentsDisplayController
 import alliesClient.components.activeContests.ActiveContestsController;
 import alliesClient.components.agentDisplay.AgentDisplayController;
 import alliesClient.components.missionsProgress.MissionsProgressController;
-import com.google.gson.JsonSyntaxException;
+import clientUtils.popUpDialog;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -29,9 +28,9 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.GridPane;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
-import util.Constants;
 import util.http.HttpClientUtil;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
@@ -110,8 +109,7 @@ public class AlliesMainController implements MainAppController {
         chosenContest = null;
         contestTab.setDisable(true);
         activeContestsController.disableProperty().bind(registeredToContest);
-        activeAgentsDisplayController.encryptionProperty().bind(encryption);
-        //TODO- initialize encryption agter registration to contest
+        //activeAgentsDisplayController.encryptionProperty().bind(encryption);
     }
 
     public void chooseContest(String boatName) {
@@ -133,10 +131,10 @@ public class AlliesMainController implements MainAppController {
                     String stringFromBody = responseBody.string();
                     if (response.code() == 200) {
                         chosenContest = GSON_INSTANCE.fromJson(stringFromBody, Contest.class);
-
                         registeredToContest.set(true);
                         contestTab.setDisable(false);
                         competitionTabPane.getSelectionModel().select(contestTab);
+                        encryption.set(chosenContest.getEncryption());
                         startRivalAlliesRefresher();
                     } else {
                         System.out.println("Error! " + stringFromBody);
@@ -151,15 +149,12 @@ public class AlliesMainController implements MainAppController {
         });
     }
 
-
     public boolean getIsCompetitionOn() {
         return isCompetitionOn.get();
     }
-
     public BooleanProperty isCompetitionOnProperty() {
         return isCompetitionOn;
     }
-
     public void missionSizeChosen(int missionSize) {
         String finalUrl = HttpUrl
                 .parse(ALLIES_READY)
@@ -219,17 +214,55 @@ public class AlliesMainController implements MainAppController {
         isAllyReady.set(ready);
     }
 
-    public void handleWinnerFound(String winnerFound){
-        //TODO
-            //pop relavnt message to user with OK option
-            //reset data of contest after user press OK
-        //chosenContest = null;
-        //contestTab.setDisable(true);
-        //registeredToContest.set(false);
-        //encryption.set("");
-
+    public void onDialogOKClicked(){
+        allyOKClickedRequest();
     }
 
+    private void allyOKClickedRequest() {
+        String finalUrl = HttpUrl
+                .parse(ALLY_OK_CLICK)
+                .newBuilder()
+                .build()
+                .toString();
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    String stringFromBody = responseBody.string();
+                    if (response.code() == 200) {
+                        System.out.println("ok pressed successfully");
+                    }
+                }
+            }
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("failed to send ok clicked request");
+            }
+        });
+    }
+
+    public void handleWinnerFound(String winnerName){
+        String message = "Contest ended: ";
+        message += (winnerName.equals(usernameLabel.textProperty().getValue())) ?  "You Won! Congratulations" : "The Winner Is " + winnerName;
+        String finalMessage = message;
+        Platform.runLater(() -> {
+            new popUpDialog(finalMessage, this::onDialogOKClicked);
+            prepareDataForNewContest();
+        } );
+        //TODO
+        //pop relavnt message to user with OK option
+        //reset data of contest after user press OK
+    }
+
+    public void prepareDataForNewContest(){
+        chosenContest = null;
+        registeredToContest.set(false);
+        encryption.set("");
+        isCompetitionOn.set(false);
+        isAllyReady.set(false);
+        competitionTabPane.getSelectionModel().select(dashboardTab);
+        contestTab.setDisable(true);
+    }
 
     private void startWinnerFoundRefresher(){
         isWinnerFoundRefresher = new IsWinnerFoundRefresher(this::handleWinnerFound, isCompetitionOn);
@@ -248,4 +281,11 @@ public class AlliesMainController implements MainAppController {
         return isAllyReady;
     }
 
+    public StringProperty getEncryptionProperty() {
+        return encryption;
+    }
+
+    public void check() {
+        new popUpDialog("message");
+    }
 }

@@ -59,7 +59,7 @@ public class ActiveContestsListServlet extends HttpServlet{
         readyUBoats.forEach((name, uBoat) -> {
                     Contest c = new Contest(uBoat.getBattleFieldName(), uBoat.getUsername(),
                             uBoat.isCompetitionOn().getValue(), uBoat.getEngine().getDifficulty().name(),
-                            uBoat.getEngine().getAlliesRequired(), uBoat.getParticipants().size());
+                            uBoat.getEngine().getAlliesRequired(), uBoat.getParticipants().size(), uBoat.getOutput());
                     contests.add(c);
         });
         System.out.println("contests: " + contests);

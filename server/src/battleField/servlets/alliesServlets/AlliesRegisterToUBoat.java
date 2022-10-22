@@ -54,6 +54,7 @@ public class AlliesRegisterToUBoat extends HttpServlet {
                     else {
                         uBoat.addParticipant(ally);
                         ally.setUBoat(uBoat);
+                        ally.setOKClicked(false);
                         Gson gson = new Gson();
                         Contest contest = uBoat.getAsDTO();
                         System.out.println("chosen contest" + contest);

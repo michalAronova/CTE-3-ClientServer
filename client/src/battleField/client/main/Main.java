@@ -24,8 +24,8 @@ public class Main {
     private static final Object DMLock = new Object();
 
     public static void main(String[] args) {
-        Contest contest = new Contest("pearl", "name", true, "hard", 3, 2);
-        Contest contest2 = new Contest("pearl", "name", true, "hard", 3, 2);
+        Contest contest = new Contest("pearl", "name", true, "hard", 3, 2, "out");
+        Contest contest2 = new Contest("pearl", "name", true, "hard", 3, 2, "out");
         List<Contest> allContests = new ArrayList<>();
         allContests.add(contest);
         allContests.add(contest2);

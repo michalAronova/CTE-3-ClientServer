@@ -56,7 +56,7 @@ public class UBoat implements Entity{
 
     public Contest getAsDTO(){
         return new Contest(getBattleFieldName(), username, isCompetitionOn().get(),
-                engine.getDifficulty().toString(), engine.getAlliesRequired(), participants.size());
+                engine.getDifficulty().toString(), engine.getAlliesRequired(), participants.size(), output);
     }
 
     @Override
@@ -228,6 +228,9 @@ public class UBoat implements Entity{
         return output;
     }
 
+    public String getOutput(){
+        return output;
+    }
     public boolean isFull(){
         return participants.size() == engine.getAlliesRequired();
     }

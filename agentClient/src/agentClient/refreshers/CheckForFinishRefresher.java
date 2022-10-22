@@ -53,7 +53,6 @@ public class CheckForFinishRefresher extends TimerTask {
                     else{
                         System.out.println(bodyString);
                     }
-
                 }
             }
 
