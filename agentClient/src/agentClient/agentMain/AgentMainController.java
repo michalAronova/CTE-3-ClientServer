@@ -98,7 +98,9 @@ public class AgentMainController implements MainAppController, Closeable {
 //        checkForContestRefresher = new CheckForContestRefresher(inContest, ((contest) -> contestDetailsController.update(contest)),
 //                this::updateDMInfo);
         checkForContestRefresher = new CheckForContestRefresher(inContest, ((contest) -> contestDetailsController.update(contest)),
-                ((dmInfo) -> {}));
+                ((dmInfo) -> {
+                    agent.updateByContest(dmInfo.getKeys(), dmInfo.getDictionary());
+                }));
         checkForContestTimer = new Timer();
         checkForContestTimer.schedule(checkForContestRefresher, REFRESH_RATE, REFRESH_RATE);
     }
@@ -117,9 +119,7 @@ public class AgentMainController implements MainAppController, Closeable {
 
     private void handleAllyOKClicked() {
         //TODO
-        Platform.runLater(() -> {
-            //initiate UI?
-        });
+        //intiate UI
     }
 
     public String getAlliesName() {

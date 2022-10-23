@@ -52,12 +52,9 @@ public class IsRegisterToUBoatServlet extends HttpServlet {
         //if agent's ally not registered to any uboat yet.. send nothing on response
         //otherwise, send contest details
         if(myAllies.getUBoat() != null){
-            UBoat boat = myAllies.getUBoat();
-            Contest contest = boat.getAsDTO();
             DMInfo dmInfo = myAllies.getDmInfo();
-            ContestForAgent contestForAgent = new ContestForAgent(contest, dmInfo);
             Gson gson = new Gson();
-            String json = gson.toJson(contestForAgent);
+            String json = gson.toJson(dmInfo);
             out.println(json);
             out.flush();
         }

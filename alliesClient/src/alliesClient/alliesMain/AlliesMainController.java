@@ -109,7 +109,7 @@ public class AlliesMainController implements MainAppController {
         chosenContest = null;
         contestTab.setDisable(true);
         activeContestsController.disableProperty().bind(registeredToContest);
-        //activeAgentsDisplayController.encryptionProperty().bind(encryption);
+        activeAgentsDisplayController.encryptionProperty().bind(encryption);
     }
 
     public void chooseContest(String boatName) {
@@ -134,7 +134,7 @@ public class AlliesMainController implements MainAppController {
                         registeredToContest.set(true);
                         contestTab.setDisable(false);
                         competitionTabPane.getSelectionModel().select(contestTab);
-                        encryption.set(chosenContest.getEncryption());
+                        Platform.runLater(() -> { encryption.set(chosenContest.getEncryption()); });
                         startRivalAlliesRefresher();
                     } else {
                         System.out.println("Error! " + stringFromBody);
@@ -249,9 +249,6 @@ public class AlliesMainController implements MainAppController {
             new popUpDialog(finalMessage, this::onDialogOKClicked);
             prepareDataForNewContest();
         } );
-        //TODO
-        //pop relavnt message to user with OK option
-        //reset data of contest after user press OK
     }
 
     public void prepareDataForNewContest(){

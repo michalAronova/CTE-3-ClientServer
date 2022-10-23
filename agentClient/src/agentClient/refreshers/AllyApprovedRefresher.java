@@ -37,7 +37,7 @@ public class AllyApprovedRefresher extends TimerTask {
                     String bodyString = responseBody.string();
                     if(response.code() == 200){
                         if(!bodyString.isEmpty()){ //not empty only if ally pressed ok!
-                            handleAllyOkClicked.run();
+                            Platform.runLater(handleAllyOkClicked);
                         }
                     }
                     else{

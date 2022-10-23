@@ -46,7 +46,7 @@ public class AllyApprovedServlet extends HttpServlet {
         UserManager alliesUserManager = ServletUtils.getAlliesUserManager(getServletContext());
         Allies myAllies = (Allies) alliesUserManager
                 .getEntityObject(agentUserManager.getAllyName(usernameFromSession));
-
+        resp.setStatus(HttpServletResponse.SC_OK);
         synchronized (this) {
             if(myAllies.isOkClicked()){
                 out.print(ALLY_SET_OK);

@@ -43,12 +43,12 @@ public class CheckForContestRefresher extends TimerTask {
                     String bodyString = responseBody.string();
                     if(response.code() == 200){
                         if(!bodyString.isEmpty()){
-                            ContestForAgent contestForAgent = GSON_INSTANCE
-                                    .fromJson(bodyString, ContestForAgent.class);
-                            inContest.set(true);
+                            DMInfo dmInfo = GSON_INSTANCE
+                                    .fromJson(bodyString, DMInfo.class);
+                            inContest.set(dmInfo.isCompetitionOn());
                             Platform.runLater(() -> {
-                                updateContestDetails.accept(contestForAgent.getContest());
-                                updateDMInfo.accept(contestForAgent.getDmInfo());
+                                updateContestDetails.accept(dmInfo.getContestDetails());
+                                updateDMInfo.accept(dmInfo);
                             });
                         }
                     }
