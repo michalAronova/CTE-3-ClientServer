@@ -1,31 +1,39 @@
 package clientUtils;
 
+import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
+import javafx.scene.control.DialogEvent;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.function.Consumer;
 
 public class popUpDialog {
-    private static JDialog dialog;
-    private JPanel panel;
     public popUpDialog(String message, Runnable onDialogOKClicked) {
-        panel = new JPanel(new GridLayout(2, 2));
-        panel.add(new JLabel(message));;
-        int option = JOptionPane.showConfirmDialog(null, panel, "Winner Found", JOptionPane.DEFAULT_OPTION);
-
-        if (option == JOptionPane.OK_OPTION) {
-            onDialogOKClicked.run();
-            System.out.println("OK!"); // do something
-        }
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("We have a winner!");
+        alert.setHeaderText("Contest ended");
+        alert.setContentText(message);
+        alert.setOnCloseRequest(new EventHandler<DialogEvent>() {
+            @Override
+            public void handle(DialogEvent event) {
+                onDialogOKClicked.run();
+            }
+        });
+        alert.showAndWait();
     }
     public popUpDialog(String message) {
-        panel = new JPanel(new GridLayout(2, 2));
-        panel.add(new JLabel(message));;
-        int option = JOptionPane.showConfirmDialog(null, panel, "Winner Found", JOptionPane.DEFAULT_OPTION);
-
-        if (option == JOptionPane.OK_OPTION) {
-            System.out.println("OK!"); // do something
-        }
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("We have a winner!");
+        alert.setHeaderText("Contest ended");
+        alert.setContentText(message);
+        alert.setOnCloseRequest(new EventHandler<DialogEvent>() {
+            @Override
+            public void handle(DialogEvent event) {
+                System.out.println("ok clicked");
+            }
+        });
+        alert.showAndWait();
     }
-
 }

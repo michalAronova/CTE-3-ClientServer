@@ -147,7 +147,7 @@ public class UBoatMainController implements MainAppController, Closeable {
     }
 
     private void cleanupAfterContestFinished() {
-        showWinnerAlert();
+        //showWinnerAlert();
         winnerName.set("");
 
         isReady.set(false);

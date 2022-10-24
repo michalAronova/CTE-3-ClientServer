@@ -283,6 +283,6 @@ public class AlliesMainController implements MainAppController {
     }
 
     public void check() {
-        new popUpDialog("message");
+        new popUpDialog("message", this::onDialogOKClicked);
     }
 }

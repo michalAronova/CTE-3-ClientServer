@@ -11,7 +11,7 @@ public class Constants {
     public final static int SMALL_REFRESH_RATE = 500;
     public final static int MEDIUM_REFRESH_RATE = 1000;
     public final static String CHAT_LINE_FORMATTING = "%tH:%tM:%tS | %.10s: %s%n";
-    public final static String FINAL_MESSAGE = "Contest ended! The winner is: ";
+    public final static String FINAL_MESSAGE = "And The winner is: ";
     // fxml locations
     public final static String UBOAT_APP_FXML_RESOURCE_LOCATION = "/uBoatClient/uBoatApp/uBoatApp.fxml";
     public final static String ALLIES_APP_FXML_RESOURCE_LOCATION = "/alliesClient/alliesApp/alliesApp.fxml";
