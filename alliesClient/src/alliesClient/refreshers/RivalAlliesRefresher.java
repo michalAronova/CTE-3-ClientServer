@@ -24,17 +24,24 @@ public class RivalAlliesRefresher extends TimerTask {
     private final Consumer<List<Team>> rivalListConsumer;
     private final BooleanProperty registeredToContest;
 
-    public RivalAlliesRefresher(Consumer<List<Team>> rivalListConsumer, BooleanProperty registeredToContest) {
+    private final BooleanProperty isCompetitionOn;
+
+    public RivalAlliesRefresher(Consumer<List<Team>> rivalListConsumer, BooleanProperty registeredToContest, BooleanProperty isCompetitionOn) {
         this.rivalListConsumer = rivalListConsumer;
         this.registeredToContest = registeredToContest;
+        this.isCompetitionOn = isCompetitionOn;
     }
 
     @Override
     public void run() {
-        //start after registration to a contest
-        if (!registeredToContest.get()) {
+        if (!registeredToContest.get()) { //start after registration to a contest
             return;
         }
+
+        if(isCompetitionOn.getValue()){ //during a competition, don't need to check for rival allies
+            return;
+        }
+
         HttpClientUtil.runAsync(RIVAL_ALLIES, new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {

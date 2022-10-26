@@ -36,15 +36,12 @@ public class IsWinnerFoundServlet extends HttpServlet {
         UserManager alliesUserManager = ServletUtils.getAlliesUserManager(getServletContext());
         Allies ally = (Allies) alliesUserManager.getEntityObject(usernameFromSession);
 
+        resp.setStatus(HttpServletResponse.SC_OK);
         //get ally's uboat
         UBoat myBoat = ally.getUBoat();
         if(myBoat.isWinnerFound()){
             out.println(myBoat.getWinner());
         }
-        else{
-            out.println("");
-        }
-        resp.setStatus(HttpServletResponse.SC_OK);
         out.flush();
     }
 }

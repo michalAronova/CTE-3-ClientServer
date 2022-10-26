@@ -72,6 +72,8 @@ public class UBoatMainController implements MainAppController, Closeable {
     private final StringProperty winnerName;
     private final BooleanProperty hasInput;
 
+    private IntegerProperty candidatesAmount;
+
     //refreshers and timers
     private ActiveTeamsRefresher activeTeamsRefresher;
 
@@ -89,16 +91,15 @@ public class UBoatMainController implements MainAppController, Closeable {
         isCompetitionOn = new SimpleBooleanProperty(false);
         hasInput = new SimpleBooleanProperty(false);
         winnerName = new SimpleStringProperty("");
+        candidatesAmount = new SimpleIntegerProperty(0);
 
-        isCompetitionOn.addListener((observable, oldValue, newValue) -> {
-            if(!newValue){
-                //-> a contest has ended
-                Platform.runLater(() -> {
-                    new popUpDialog(FINAL_MESSAGE + winnerName.getValue());
-                });
-                cleanupAfterContestFinished();
-            }
-        });
+//        isCompetitionOn.addListener((observable, oldValue, newValue) -> {
+//            if(!newValue){
+//                //-> a contest has ended
+//                Platform.runLater(() -> new popUpDialog(FINAL_MESSAGE + winnerName.getValue()));
+//                cleanupAfterContestFinished();
+//            }
+//        });
 
         startContestFinishedRefresher();
     }
@@ -347,7 +348,7 @@ public class UBoatMainController implements MainAppController, Closeable {
                             }
                         });
                         startTeamsRefresher();
-                        //startCandidatesRefresher();
+                        startCandidatesRefresher();
 
                         Platform.runLater(() -> {
                             xmlErrorLabel.setStyle("-fx-text-fill: green");
@@ -385,9 +386,9 @@ public class UBoatMainController implements MainAppController, Closeable {
     private void startCandidatesRefresher(){
         candidatesRefresher = new CandidatesRefresher(
                 (candidates) -> candidatesComponentController.addMultiple(candidates, false),
-                isCompetitionOn);
+                isCompetitionOn, candidatesAmount);
         candidatesTimer = new Timer();
-        candidatesTimer.schedule(candidatesRefresher, REFRESH_RATE, REFRESH_RATE);
+        candidatesTimer.schedule(candidatesRefresher, SMALL_REFRESH_RATE, SMALL_REFRESH_RATE);
     }
 
     private void configManualRequest(CodeObj code){
@@ -485,6 +486,11 @@ public class UBoatMainController implements MainAppController, Closeable {
 
     public BooleanProperty hasInputProperty() {
         return hasInput;
+    }
+
+    @Override
+    public void updateCandidateAmount(int size) {
+        candidatesAmount.set(size);
     }
 }
 

@@ -1,5 +1,6 @@
 package agentClient.agentMain;
 
+import DTO.missionResult.MissionResult;
 import agentClient.agentApp.AgentAppController;
 import agentClient.agentLogic.Agent;
 import agentClient.refreshers.AllyApprovedRefresher;
@@ -64,6 +65,14 @@ public class AgentMainController implements MainAppController, Closeable {
 
     public void createAgent(String username, String myAllies, int threadCount, int missionAmountPull){
         agent = new Agent(username, myAllies, threadCount, missionAmountPull);
+        agent.isCompetitionOnProperty().bind(inContest);
+        agent.setUpdateLocal(this::updateCandidates);
+    }
+
+    private void updateCandidates(MissionResult missionResult) {
+        Platform.runLater(() ->
+                candidatesComponentController
+                .addMissionResult(missionResult, false));
     }
 
     public void setMainController(AgentAppController agentAppController) {
@@ -95,12 +104,10 @@ public class AgentMainController implements MainAppController, Closeable {
     }
 
     public void startCheckForContestRefresher(){
-//        checkForContestRefresher = new CheckForContestRefresher(inContest, ((contest) -> contestDetailsController.update(contest)),
-//                this::updateDMInfo);
-        checkForContestRefresher = new CheckForContestRefresher(inContest, ((contest) -> contestDetailsController.update(contest)),
-                ((dmInfo) -> {
-                    agent.updateByContest(dmInfo.getKeys(), dmInfo.getDictionary());
-                }));
+        checkForContestRefresher = new CheckForContestRefresher(inContest,
+                ((contest) -> contestDetailsController.update(contest)),
+                ((dmInfo) -> agent.updateByContest(dmInfo.getKeys(), dmInfo.getDictionary())));
+
         checkForContestTimer = new Timer();
         checkForContestTimer.schedule(checkForContestRefresher, REFRESH_RATE, REFRESH_RATE);
     }
@@ -184,4 +191,8 @@ public class AgentMainController implements MainAppController, Closeable {
     }
 
 
+    @Override
+    public void updateCandidateAmount(int size) {
+        totalCandidates.set(size);
+    }
 }

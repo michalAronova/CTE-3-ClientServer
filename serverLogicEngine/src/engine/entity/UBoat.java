@@ -40,7 +40,9 @@ public class UBoat implements Entity{
         counterReady = new SimpleIntegerProperty(0);
         competitionOn = new SimpleBooleanProperty();
         counterReady.addListener((observable, oldValue, newValue) -> {
+            System.out.println("counter: "+ newValue+" / required: "+engine.getAlliesRequired());
             if(newValue.intValue() == engine.getAlliesRequired()){ //all allies ready to start
+                System.out.println("updating competition start...");
                 updateCompetitionStart();
             }
         });
@@ -169,10 +171,11 @@ public class UBoat implements Entity{
     }
 
     private void start() {
+        System.out.println("uboat start method was called");
         for (Allies ally: participants.values()) {
             setAlliesParams(ally); //created the DM
 
-            new Thread(() -> ally.start(output), "Allies "+ally.getUsername()+" starting thread");
+            new Thread(() -> ally.start(output), "Allies "+ally.getUsername()+" starting thread").start();
         }
     }
 
@@ -183,6 +186,7 @@ public class UBoat implements Entity{
     }
 
     public void updateCompetitionStart() {
+        competitionOn.set(true);
         clearForNewContest();
         start();
     }
@@ -241,5 +245,13 @@ public class UBoat implements Entity{
         if (!(o instanceof UBoat)) return false;
         UBoat uBoat = (UBoat) o;
         return username.equals(uBoat.username);
+    }
+
+    public List<Character> getKeys() {
+        return engine.getKeyBoardList();
+    }
+
+    public Set<String> getDictionary() {
+        return engine.getDictionary().getWords();
     }
 }

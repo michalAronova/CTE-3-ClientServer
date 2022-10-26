@@ -110,7 +110,6 @@ public class AlliesAppController implements LoginController {
                     Platform.runLater(() -> {
                         usernameProperty.set(username);
                         isValidUsername.set(true);
-                        alliesMainController.check();
                     });
                 }
             }

@@ -25,6 +25,7 @@ public class MissionsProgressController {
     private Timer missionProgressTimer;
     private MissionsProgressRefresher missionProgressRefresher;
 
+
     @FXML public void initialize(){
         totalColumn.setCellValueFactory(param ->
                 new SimpleStringProperty(String.valueOf(param.getValue().getTotal())));
@@ -48,7 +49,7 @@ public class MissionsProgressController {
 
     public void setMainApplicationController(AlliesMainController mainApplicationController){
         this.mainApplicationController = mainApplicationController;
-        startMissionProgressRefresher();
+        //startMissionProgressRefresher();
     }
 
     public void startMissionProgressRefresher() {

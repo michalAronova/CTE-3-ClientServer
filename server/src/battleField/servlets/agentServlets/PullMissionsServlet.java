@@ -21,7 +21,7 @@ import java.util.List;
 public class PullMissionsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/plain;charset=UTF-8");
+        resp.setContentType("application/json");
 
         String usernameFromSession = SessionUtils.getUsername(req);
         AgentUserManager agentUserManager = ServletUtils.getAgentUserManager(getServletContext());
@@ -30,11 +30,20 @@ public class PullMissionsServlet extends HttpServlet {
         Allies myAllies = (Allies) alliesUserManager.getEntityObject
                                     (agentUserManager.getAllyName(usernameFromSession));
 
+        if(!myAllies.isCompetitionOnProperty().getValue()){
+            resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            //the competition has ended
+            return;
+        }
+
         List<MissionDTO> missions = myAllies.pullMissions
                 (agentUserManager
                         .getSimpleAgent(usernameFromSession)
                         .getDTO()
                         .getMissionPull());
+
+//        System.out.println("Missions: ");
+//        System.out.println(missions);
 
         try (PrintWriter out = resp.getWriter()) {
             Gson gson = new Gson();

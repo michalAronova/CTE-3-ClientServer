@@ -46,6 +46,8 @@ public class ContestDetailsController {
     }
 
     public void update(Contest contest){
+        if(contest == null) return;
+
         battleName.set(contest.getBattleFieldName());
         uboatName.set(contest.getuBoatName());
         activeOrIdle.set(contest.getActive() ? active : idle);

@@ -22,6 +22,7 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Consumer;
 
 import static util.Constants.GSON_INSTANCE;
 import static util.http.HttpClientUtil.HTTP_CLIENT;
@@ -42,14 +43,16 @@ public class Agent {
     private final BooleanProperty isEmptyQueue;
 
     private final BooleanProperty isCompetitionOn;
+    private Consumer<MissionResult> updateLocal;
 
     private IntegerProperty missionsDone;
 
     private KeyBoard keyboard;
     private Set<String> dictionary;
-    Task<Boolean> decipherTask;
+    private Task<Boolean> decipherTask;
 
-    private final List<MissionResult> resultList;
+    private CountDownLatch cdl;
+
     private int totalMissionDone = 0;
     private int totalCandidatesFound = 0;
     public Agent(String username, String myAllies, int threadCount, int missionAmountPull) {
@@ -58,7 +61,6 @@ public class Agent {
         this.threadCount = threadCount;
         this.missionAmountPull = missionAmountPull;
         missionsDone = new SimpleIntegerProperty(0);
-        resultList = new LinkedList<>();
 
         //create result queue
         resultQueue = new LinkedBlockingQueue<>();
@@ -73,6 +75,17 @@ public class Agent {
 
         isEmptyQueue = new SimpleBooleanProperty(true);
         isCompetitionOn = new SimpleBooleanProperty(false);
+
+        isCompetitionOn.addListener((observable, oldValue, newValue) -> {
+            if(newValue){ //is competition is on, start
+                System.out.println("competition on notified inside Agent Object, start!");
+                start();
+            }
+            else{ //if competition turned not on, stop
+                System.out.println("competition off notified inside Agent Object, stop!");
+                stop();
+            }
+        });
 
         isEmptyQueue.addListener((observable, oldValue, newValue) -> {
             if (newValue && isCompetitionOn.getValue()) {
@@ -93,7 +106,7 @@ public class Agent {
     }
 
     public void start(){
-        isCompetitionOn.set(true);
+        //isCompetitionOn.set(true);
         decipherTask = new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {
@@ -101,31 +114,37 @@ public class Agent {
                 return true;
             }
         };
+
+        new Thread(decipherTask, "decipher task thread").start();
     }
 
     public void stop(){
-        decipherTask.cancel();
-        isCompetitionOn.set(false);
+        if(decipherTask != null){
+            decipherTask.cancel();
+        }
+        //isCompetitionOn.set(false);
     }
 
     private void decipher() {
+        System.out.println(Thread.currentThread().getName()+" is working");
         missionsDone.set(0);
-        isCompetitionOn.set(true);
+        //isCompetitionOn.set(true);
         threadExecutor.prestartAllCoreThreads();
 
         new Thread(new ResultListener(resultQueue, this::transferMissionResult).addBooleanToProceed(isCompetitionOn),
                 "Agent " + username + " Result Listener").start();
-        new Thread(this::pullMissionsFromAlly, "Pull Thread for " + username).start();
+        new Thread(this::pullMissionsFromAlly, "First Pull Thread for " + username).start();
     }
 
     private void transferMissionResult(MissionResult missionResult) {
+        updateLocal.accept(missionResult);
+
         String finalUrl = HttpUrl
                 .parse(Constants.UPLOAD_CANDIDATES)
                 .newBuilder()
                 .build()
                 .toString();
         totalCandidatesFound += missionResult.getCandidates().size();
-        resultList.add(missionResult);
         HttpClientUtil.runAsyncResultUpload(finalUrl, missionResult, new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -211,17 +230,17 @@ public class Agent {
     }
 
     public void pullMissionsFromAlly(){
-        List<MissionDTO> missionsDTOs = new LinkedList<>();
+        List<MissionDTO> missionsDTOs;
         System.out.println("Using thread: "+ Thread.currentThread().getName());
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        while(isEmptyQueue() && !Thread.currentThread().isInterrupted()) {
-            missionsDTOs = requestMissionPull();
 
-            System.out.println(username+" pulled " + missionsDTOs.size() + " missions!");
+        //trying to get missions until I fill up my queue...
+        while(isEmptyQueue() && !Thread.currentThread().isInterrupted() && isCompetitionOn.getValue()) {
+            missionsDTOs = requestMissionPull();
 
             if (missionsDTOs.size() > 0) {
                 missionsDTOs.forEach(missionDTO -> {
@@ -265,12 +284,13 @@ public class Agent {
         try {
             Response response = HTTP_CLIENT.newCall(request).execute();
             try (ResponseBody responseBody = response.body()) {
-                if (response.code() == 200) {
+                if (response.code() == 200) { //HttpServletResponse.SC_OK
                     Type listType = new TypeToken<List<MissionDTO>>() { }.getType();
                     missionDTOS = GSON_INSTANCE.fromJson(responseBody.string(), listType);
                 }
-                else {
-                    System.out.println("Error: "+ responseBody.string());
+                else if(response.code() == 204){ //HttpServletResponse.SC_NO_CONTENT - contest has ended
+                    System.out.println("can't pull because competition has ended...");
+                    //isCompetitionOn.set(false);
                 }
             }
         } catch (IOException e) {
@@ -285,5 +305,9 @@ public class Agent {
 
     public BooleanProperty isCompetitionOnProperty() {
         return isCompetitionOn;
+    }
+
+    public void setUpdateLocal(Consumer<MissionResult> updateLocal) {
+        this.updateLocal = updateLocal;
     }
 }

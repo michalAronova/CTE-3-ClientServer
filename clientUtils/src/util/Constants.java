@@ -34,6 +34,7 @@ public class Constants {
 
     //uboat
     public final static String CONTEST_STARTED = FULL_SERVER_PATH + "/uboat/contest/start";
+    public final static String CONTEST_FINISHED = FULL_SERVER_PATH + "/uboat/contest/finish";
     public final static String UPLOAD_XML = FULL_SERVER_PATH + "/uboat/upload";
     public final static String MANUAL_CONFIG = FULL_SERVER_PATH + "/uboat/code/configuration";
     public final static String PARTICIPANTS = FULL_SERVER_PATH + "/uboat/participants";

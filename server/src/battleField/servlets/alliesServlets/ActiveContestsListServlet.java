@@ -54,7 +54,6 @@ public class ActiveContestsListServlet extends HttpServlet{
     }
 
     private List<Contest> generateContestListFromUBoats(Map<String, UBoat> readyUBoats) {
-        System.out.println("ready uBoats: " + readyUBoats);
         List<Contest> contests = new ArrayList<>();
         readyUBoats.forEach((name, uBoat) -> {
                     Contest c = new Contest(uBoat.getBattleFieldName(), uBoat.getUsername(),
@@ -62,7 +61,6 @@ public class ActiveContestsListServlet extends HttpServlet{
                             uBoat.getEngine().getAlliesRequired(), uBoat.getParticipants().size(), uBoat.getOutput());
                     contests.add(c);
         });
-        System.out.println("contests: " + contests);
 
         return contests;
     }

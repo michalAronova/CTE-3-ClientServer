@@ -3,24 +3,18 @@ package engine.decipherManager;
 import DTO.codeObj.CodeObj;
 import DTO.mission.MissionDTO;
 import DTO.missionResult.MissionResult;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import engine.decipherManager.dictionary.Dictionary;
-import engine.decipherManager.mission.Mission;
 import engine.decipherManager.permuter.Permuter;
 import engine.decipherManager.resultListener.ResultListener;
 import engine.stock.Stock;
 import enigmaMachine.Machine;
 import enigmaMachine.reflector.Reflecting;
 import enigmaMachine.rotor.Rotor;
-import exceptions.taskExceptions.TaskIsCancelledException;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.util.Pair;
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.paukov.combinatorics3.Generator;
-import schema.generated.CTEDecipher;
 
 import java.io.*;
 import java.util.*;
@@ -50,15 +44,12 @@ public class DecipherManager {
     private BlockingQueue<MissionDTO> workQueue;
 
     private String encryption;
-    private BooleanProperty isPaused;
-    private BooleanProperty isCancelled;
+    private BooleanProperty isGameOn;
     private Task<Boolean> currentRunningTask;
 
     private Consumer<MissionResult> transferMissionResult;
 
     private BiConsumer<Integer, Long> updateTotalMissionDone;
-
-    private final BooleanProperty workQueueCreated;
     private double totalMissionDone;
     private double totalMissionProduced;
 
@@ -79,9 +70,10 @@ public class DecipherManager {
         }
 
         possiblePositionPermutations = calculatePermutationsCount();
-        workQueueCreated = new SimpleBooleanProperty(false);
         totalMissionProduced = 0;
         totalMissionDone = 0;
+
+        workQueue = new ArrayBlockingQueue<>(WORK_QUEUE_LIMIT);
     }
 
     private double calculatePermutationsCount() {
@@ -125,12 +117,9 @@ public class DecipherManager {
         }
     }
 
-    public void setIsPaused(BooleanProperty isPaused) {
-        this.isPaused = isPaused;
-    }
 
-    public void setIsCancelled(BooleanProperty isCancelled) {
-        this.isCancelled = isCancelled;
+    public void setIsGameOn(BooleanProperty isGameOn) {
+        this.isGameOn = isGameOn;
     }
 
     public void setCurrentRunningTask(Task<Boolean> task){
@@ -156,6 +145,7 @@ public class DecipherManager {
     }
 
     public void manageAgents(String encryption) {
+        System.out.println("started creating missions for the agents");
         updatingMachineEncoding = machineEncoded;
         this.encryption = encryption;
 
@@ -163,18 +153,7 @@ public class DecipherManager {
         resultQueue = new LinkedBlockingQueue<>();
         new Thread(new ResultListener(resultQueue, transferMissionResult), "Result Listener").start();
 
-        //create work queue to push missions to
-        workQueue = new ArrayBlockingQueue<>(WORK_QUEUE_LIMIT);
-        workQueueCreated.set(true);
         initiateWork();
-    }
-
-    public BooleanProperty isWorkQueueCreated() {
-        return workQueueCreated;
-    }
-
-    public BooleanProperty workQueueCreatedProperty() {
-        return workQueueCreated;
     }
 
     public BlockingQueue<MissionDTO> getWorkQueue() {
@@ -262,6 +241,7 @@ public class DecipherManager {
             List<Character> nextRotorsPositions = initializeRotorsPositions(machineCode.getID2PositionList());
 
             for (int i = 0; i <= totalMissionsAmountForPositions; i++) {
+                if(!isGameOn.getValue()) break;
                 if(i != 0) {
                     nextRotorsPositions = getNextRotorsPositions(nextRotorsPositions, missionSize);
                 }
@@ -277,6 +257,7 @@ public class DecipherManager {
                                                     missionSize,
                                                     encryption));
                 }
+
                 totalMissionProduced++;
                 totalMissions++;
             }
@@ -288,6 +269,7 @@ public class DecipherManager {
 
     private void runMedium() {
         for (Reflecting reflector: stock.getReflectorMap().values()) {
+            if(!isGameOn.getValue()) break;
             Machine machine = deepCopyMachine(updatingMachineEncoding);
             machine.setReflector(reflector);
             serializeUpdatingMachine(machine);
@@ -303,6 +285,7 @@ public class DecipherManager {
         int[] perms;
         
         while((perms = permuter.getNext()) != null){
+            if(!isGameOn.getValue()) break;
             for (int perm : perms) {
                 newPermutation.add(rotors.get(perm));
             }
@@ -322,6 +305,7 @@ public class DecipherManager {
                 .forEach(permutations::add);
 
         for (List<Integer> perm: permutations) {
+            if(!isGameOn.getValue()) break;
             Machine machine = deepCopyMachine(updatingMachineEncoding);
             machine.setRotors(getRotorListFromIDList(perm));
             serializeUpdatingMachine(machine);

@@ -144,5 +144,9 @@ public class ActiveContestsController implements Closeable {
     public BooleanProperty disableProperty() {
         return disabledProperty;
     }
+
+    public void clearChoice(){
+        chosenContestName.set("");
+    }
 }
 

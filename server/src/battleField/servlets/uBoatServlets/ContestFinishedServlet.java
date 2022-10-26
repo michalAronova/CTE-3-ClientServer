@@ -25,6 +25,7 @@ public class ContestFinishedServlet extends HttpServlet {
         String usernameFromSession = SessionUtils.getUsername(req);
         UBoatUserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
         UBoat uBoat = (UBoat) uBoatUserManager.getEntityObject(usernameFromSession);
+        resp.setStatus(HttpServletResponse.SC_OK);
         synchronized (this) {
             try(PrintWriter out = resp.getWriter()) {
                 ContestStatus status = new ContestStatus(uBoat.isCompetitionOn().getValue(), uBoat.getWinner());

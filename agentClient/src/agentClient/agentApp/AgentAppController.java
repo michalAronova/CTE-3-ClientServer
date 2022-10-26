@@ -45,6 +45,8 @@ public class AgentAppController implements LoginController, Closeable {
 
     private final StringProperty username;
     private String ally;
+    private int threadCount;
+    private int missionPull;
     private BooleanProperty isValidAgent;
     private final StringProperty allyChosen;
     private final Map<String,Toggle> allyname2toggle;
@@ -161,8 +163,8 @@ public class AgentAppController implements LoginController, Closeable {
             return;
         }
         ally = allies.getSelectedToggle().getUserData().toString();
-        int threadCount = (int) threadSlider.getValue();
-        int missionPull = -1;
+        threadCount = (int) threadSlider.getValue();
+        missionPull = -1;
         try {
             missionPull = Integer.parseInt(missionPullTextField.getText());
             if(missionPull <= 0) throw new NumberFormatException();
@@ -197,7 +199,6 @@ public class AgentAppController implements LoginController, Closeable {
                 try (ResponseBody responseBody = response.body()) {
                     if (response.code() == 200) {
                         Platform.runLater(() -> {
-                            agentMainController.createAgent(username, ally, threadCount, missionPull);
                             isValidAgent.set(true);
                         });
                     }
@@ -224,6 +225,7 @@ public class AgentAppController implements LoginController, Closeable {
             agentMainController = fxmlLoader.getController();
             agentMainController.setMainController(this);
             agentMainController.alliesNameProperty().set(ally);
+            agentMainController.createAgent(username.getValue(), ally, threadCount, missionPull);
             vBox.getChildren().clear();
             vBox.getChildren().add(main);
         } catch (IOException e) {

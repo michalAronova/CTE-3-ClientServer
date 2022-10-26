@@ -45,13 +45,13 @@ public class MissionSizeChooserController {
 
     public void setAlliesMainController(AlliesMainController alliesMainController) {
         this.alliesMainController = alliesMainController;
-        vBoxRoot.visibleProperty().bind(alliesMainController.isCompetitionOnProperty().not());
+        //if ally is ready, he can't change the mission size anymore.
+        vBoxRoot.visibleProperty().bind(alliesMainController.getIsAllyReady().not());
     }
 
     public void onReadyClicked(ActionEvent actionEvent) {
         try {
             alliesMainController.missionSizeChosen(Integer.parseInt(missionsSizeTextField.getText()));
-            alliesMainController.setIsAllyReady(true);
         }
         catch(NumberFormatException e){
             errorMessage.set("Error: Size must be a positive number");

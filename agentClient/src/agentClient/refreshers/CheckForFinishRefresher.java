@@ -38,16 +38,11 @@ public class CheckForFinishRefresher extends TimerTask {
                 try(ResponseBody responseBody = response.body()) {
                     String bodyString = responseBody.string();
                     if(response.code() == 200){
-                        if(!bodyString.isEmpty()){
-                            ContestStatus contestStatus = GSON_INSTANCE
-                                    .fromJson(bodyString, ContestStatus.class);
-                            inContest.set(contestStatus.isCompetitionOn());
+                        ContestStatus contestStatus = GSON_INSTANCE
+                                .fromJson(bodyString, ContestStatus.class);
+                        if(!contestStatus.isCompetitionOn()){
+                            inContest.set(false);
                             waitForAllyApproval.set(true);
-                            if(!contestStatus.isCompetitionOn()){
-                                Platform.runLater(() -> {
-                                    //alert of winner?
-                                });
-                            }
                         }
                     }
                     else{

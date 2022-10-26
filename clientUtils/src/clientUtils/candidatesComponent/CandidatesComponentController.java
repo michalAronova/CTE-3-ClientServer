@@ -48,6 +48,7 @@ public class CandidatesComponentController {
     public void addMissionResult(MissionResult missionResult, boolean isForAllyDisplay){
         List<Candidate> candidates = Candidate.getListFromMissionResult(missionResult, isForAllyDisplay);
         dataList.addAll(candidates);
+        mainApplicationController.updateCandidateAmount(dataList.size());
     }
     public void addMultiple(List<MissionResult> missionResults, boolean isForAllyDisplay){
         missionResults.forEach((result) -> addMissionResult(result, isForAllyDisplay));
@@ -55,5 +56,6 @@ public class CandidatesComponentController {
 
     public void clear() {
         dataList.clear();
+        mainApplicationController.updateCandidateAmount(0);
     }
 }

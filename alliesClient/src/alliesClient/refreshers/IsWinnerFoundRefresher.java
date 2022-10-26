@@ -33,7 +33,12 @@ public class IsWinnerFoundRefresher extends TimerTask {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String responseBodyString = response.body().string();
-                if(!responseBodyString.equals("")){ //responseBodyString is the name of the winner
+                if(responseBodyString.isEmpty()){
+                    System.out.println("no winner was found yet");
+                }
+                else{
+                    System.out.println("winner found: "+ responseBodyString);
+                    isCompetitionOn.set(false);
                     updateWinnerFound.accept(responseBodyString);
                 }
             }

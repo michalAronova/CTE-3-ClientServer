@@ -7,7 +7,6 @@ import DTO.dmInfo.DMInfo;
 import DTO.mission.MissionDTO;
 import DTO.missionResult.MissionResult;
 import DTO.team.Team;
-import com.sun.deploy.util.BlackList;
 import engine.Engine;
 import engine.decipherManager.DecipherManager;
 import engine.decipherManager.Difficulty;
@@ -16,7 +15,6 @@ import engine.stock.Stock;
 import enigmaMachine.Machine;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.concurrent.Task;
 
 import java.util.*;
 
@@ -39,8 +37,6 @@ public class Allies implements Entity {
 
     private final DMInfo noCompetitionDMInfo = new DMInfo(false, null, null, null);
     private DMInfo dmInfo = noCompetitionDMInfo;
-
-    Task<Boolean> createMissionsTask;
 
     private final Object DMLock = new Object();
 
@@ -89,24 +85,20 @@ public class Allies implements Entity {
         this.uBoat = uBoat;
         uBoat.addParticipant(this);
         isCompetitionOn.bind(uBoat.isCompetitionOn());
+        dmInfo = new DMInfo(isCompetitionOn.getValue(), uBoat.getAsDTO(),
+                uBoat.getKeys(), uBoat.getDictionary());
     }
 
     public synchronized void removeUBoat(){
         uBoat.removeParticipant(username);
         isCompetitionOn.unbind();
+        dmInfo = noCompetitionDMInfo;
         this.uBoat = null;
     }
 
     public void start(String encryption){
-        createMissionsTask = new Task<Boolean>() {
-            @Override
-            protected Boolean call() throws Exception {
-                DM.manageAgents(encryption); //start creating missions
-                return true;
-            }
-        };
-
-        new Thread(createMissionsTask, "Mission creation Task for "+username).start();
+        System.out.println("ally start method was called");
+        DM.manageAgents(encryption);
     }
 
     public synchronized void addAgentData(SimpleAgentDTO simpleAgentDTO) {
@@ -127,15 +119,23 @@ public class Allies implements Entity {
     public void createDM(Dictionary dictionary, Machine machine,
                          Stock stock, Difficulty difficulty, CodeObj code, String input){
         DM = new DecipherManager(dictionary, machine, stock, difficulty, code, input);
+        DM.setMissionSize(this.missionSize);
+        DM.setIsGameOn(this.isCompetitionOn);
     }
 
     public List<MissionDTO> pullMissions(int missionPullAmount) {
         List<MissionDTO> missions = new ArrayList<>();
+        if(DM.getWorkQueue().isEmpty()) { // if the queue is empty, don't block it by entering synchronized.
+                                          // simply return an empty list.
+            return missions;
+        }
+
         synchronized (DM.getWorkQueue()){
             while(!DM.getWorkQueue().isEmpty() && missionPullAmount > 0){
                 --missionPullAmount;
                 try {
-                    missions.add(DM.getWorkQueue().take());
+                    MissionDTO mission = DM.getWorkQueue().take();
+                    missions.add(mission);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -155,10 +155,6 @@ public class Allies implements Entity {
     }
 
     private void onCompetitionFinished(){
-        if(createMissionsTask != null){
-            createMissionsTask.cancel();
-        }
-
         agentName2data.forEach((name, agent) -> agent.resetWorkStatus());
         drainWaiters();
         resultList.clear();
@@ -224,8 +220,10 @@ public class Allies implements Entity {
 
     public void addResult(MissionResult result) {
         synchronized (resultList){
+            System.out.println("result added to "+username);
             resultList.add(result);
             uBoat.addResult(result);
+            System.out.println("result added to "+uBoat.getUsername());
         }
     }
 

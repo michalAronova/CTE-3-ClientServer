@@ -39,4 +39,17 @@ public class MissionDTO implements Serializable {
     public String getToDecrypt() {
         return toDecrypt;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Encoding: ").append(machineEncoded);
+        sb.append(System.lineSeparator());
+        sb.append("Positions: ").append(startPositions);
+        sb.append(System.lineSeparator());
+        sb.append("Size: ").append(missionSize);
+        sb.append(System.lineSeparator());
+        sb.append("Encryption: ").append(toDecrypt);
+        return sb.toString();
+    }
 }

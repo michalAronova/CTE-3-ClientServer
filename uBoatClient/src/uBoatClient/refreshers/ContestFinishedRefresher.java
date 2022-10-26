@@ -1,6 +1,8 @@
 package uBoatClient.refreshers;
 
 import DTO.contestStatus.ContestStatus;
+import clientUtils.popUpDialog;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import okhttp3.Call;
@@ -26,7 +28,7 @@ public class ContestFinishedRefresher extends TimerTask {
 
     @Override
     public void run() {
-        if(!isCompetitionOn.get()){
+        if(!isCompetitionOn.getValue()){
             return;
             //the change of this property to true is handled by checking the number of active teams
             //each request to get the list of active teams registered to this uboat
@@ -35,7 +37,7 @@ public class ContestFinishedRefresher extends TimerTask {
         //hence, this refresher only looks for the END of a competition - during which
         //the property is TRUE (during a competition)
 
-        HttpClientUtil.runAsync(CONTEST_STARTED, new Callback() {
+        HttpClientUtil.runAsync(CONTEST_FINISHED, new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try(ResponseBody responseBody = response.body()) {
@@ -43,6 +45,7 @@ public class ContestFinishedRefresher extends TimerTask {
                     ContestStatus contestStatus = GSON_INSTANCE.fromJson(jsonStatus, ContestStatus.class);
                     if(!contestStatus.isCompetitionOn()){
                         winnerName.set(contestStatus.getWinnerName());
+                        Platform.runLater(() -> new popUpDialog(FINAL_MESSAGE + winnerName.getValue()));
                         isCompetitionOn.set(contestStatus.isCompetitionOn());
                     }
                 }
