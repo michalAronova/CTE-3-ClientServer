@@ -21,6 +21,7 @@ public class UBoat implements Entity{
     private final Map<String,Allies> participants;
     private final Map<String, Boolean> name2ready;
     private final List<MissionResult> candidatesList;
+    private final Object candidatesListLock = new Object();
     private String input;
     private String output;
 
@@ -39,6 +40,7 @@ public class UBoat implements Entity{
 
         counterReady = new SimpleIntegerProperty(0);
         competitionOn = new SimpleBooleanProperty();
+
         counterReady.addListener((observable, oldValue, newValue) -> {
             System.out.println("counter: "+ newValue+" / required: "+engine.getAlliesRequired());
             if(newValue.intValue() == engine.getAlliesRequired()){ //all allies ready to start
@@ -46,6 +48,7 @@ public class UBoat implements Entity{
                 updateCompetitionStart();
             }
         });
+
         candidatesList = new LinkedList<>();
         winner = new SimpleStringProperty("");
         winnerFound = new SimpleBooleanProperty(false);
@@ -144,16 +147,17 @@ public class UBoat implements Entity{
         return input;
     }
 
-    public void updateVictory(String winner) {
+    public void updateVictory(String currentWinner) {
         competitionOn.set(false);
         counterReady.set(0);
         participants.forEach((name, ally) -> {
-            ally.setIsWinner(name.equals(winner));
+            ally.setIsWinner(name.equals(currentWinner));
+            ally.setTheWinner(currentWinner);
         });
     }
 
     public void addResult(MissionResult result) {
-        synchronized (candidatesList){
+        synchronized (candidatesListLock){
             candidatesList.add(result);
             for (Pair<String, CodeObj> candidate: result.getCandidates()) {
                 if(candidate.getKey().equals(input)){
@@ -183,6 +187,7 @@ public class UBoat implements Entity{
         winnerFound.set(false);
         winner.set("");
         setCompetitionOn(true);
+        candidatesList.clear();
     }
 
     public void updateCompetitionStart() {
@@ -217,7 +222,7 @@ public class UBoat implements Entity{
 
     public List<MissionResult> getResults(int fromIndex){
         List<MissionResult> ret;
-        synchronized (candidatesList){
+        synchronized (candidatesListLock){
             if (fromIndex < 0 || fromIndex > candidatesList.size()) {
                 fromIndex = 0;
             }

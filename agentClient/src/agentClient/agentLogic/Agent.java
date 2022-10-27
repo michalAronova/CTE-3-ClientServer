@@ -122,7 +122,6 @@ public class Agent {
         if(decipherTask != null){
             decipherTask.cancel();
         }
-        //isCompetitionOn.set(false);
     }
 
     private void decipher() {
@@ -289,7 +288,7 @@ public class Agent {
                     missionDTOS = GSON_INSTANCE.fromJson(responseBody.string(), listType);
                 }
                 else if(response.code() == 204){ //HttpServletResponse.SC_NO_CONTENT - contest has ended
-                    System.out.println("can't pull because competition has ended...");
+                    //System.out.println("can't pull because competition has ended...");
                     //isCompetitionOn.set(false);
                 }
             }

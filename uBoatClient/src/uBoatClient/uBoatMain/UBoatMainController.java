@@ -6,7 +6,6 @@ import DTO.processResponse.ProcessResponse;
 import clientUtils.MainAppController;
 import clientUtils.activeTeams.ActiveTeamsComponentController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
-import clientUtils.popUpDialog;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import okhttp3.*;
@@ -93,14 +92,6 @@ public class UBoatMainController implements MainAppController, Closeable {
         winnerName = new SimpleStringProperty("");
         candidatesAmount = new SimpleIntegerProperty(0);
 
-//        isCompetitionOn.addListener((observable, oldValue, newValue) -> {
-//            if(!newValue){
-//                //-> a contest has ended
-//                Platform.runLater(() -> new popUpDialog(FINAL_MESSAGE + winnerName.getValue()));
-//                cleanupAfterContestFinished();
-//            }
-//        });
-
         startContestFinishedRefresher();
     }
 
@@ -120,10 +111,10 @@ public class UBoatMainController implements MainAppController, Closeable {
         }
 
         //can't logout during competition (without bonus)
-        logoutButton.disableProperty().bind(isCompetitionOn);
+        logoutButton.visibleProperty().bind(isReady.not());
         //the code configuration component is disabled during competition
         //so user can't change code mid-competition
-        codeConfigController.getRoot().disableProperty().bind(isCompetitionOn);
+        codeConfigController.getRoot().disableProperty().bind(isReady);
 
         //user may only click ready when it is not ready AND it has input
         readyButton.disableProperty().bind(Bindings
@@ -148,21 +139,11 @@ public class UBoatMainController implements MainAppController, Closeable {
     }
 
     private void cleanupAfterContestFinished() {
-        //showWinnerAlert();
         winnerName.set("");
-
         isReady.set(false);
         candidatesComponentController.clear();
         activeTeamsComponentController.clear();
         teamsLeftForStart.set(requiredTeams);
-    }
-
-    private void showWinnerAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("We have a winner!");
-        alert.setHeaderText(null);
-        alert.setContentText("And the winner is... "+ winnerName.getValue()+"!");
-        alert.showAndWait();
     }
 
     @FXML
@@ -368,7 +349,9 @@ public class UBoatMainController implements MainAppController, Closeable {
     }
 
     private void startContestFinishedRefresher() {
-        contestFinishedRefresher = new ContestFinishedRefresher(isCompetitionOn, winnerName);
+        contestFinishedRefresher = new ContestFinishedRefresher(isCompetitionOn,
+                winnerName,
+                this::cleanupAfterContestFinished);
         finishedTimer = new Timer();
         finishedTimer.schedule(contestFinishedRefresher, REFRESH_RATE, REFRESH_RATE);
     }
@@ -492,5 +475,6 @@ public class UBoatMainController implements MainAppController, Closeable {
     public void updateCandidateAmount(int size) {
         candidatesAmount.set(size);
     }
+
 }
 

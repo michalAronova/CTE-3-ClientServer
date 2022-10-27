@@ -17,4 +17,10 @@ public class ContestStatus {
     public String getWinnerName() {
         return winnerName;
     }
+
+    @Override
+    public String toString() {
+        String winner = winnerName == null ? "NO WINNER" : winnerName;
+        return "in contest: "+isCompetitionOn+" | winner: "+winner;
+    }
 }

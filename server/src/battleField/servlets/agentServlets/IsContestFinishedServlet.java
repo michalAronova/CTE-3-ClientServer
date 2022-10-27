@@ -46,8 +46,8 @@ public class IsContestFinishedServlet extends HttpServlet {
                 .getEntityObject(agentUserManager.getAllyName(usernameFromSession));
         resp.setStatus(HttpServletResponse.SC_OK);
 
-        ContestStatus status = new ContestStatus(myAllies.getUBoat().isCompetitionOn().getValue(),
-                myAllies.getUBoat().getWinner());
+        ContestStatus status = new ContestStatus(myAllies.isCompetitionOnProperty().getValue(),
+                myAllies.getTheWinner());
         out.print(new Gson().toJson(status));
     }
 }

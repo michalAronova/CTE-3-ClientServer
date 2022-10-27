@@ -43,6 +43,9 @@ public class UploadCandidatesServlet extends HttpServlet {
             Gson gson = new Gson();
             String json = getStringFromInputStream(part.getInputStream());
             MissionResult result = gson.fromJson(json, MissionResult.class);
+
+            System.out.println("result to add: "+result);
+
             ally.addResult(result);
         }
     }

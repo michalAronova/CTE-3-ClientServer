@@ -20,10 +20,12 @@ import static util.Constants.*;
 public class ContestFinishedRefresher extends TimerTask {
     private final BooleanProperty isCompetitionOn;
     private final StringProperty winnerName;
+    private final Runnable okClicked;
 
-    public ContestFinishedRefresher(BooleanProperty isCompetitionOn, StringProperty winnerName) {
+    public ContestFinishedRefresher(BooleanProperty isCompetitionOn, StringProperty winnerName, Runnable okClicked) {
         this.isCompetitionOn = isCompetitionOn;
         this.winnerName = winnerName;
+        this.okClicked = okClicked;
     }
 
     @Override
@@ -45,8 +47,8 @@ public class ContestFinishedRefresher extends TimerTask {
                     ContestStatus contestStatus = GSON_INSTANCE.fromJson(jsonStatus, ContestStatus.class);
                     if(!contestStatus.isCompetitionOn()){
                         winnerName.set(contestStatus.getWinnerName());
-                        Platform.runLater(() -> new popUpDialog(FINAL_MESSAGE + winnerName.getValue()));
-                        isCompetitionOn.set(contestStatus.isCompetitionOn());
+                        isCompetitionOn.set(false);
+                        Platform.runLater(() -> new popUpDialog("UBoat",FINAL_MESSAGE + winnerName.getValue(), okClicked));
                     }
                 }
             }

@@ -29,10 +29,12 @@ public class Allies implements Entity {
     // wait-list for agents joining during a contest here
     private final Map<String, SimpleAgentDTO> waitingAgents;
     private Boolean isWinner;
+    private String theWinner;
     private final BooleanProperty isCompetitionOn;
     private final BooleanProperty okClicked;
 
     private final List<MissionResult> resultList;
+    private final Object resultListLock = new Object();
     private int missionSize;
 
     private final DMInfo noCompetitionDMInfo = new DMInfo(false, null, null, null);
@@ -48,13 +50,20 @@ public class Allies implements Entity {
         resultList = new LinkedList<>();
         uBoat = null;
         okClicked = new SimpleBooleanProperty(false);
+        okClicked.addListener((observable, oldValue, newValue) -> {
+            if(newValue){ //only clear when user clicked OK
+                onCompetitionFinished();
+            }
+        });
+
         isCompetitionOn = new SimpleBooleanProperty(false);
         isCompetitionOn.addListener(((observable, oldValue, newValue) -> {
             if(!newValue){ //competition finished //TODO
-                onCompetitionFinished();
+                dmInfo = noCompetitionDMInfo;
                 //method to be called upon end of game
                 //need to know if im the winner
                 //things that need to happen when the game ends
+                //MOVED TO - WHEN USER CLICKED OK!
             }
             else{ //competition started
                 dmInfo = new DMInfo(true, uBoat.getAsDTO(), uBoat.getEngine().getKeyBoardList(),
@@ -92,6 +101,7 @@ public class Allies implements Entity {
     public synchronized void removeUBoat(){
         uBoat.removeParticipant(username);
         isCompetitionOn.unbind();
+        isCompetitionOn.set(false);
         dmInfo = noCompetitionDMInfo;
         this.uBoat = null;
     }
@@ -219,9 +229,10 @@ public class Allies implements Entity {
     }
 
     public void addResult(MissionResult result) {
-        synchronized (resultList){
-            System.out.println("result added to "+username);
+        synchronized (resultListLock){
+            System.out.println("trying to add results...");
             resultList.add(result);
+            System.out.println("result added to "+username);
             uBoat.addResult(result);
             System.out.println("result added to "+uBoat.getUsername());
         }
@@ -233,7 +244,7 @@ public class Allies implements Entity {
 
     public List<MissionResult> getResults(int fromIndex){
         List<MissionResult> ret;
-        synchronized (resultList){
+        synchronized (resultListLock){
             if (fromIndex < 0 || fromIndex > resultList.size()) {
                 fromIndex = 0;
             }
@@ -262,5 +273,13 @@ public class Allies implements Entity {
 
     public boolean isOkClicked() {
         return okClicked.get();
+    }
+
+    public void setTheWinner(String theWinner) {
+        this.theWinner = theWinner;
+    }
+
+    public String getTheWinner(){
+        return theWinner;
     }
 }

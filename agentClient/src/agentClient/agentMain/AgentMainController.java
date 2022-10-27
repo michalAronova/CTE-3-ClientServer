@@ -125,8 +125,8 @@ public class AgentMainController implements MainAppController, Closeable {
     }
 
     private void handleAllyOKClicked() {
-        //TODO
-        //intiate UI
+        candidatesComponentController.clear();
+        clearMissionInfo();
     }
 
     public String getAlliesName() {
@@ -194,5 +194,12 @@ public class AgentMainController implements MainAppController, Closeable {
     @Override
     public void updateCandidateAmount(int size) {
         totalCandidates.set(size);
+    }
+
+    private void clearMissionInfo(){
+        totalCandidates.set(0);
+        inQueue.set(0);
+        pulled.set(0);
+        completed.set(0);
     }
 }

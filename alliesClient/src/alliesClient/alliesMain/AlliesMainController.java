@@ -256,11 +256,11 @@ import static util.Constants.*;
         if(winnerName.isEmpty()) return;
         isCompetitionOn.set(false); //so refreshers can stop/start accordingly already
         String message = "Contest ended: ";
-        message += (winnerName.equals(usernameLabel.textProperty().getValue())) ?  "You Won! Congratulations" : "You Lost... The winner is " + winnerName;
+        message += (winnerName.trim().equals(usernameLabel.getText().trim())) ?  "You Won! Congratulations" : "You Lost... The winner is " + winnerName;
         String finalMessage = message;
         Platform.runLater(() -> {
             prepareDataForNewContest();
-            new popUpDialog(finalMessage, this::onDialogOKClicked);
+            new popUpDialog(usernameLabel.getText(), finalMessage, this::onDialogOKClicked);
         } );
     }
 

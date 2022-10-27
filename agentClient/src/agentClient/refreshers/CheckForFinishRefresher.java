@@ -40,7 +40,9 @@ public class CheckForFinishRefresher extends TimerTask {
                     if(response.code() == 200){
                         ContestStatus contestStatus = GSON_INSTANCE
                                 .fromJson(bodyString, ContestStatus.class);
+                        System.out.println("status: "+contestStatus);
                         if(!contestStatus.isCompetitionOn()){
+                            System.out.println("competition on is false in status");
                             inContest.set(false);
                             waitForAllyApproval.set(true);
                         }

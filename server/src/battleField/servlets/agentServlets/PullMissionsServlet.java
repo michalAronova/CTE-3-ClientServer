@@ -42,9 +42,6 @@ public class PullMissionsServlet extends HttpServlet {
                         .getDTO()
                         .getMissionPull());
 
-//        System.out.println("Missions: ");
-//        System.out.println(missions);
-
         try (PrintWriter out = resp.getWriter()) {
             Gson gson = new Gson();
             String missionsToJson = gson.toJson(missions);

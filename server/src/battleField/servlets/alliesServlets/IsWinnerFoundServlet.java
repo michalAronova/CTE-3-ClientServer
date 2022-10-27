@@ -39,6 +39,7 @@ public class IsWinnerFoundServlet extends HttpServlet {
         resp.setStatus(HttpServletResponse.SC_OK);
         //get ally's uboat
         UBoat myBoat = ally.getUBoat();
+
         if(myBoat.isWinnerFound()){
             out.println(myBoat.getWinner());
         }

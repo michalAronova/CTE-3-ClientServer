@@ -48,7 +48,6 @@ public class ActiveContestsListServlet extends HttpServlet{
         //pass json of list of contest DTOs
         String json = gson.toJson(allContests);
         resp.setStatus(HttpServletResponse.SC_OK);
-        System.out.println(json);
         out.println(json);
         out.flush();
     }
