@@ -8,6 +8,7 @@ import engine.entity.UBoat;
 import engine.users.UBoatUserManager;
 import exceptions.XMLException.InvalidXMLException;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -65,8 +66,10 @@ public class LoadServlet extends HttpServlet {
                 out.flush();
             }
             catch(InvalidXMLException e){
-                resp.sendError(SC_BAD_REQUEST);
+                resp.setStatus(SC_BAD_REQUEST);
                 out.print(e.getMessage());
+                System.out.println("ERROR 400");
+                System.out.println(e.getMessage());
             }
             finally{
                 out.close();

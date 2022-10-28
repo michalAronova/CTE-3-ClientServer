@@ -61,13 +61,19 @@ public class AgentLoginServlet extends HttpServlet {
                         SimpleAgentDTO agentDTO = new SimpleAgentDTO(usernameFromParameter, threadCount, missionAmountPull);
                         allies.addAgentData(agentDTO);
 
+                        if(allies.isAgentInWaitingList(usernameFromParameter)){
+                            response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                        }
+                        else{
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        }
+
                         //adding agent to agents manager
                         agentUserManager.addUser(usernameFromParameter, new SimpleAgent(alliesUsername, agentDTO));
 
                         request.getSession(true).setAttribute(ConstantParams.USERNAME, usernameFromParameter);
                         request.getSession().setAttribute(ConstantParams.ENTITY, EntityEnum.AGENT);
 
-                        response.setStatus(HttpServletResponse.SC_OK);
 
                         response.getOutputStream()
                                 .print(String.format("logged in as %s (%s)",

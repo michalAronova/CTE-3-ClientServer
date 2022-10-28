@@ -20,7 +20,7 @@ public class UBoatUserManager extends UserManager{
 
     @Override
     public synchronized void removeUser(String username) {
-        battleFieldNames.remove(super.getUser(username).getEngine().getBattleFieldName());
+        battleFieldNames.remove(getUser(username).getEngine().getBattleFieldName().toUpperCase());
         super.removeUser(username);
         readyUBoats.remove(username);
     }

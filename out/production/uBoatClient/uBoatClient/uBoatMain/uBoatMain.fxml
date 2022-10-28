@@ -137,6 +137,15 @@
                   </ScrollPane>
             </content>
           </Tab>
+          <Tab fx:id="chatTab" text="Chat">
+            <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true">
+                     <content>
+                        <AnchorPane fx:id="chatPanel" minHeight="0.0" minWidth="0.0" />
+                     </content>
+                  </ScrollPane>
+            </content>
+          </Tab>
         </tabs>
       </TabPane>
    </children>

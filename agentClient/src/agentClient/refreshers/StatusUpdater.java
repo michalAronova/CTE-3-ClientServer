@@ -1,33 +1,37 @@
 package agentClient.refreshers;
 
-import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
-import util.Constants;
 import util.http.HttpClientUtil;
 
 import java.io.IOException;
 import java.util.TimerTask;
 
 import static parameters.ConstantParams.*;
-import static parameters.ConstantParams.THREAD_COUNT;
 import static util.Constants.UPDATE_WORK_STATUS;
 
 public class StatusUpdater extends TimerTask {
     private final IntegerProperty candidatesProduced;
     private final IntegerProperty missionsLeft;
     private final IntegerProperty missionsDone;
+    private final BooleanProperty inWaitingList;
 
     public StatusUpdater(IntegerProperty candidatesProduced, IntegerProperty missionsLeft,
-                         IntegerProperty missionsDone) {
+                         IntegerProperty missionsDone, BooleanProperty inWaitingList) {
         this.candidatesProduced = candidatesProduced;
         this.missionsLeft = missionsLeft;
         this.missionsDone = missionsDone;
+        this.inWaitingList = inWaitingList;
     }
 
     @Override
     public void run() {
+        if(inWaitingList.get()){
+            return;
+        }
+
         String finalUrl = HttpUrl
                 .parse(UPDATE_WORK_STATUS)
                 .newBuilder()

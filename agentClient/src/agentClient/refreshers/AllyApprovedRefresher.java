@@ -17,17 +17,21 @@ import static util.Constants.*;
 
 public class AllyApprovedRefresher extends TimerTask {
     private final BooleanProperty waitForAllyApproval;
-
+    private final BooleanProperty inWaitingList;
     private final Runnable handleAllyOkClicked;
 
-    public AllyApprovedRefresher(BooleanProperty waitForAllyApproval, Runnable handleAllyOkClicked) {
+    public AllyApprovedRefresher(BooleanProperty waitForAllyApproval, Runnable handleAllyOkClicked,
+                                 BooleanProperty inWaitingList) {
         this.waitForAllyApproval = waitForAllyApproval;
         this.handleAllyOkClicked = handleAllyOkClicked;
+        this.inWaitingList = inWaitingList;
     }
     @Override
     public void run() {
         //run while waiting to ally approval!
-        if(!waitForAllyApproval.getValue()){
+        //OR:
+        //if I am in waiting list
+        if(!waitForAllyApproval.getValue() && !inWaitingList.getValue()){
             return;
         }
         HttpClientUtil.runAsync(ALLY_APPROVED, new Callback() {

@@ -22,6 +22,7 @@ public class Constants {
     public final static String AGENT_MAIN_FXML_RESOURCE_LOCATION = "/agentClient/agentMain/agentMain.fxml";
     public final static String CHOOSE_NAME_FXML_RESOURCE_LOCATION = "../../../clientUtils/clientUtils/chooseNameComponent/chooseNameComponent.fxml";
 
+    public final static String CHAT_ROOM_FXML_RESOURCE_LOCATION = "../../../clientUtils/clientUtils/chat/chatroom/chat-room-main.fxml";
     // Server resources locations
     public final static String BASE_DOMAIN = "localhost";
     private final static String BASE_URL = "http://" + BASE_DOMAIN + ":8080";
@@ -73,9 +74,10 @@ public class Constants {
 
     //chat
     public final static String USERS_LIST = FULL_SERVER_PATH + "/userslist";
-    public final static String LOGOUT = FULL_SERVER_PATH + "/logout";
 
     public final static String SEND_CHAT_LINE = FULL_SERVER_PATH + "/pages/chatroom/sendChat";
     public final static String CHAT_LINES_LIST = FULL_SERVER_PATH + "/chat";
 
+    //logout
+    public final static String LOGOUT = FULL_SERVER_PATH + "/logout";
 }

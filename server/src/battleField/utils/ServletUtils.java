@@ -1,7 +1,7 @@
 package battleField.utils;
 
-import battleField.servlets.chat.ChatManager;
 import engine.ServerEngine;
+import engine.chat.ChatManager;
 import engine.users.AgentUserManager;
 import engine.users.UBoatUserManager;
 import engine.users.UserManager;
@@ -54,6 +54,14 @@ public class ServletUtils {
         return (UBoatUserManager) servletContext.getAttribute(UBOAT_USER_MANAGER_ATTRIBUTE_NAME);
     }
 
+    public static ChatManager getChatManager(ServletContext servletContext) {
+        synchronized (chatManagerLock) {
+            if (servletContext.getAttribute(CHAT_MANAGER_ATTRIBUTE_NAME) == null) {
+                servletContext.setAttribute(CHAT_MANAGER_ATTRIBUTE_NAME, new ChatManager());
+            }
+        }
+        return (ChatManager) servletContext.getAttribute(CHAT_MANAGER_ATTRIBUTE_NAME);
+    }
 
     public static UserManager getAlliesUserManager(ServletContext servletContext) {
 
@@ -73,15 +81,6 @@ public class ServletUtils {
             }
         }
         return (AgentUserManager) servletContext.getAttribute(AGENT_USER_MANAGER_ATTRIBUTE_NAME);
-    }
-
-    public static ChatManager getChatManager(ServletContext servletContext) {
-        synchronized (chatManagerLock) {
-            if (servletContext.getAttribute(CHAT_MANAGER_ATTRIBUTE_NAME) == null) {
-                servletContext.setAttribute(CHAT_MANAGER_ATTRIBUTE_NAME, new ChatManager());
-            }
-        }
-        return (ChatManager) servletContext.getAttribute(CHAT_MANAGER_ATTRIBUTE_NAME);
     }
 
     public static ServerEngine getServerEngine(ServletContext servletContext){

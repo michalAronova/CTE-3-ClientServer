@@ -24,6 +24,7 @@ public class SimpleAgentDTO implements Serializable {
         this.name = dto.getName();
         this.threadCount = dto.getThreadCount();
         this.missionPull = dto.getMissionPull();
+        this.workStatus = new WorkStatusDTO();
     }
 
     public void resetWorkStatus(){

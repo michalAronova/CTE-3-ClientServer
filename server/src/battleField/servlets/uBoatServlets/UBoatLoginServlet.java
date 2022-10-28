@@ -30,7 +30,8 @@ public class UBoatLoginServlet  extends HttpServlet {
         UserManager userManager = ServletUtils.getUBoatUserManager(getServletContext());
         PrintWriter out = response.getWriter();
 
-        out.println("usernameFromSession: "+ usernameFromSession);
+        out.println("trying to login. usernameFromSession: "+ usernameFromSession);
+        System.out.println("trying to login. usernameFromSession: "+ usernameFromSession);
 
         if (usernameFromSession == null) { //user is not logged in yet
 
@@ -50,6 +51,7 @@ public class UBoatLoginServlet  extends HttpServlet {
                         // stands for unauthorized as there is already such user with this name
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         out.println(errorMessage);
+                        System.out.println(errorMessage);
                     }
                     else {
                         usernameManager.addUser(usernameFromParameter);
@@ -61,6 +63,9 @@ public class UBoatLoginServlet  extends HttpServlet {
                         response.setStatus(HttpServletResponse.SC_OK);
                         out.println(String.format("logged in as %s (%s)",
                                 usernameFromParameter, EntityEnum.UBOAT));
+
+                        System.out.printf("logged in as %s (%s)%n",
+                                usernameFromParameter, EntityEnum.UBOAT);
                     }
                 }
             }
@@ -68,6 +73,7 @@ public class UBoatLoginServlet  extends HttpServlet {
             //user is already logged in
             response.setStatus(HttpServletResponse.SC_OK);
             out.println("user is already logged in");
+            System.out.println("user is already logged in");
         }
     }
 }

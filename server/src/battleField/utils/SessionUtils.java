@@ -21,8 +21,6 @@ public class SessionUtils {
     }
 
     public static void clearSession (HttpServletRequest request) {
-        request.getSession().removeAttribute(ConstantParams.USERNAME);
-        request.getSession().removeAttribute(ConstantParams.ENTITY);
         request.getSession().invalidate();
     }
 }

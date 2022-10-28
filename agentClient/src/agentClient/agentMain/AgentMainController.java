@@ -9,19 +9,28 @@ import agentClient.refreshers.CheckForFinishRefresher;
 import agentClient.refreshers.StatusUpdater;
 import clientUtils.MainAppController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
+import clientUtils.chat.chatroom.ChatRoomMainController;
 import clientUtils.contestDetails.ContestDetailsController;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.layout.AnchorPane;
 
 import java.io.Closeable;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Timer;
 
 import static util.Constants.*;
 
 public class AgentMainController implements MainAppController, Closeable {
+    @FXML private Tab chatTab;
+    @FXML private AnchorPane chatPanel;
     @FXML private Label usernameLabel;
     @FXML private Label alliesNameLabel;
     @FXML private Label totalCandidatesLabel;
@@ -31,6 +40,8 @@ public class AgentMainController implements MainAppController, Closeable {
     @FXML private ContestDetailsController contestDetailsController;
     @FXML private CandidatesComponentController candidatesComponentController;
 
+    private Parent chatRoomComponent;
+    private ChatRoomMainController chatRoomComponentController;
     private AgentAppController agentAppController;
 
     //properties
@@ -41,6 +52,7 @@ public class AgentMainController implements MainAppController, Closeable {
     private final IntegerProperty completed;
     private final BooleanProperty finished;
     private final BooleanProperty inContest;
+    private final BooleanProperty inWaitingList;
     private final BooleanProperty waitForAllyApproval;
     //refreshers and timers
     private CheckForContestRefresher checkForContestRefresher;
@@ -64,6 +76,7 @@ public class AgentMainController implements MainAppController, Closeable {
         finished = new SimpleBooleanProperty(false);
         inContest = new SimpleBooleanProperty(false);
         waitForAllyApproval = new SimpleBooleanProperty(false);
+        inWaitingList = new SimpleBooleanProperty();
     }
 
     public void createAgent(String username, String myAllies, int threadCount, int missionAmountPull){
@@ -88,6 +101,7 @@ public class AgentMainController implements MainAppController, Closeable {
     public void setMainController(AgentAppController agentAppController) {
         this.agentAppController = agentAppController;
         this.usernameLabel.textProperty().bind(agentAppController.usernameProperty());
+        this.inWaitingList.set(agentAppController.getInWaitingList());
     }
 
     @FXML
@@ -104,7 +118,28 @@ public class AgentMainController implements MainAppController, Closeable {
         CompletedLabel.textProperty().bind(Bindings.format("%d", completed));
 
         startRefreshers();
-        //do something with finished and in contest properties ?
+        loadChatRoomPage();
+    }
+    private void loadChatRoomPage() {
+        URL loginPageUrl = getClass().getResource(CHAT_ROOM_FXML_RESOURCE_LOCATION);
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(loginPageUrl);
+            chatRoomComponent = fxmlLoader.load();
+            chatRoomComponentController = fxmlLoader.getController();
+            chatRoomComponentController.setChatAppMainController(this);
+            setChatTab(chatRoomComponent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void setChatTab(Parent pane) {
+        chatPanel.getChildren().clear();
+        chatPanel.getChildren().add(pane);
+        AnchorPane.setBottomAnchor(pane, 1.0);
+        AnchorPane.setTopAnchor(pane, 1.0);
+        AnchorPane.setLeftAnchor(pane, 1.0);
+        AnchorPane.setRightAnchor(pane, 1.0);
     }
 
     private void startRefreshers() {
@@ -115,14 +150,14 @@ public class AgentMainController implements MainAppController, Closeable {
     }
 
     private void startStatusUpdater() {
-        statusUpdater = new StatusUpdater(totalCandidates, inQueue, completed);
+        statusUpdater = new StatusUpdater(totalCandidates, inQueue, completed, inWaitingList);
         statusUpdateTimer = new Timer();
         statusUpdateTimer.schedule(statusUpdater, TINY_REFRESH_RATE, TINY_REFRESH_RATE);
     }
 
     public void startCheckForContestRefresher(){
         checkForContestRefresher = new CheckForContestRefresher(inContest,
-                ((contest) -> contestDetailsController.update(contest)),
+                inWaitingList, ((contest) -> contestDetailsController.update(contest)),
                 ((dmInfo) -> agent.updateByContest(dmInfo.getKeys(), dmInfo.getDictionary())));
 
         checkForContestTimer = new Timer();
@@ -130,18 +165,20 @@ public class AgentMainController implements MainAppController, Closeable {
     }
 
     private void startCheckForFinishRefresher() {
-        checkForFinishRefresher = new CheckForFinishRefresher(inContest, waitForAllyApproval);
+        checkForFinishRefresher = new CheckForFinishRefresher(inContest, waitForAllyApproval, inWaitingList);
         checkForFinishTimer = new Timer();
         checkForFinishTimer.schedule(checkForFinishRefresher, REFRESH_RATE, REFRESH_RATE);
     }
 
     private void startAllyApprovedRefresher(){
-        allyApprovedRefresher = new AllyApprovedRefresher(waitForAllyApproval, this::handleAllyOKClicked);
+        allyApprovedRefresher = new AllyApprovedRefresher(waitForAllyApproval,
+                                        this::handleAllyOKClicked, inWaitingList);
         allyApprovedTimer = new Timer();
         allyApprovedTimer.schedule(allyApprovedRefresher, REFRESH_RATE, REFRESH_RATE);
     }
 
     private void handleAllyOKClicked() {
+        inWaitingList.set(false);
         candidatesComponentController.clear();
         agent.clearData();
         contestDetailsController.clear();
@@ -221,6 +258,8 @@ public class AgentMainController implements MainAppController, Closeable {
             statusUpdater.cancel();
             statusUpdateTimer.cancel();
         }
+
+        chatRoomComponentController.close();
     }
 
 

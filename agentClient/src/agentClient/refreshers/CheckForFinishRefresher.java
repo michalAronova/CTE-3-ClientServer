@@ -1,9 +1,7 @@
 package agentClient.refreshers;
 
 
-import DTO.contestForAgent.ContestForAgent;
 import DTO.contestStatus.ContestStatus;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -20,14 +18,20 @@ import static util.Constants.*;
 public class CheckForFinishRefresher extends TimerTask {
     private final BooleanProperty inContest;
     private final BooleanProperty waitForAllyApproval;
+    private final BooleanProperty inWaitingList;
 
-    public CheckForFinishRefresher(BooleanProperty inContest, BooleanProperty waitForAllyApproval) {
+    public CheckForFinishRefresher(BooleanProperty inContest, BooleanProperty waitForAllyApproval, BooleanProperty inWaitingList) {
         this.inContest = inContest;
         this.waitForAllyApproval = waitForAllyApproval;
+        this.inWaitingList = inWaitingList;
     }
 
     @Override
     public void run() {
+        if(inWaitingList.get()){
+            return;
+        }
+
         if(!inContest.getValue()){
             return;
         }

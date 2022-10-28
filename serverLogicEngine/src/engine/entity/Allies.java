@@ -23,7 +23,6 @@ public class Allies implements Entity {
     private DecipherManager DM;
     private UBoat uBoat;
     //private final Map<String, Agent> name2Agent;
-
     private final Map<String, SimpleAgentDTO> agentName2data;
 
     // wait-list for agents joining during a contest here
@@ -31,6 +30,7 @@ public class Allies implements Entity {
     private Boolean isWinner;
     private String theWinner;
     private final BooleanProperty isCompetitionOn;
+    private boolean isAllyReady = false;
     private final BooleanProperty okClicked;
 
     private final List<MissionResult> resultList;
@@ -111,7 +111,7 @@ public class Allies implements Entity {
     }
 
     public synchronized void addAgentData(SimpleAgentDTO simpleAgentDTO) {
-        if(isCompetitionOn.getValue()){
+        if(isAllyReady){
             waitingAgents.put(simpleAgentDTO.getName(), simpleAgentDTO);
         }
         else {
@@ -164,6 +164,7 @@ public class Allies implements Entity {
     }
 
     private void onCompetitionFinished(){
+        isAllyReady = false;
         agentName2data.forEach((name, agent) -> agent.resetWorkStatus());
         drainWaiters();
         resultList.clear();
@@ -253,6 +254,9 @@ public class Allies implements Entity {
     }
 
     public void updateAgentWorkStatus(String agentName, WorkStatusDTO workStatus) {
+        if(waitingAgents.containsKey(agentName)){
+            return;
+        }
         agentName2data.get(agentName).setWorkStatus(workStatus);
     }
 
@@ -280,5 +284,13 @@ public class Allies implements Entity {
 
     public String getTheWinner(){
         return theWinner;
+    }
+
+    public void setReady() {
+        isAllyReady = true;
+    }
+
+    public boolean isAgentInWaitingList(String agentUsername) {
+        return waitingAgents.containsKey(agentUsername);
     }
 }

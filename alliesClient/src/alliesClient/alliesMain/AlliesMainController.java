@@ -10,6 +10,7 @@ import alliesClient.refreshers.RivalAlliesRefresher;
 import clientUtils.MainAppController;
 import clientUtils.activeTeams.ActiveTeamsComponentController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
+import clientUtils.chat.chatroom.ChatRoomMainController;
 import clientUtils.contestDetails.ContestDetailsController;
 import alliesClient.components.activeAgentsDisplay.ActiveAgentsDisplayController;
 import alliesClient.components.activeContests.ActiveContestsController;
@@ -19,9 +20,12 @@ import clientUtils.popUpDialog;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +33,7 @@ import util.http.HttpClientUtil;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Timer;
 
@@ -36,7 +41,9 @@ import static parameters.ConstantParams.DESIRED_UBOAT;
 import static parameters.ConstantParams.MISSION_SIZE;
 import static util.Constants.*;
 
-        public class AlliesMainController implements MainAppController, Closeable {
+public class AlliesMainController implements MainAppController, Closeable {
+    @FXML private Tab chatTab;
+    @FXML private AnchorPane chatPanel;
     @FXML private GridPane contestOnGrid;
     @FXML private Label usernameLabel;
 
@@ -55,6 +62,8 @@ import static util.Constants.*;
     @FXML private TabPane competitionTabPane;
     private AlliesAppController alliesAppController;
     @FXML private Tab contestTab;
+    private Parent chatRoomComponent;
+    private ChatRoomMainController chatRoomComponentController;
 
     private Contest chosenContest;
     private StringProperty encryption;
@@ -112,6 +121,29 @@ import static util.Constants.*;
         activeAgentsDisplayController.encryptionProperty().bind(encryption);
 
         startRefreshers();
+        loadChatRoomPage();
+    }
+
+    private void loadChatRoomPage() {
+        URL loginPageUrl = getClass().getResource(CHAT_ROOM_FXML_RESOURCE_LOCATION);
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(loginPageUrl);
+            chatRoomComponent = fxmlLoader.load();
+            chatRoomComponentController = fxmlLoader.getController();
+            chatRoomComponentController.setChatAppMainController(this);
+            setChatTab(chatRoomComponent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void setChatTab(Parent pane) {
+        chatPanel.getChildren().clear();
+        chatPanel.getChildren().add(pane);
+        AnchorPane.setBottomAnchor(pane, 1.0);
+        AnchorPane.setTopAnchor(pane, 1.0);
+        AnchorPane.setLeftAnchor(pane, 1.0);
+        AnchorPane.setRightAnchor(pane, 1.0);
     }
 
     private void startRefreshers(){
@@ -219,7 +251,7 @@ import static util.Constants.*;
             isCompetitionOn.set(false);
             System.out.println("competition set to false in "+usernameLabel.getText());
         }
-        if(activeTeamsController.getActiveTeamsAmount() == chosenContest.getTotalRequiredTeams()){
+        else if(activeTeamsController.getActiveTeamsAmount() == chosenContest.getTotalRequiredTeams()){
             isCompetitionOn.set(true);
             System.out.println("competition set to true in "+usernameLabel.getText());
         }
@@ -324,5 +356,7 @@ import static util.Constants.*;
         activeContestsController.stopRefresher();
         agentDisplayController.stopRefresher();
         missionsProgressController.stopRefresher();
+
+        chatRoomComponentController.close();
     }
 }

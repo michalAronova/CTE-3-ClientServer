@@ -11,5 +11,6 @@
     <orderEntry type="library" name="gson-2.1" level="project" />
     <orderEntry type="module" module-name="DTO" />
     <orderEntry type="library" name="controlsfx-8.40.11" level="project" />
+    <orderEntry type="module" module-name="constants" />
   </component>
 </module>

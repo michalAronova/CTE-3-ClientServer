@@ -49,6 +49,8 @@ public class AgentAppController implements LoginController, Closeable {
     private int missionPull;
     private BooleanProperty isValidAgent;
     private final StringProperty allyChosen;
+    private final BooleanProperty inWaitingList;
+
     private final Map<String,Toggle> allyname2toggle;
 
     private AlliesAvailableRefresher alliesAvailableRefresher;
@@ -59,6 +61,7 @@ public class AgentAppController implements LoginController, Closeable {
         username = new SimpleStringProperty("");
         allyChosen = new SimpleStringProperty("");
         isValidAgent = new SimpleBooleanProperty(false);
+        inWaitingList = new SimpleBooleanProperty(false);
         allyname2toggle = new HashMap<>();
     }
 
@@ -197,10 +200,13 @@ public class AgentAppController implements LoginController, Closeable {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
-                    if (response.code() == 200) {
-                        Platform.runLater(() -> {
-                            isValidAgent.set(true);
-                        });
+                    if(response.code() == 200){
+                        inWaitingList.set(false);
+                        Platform.runLater(() -> isValidAgent.set(true));
+                    }
+                    else if (response.code() == 202) {
+                        inWaitingList.set(true);
+                        Platform.runLater(() -> isValidAgent.set(true));
                     }
                     else {
                         String responseBodyString = responseBody.string();
@@ -248,5 +254,9 @@ public class AgentAppController implements LoginController, Closeable {
         if(agentMainController != null) {
             agentMainController.close();
         }
+    }
+
+    public boolean getInWaitingList() {
+        return inWaitingList.get();
     }
 }

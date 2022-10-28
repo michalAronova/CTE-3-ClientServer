@@ -6,8 +6,12 @@ import DTO.processResponse.ProcessResponse;
 import clientUtils.MainAppController;
 import clientUtils.activeTeams.ActiveTeamsComponentController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
+import clientUtils.chat.chatroom.ChatRoomMainController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.layout.AnchorPane;
 import okhttp3.*;
 import uBoatClient.components.codeConfigurationComponent.CodeConfigComponentController;
 import uBoatClient.components.codeObjDisplayComponent.CodeObjDisplayComponentController;
@@ -31,12 +35,15 @@ import util.http.HttpClientUtil;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Timer;
 
 import static parameters.ConstantParams.MSG_TO_PROCESS;
 import static util.Constants.*;
 
 public class UBoatMainController implements MainAppController, Closeable {
+    @FXML private Tab chatTab;
+    @FXML private AnchorPane chatPanel;
     @FXML private Button continueButton;
     @FXML private Button readyButton;
     @FXML private VBox mainVBox;
@@ -60,6 +67,9 @@ public class UBoatMainController implements MainAppController, Closeable {
     @FXML private CandidatesComponentController  candidatesComponentController;
     @FXML private ActiveTeamsComponentController activeTeamsComponentController;
     private UBoatAppController uBoatAppController;
+
+    private Parent chatRoomComponent;
+    private ChatRoomMainController chatRoomComponentController;
     private final BooleanProperty isFileLoaded;
     private final StringProperty filePath;
     private final StringProperty xmlErrorMessage;
@@ -137,7 +147,8 @@ public class UBoatMainController implements MainAppController, Closeable {
         dictionaryComponentController.disableProperty().bind(isReady);
         processComponentController.disableProperty().bind(isReady);
 
-        competitionTabPane.disableProperty().bind(isFileLoaded.not());
+        machineTab.disableProperty().bind(isFileLoaded.not());
+
         loadFileButton.disableProperty().bind(isFileLoaded);
 
         xmlErrorLabel.textProperty().bind(xmlErrorMessage);
@@ -146,6 +157,9 @@ public class UBoatMainController implements MainAppController, Closeable {
         continueButton.setDisable(true);
 
         entityLabel.setText("UBOAT");
+
+        //load the chat tab <3
+        loadChatRoomPage();
     }
 
     private void cleanupAfterContestFinished() {
@@ -170,6 +184,7 @@ public class UBoatMainController implements MainAppController, Closeable {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
+                    HttpClientUtil.removeCookiesOf(Constants.BASE_DOMAIN);
                     System.out.println(responseBody.string());
                     close();
                     Platform.runLater(() -> uBoatAppController.loggedOut());
@@ -502,6 +517,30 @@ public class UBoatMainController implements MainAppController, Closeable {
             contestFinishedRefresher.cancel();
             finishedTimer.cancel();
         }
+
+        chatRoomComponentController.close();
+    }
+
+    private void loadChatRoomPage() {
+        URL loginPageUrl = getClass().getResource(CHAT_ROOM_FXML_RESOURCE_LOCATION);
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(loginPageUrl);
+            chatRoomComponent = fxmlLoader.load();
+            chatRoomComponentController = fxmlLoader.getController();
+            chatRoomComponentController.setChatAppMainController(this);
+            setChatTab(chatRoomComponent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void setChatTab(Parent pane) {
+        chatPanel.getChildren().clear();
+        chatPanel.getChildren().add(pane);
+        AnchorPane.setBottomAnchor(pane, 1.0);
+        AnchorPane.setTopAnchor(pane, 1.0);
+        AnchorPane.setLeftAnchor(pane, 1.0);
+        AnchorPane.setRightAnchor(pane, 1.0);
     }
 
     public boolean hasInput() {

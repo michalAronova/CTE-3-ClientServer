@@ -29,7 +29,7 @@ public class UBoatClientMain extends Application {
             Parent root = fxmlLoader.load();
             uBoatAppController = fxmlLoader.getController();
 
-            Scene scene = new Scene(root, 600, 400);
+            Scene scene = new Scene(root, 900, 600);
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException e) {

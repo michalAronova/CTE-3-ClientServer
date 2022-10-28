@@ -33,6 +33,7 @@ public class AlliesReadyServlet extends HttpServlet {
         ally.setMissionSize(missionSizeFromParameter);
 
         synchronized (this){
+            ally.setReady();
             ally.getUBoat().updateAllyReady(usernameFromSession);
         }
     }

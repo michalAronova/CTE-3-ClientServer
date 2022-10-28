@@ -1,7 +1,6 @@
 package agentClient.refreshers;
 
 import DTO.contest.Contest;
-import DTO.contestForAgent.ContestForAgent;
 import DTO.dmInfo.DMInfo;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -21,18 +20,24 @@ import static util.Constants.*;
 public class CheckForContestRefresher extends TimerTask {
 
     private final BooleanProperty inContest;
+    private final BooleanProperty inWaitingList;
     private final Consumer<Contest> updateContestDetails;
     private final Consumer<DMInfo> updateDMInfo;
     private final int version = 0;
 
-    public CheckForContestRefresher(BooleanProperty inContest, Consumer<Contest> updateContestDetails, Consumer<DMInfo> updateDMInfo) {
+    public CheckForContestRefresher(BooleanProperty inContest, BooleanProperty inWaitingList, Consumer<Contest> updateContestDetails, Consumer<DMInfo> updateDMInfo) {
         this.inContest = inContest;
+        this.inWaitingList = inWaitingList;
         this.updateContestDetails = updateContestDetails;
         this.updateDMInfo = updateDMInfo;
     }
 
     @Override
     public void run() {
+        if(inWaitingList.get()){
+            return;
+        }
+
         if(inContest.getValue()){
             return;
         }
