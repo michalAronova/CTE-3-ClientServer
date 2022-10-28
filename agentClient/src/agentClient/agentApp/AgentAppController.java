@@ -245,6 +245,8 @@ public class AgentAppController implements LoginController, Closeable {
     @Override
     public void close() {
         stopAlliesRefresher();
-        agentMainController.close();
+        if(agentMainController != null) {
+            agentMainController.close();
+        }
     }
 }

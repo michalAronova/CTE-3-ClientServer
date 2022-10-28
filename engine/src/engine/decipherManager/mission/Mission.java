@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -35,17 +36,16 @@ public class Mission implements Runnable {
 
     private final BlockingQueue<MissionResult> resultQueue;
 
-    private final BlockingQueue<Runnable> workQueue;
-    private final BooleanProperty isEmptyQueue;
     private final String allyName;
     private final String agentName;
     private final IntegerProperty missionsInQueue;
+    private final CountDownLatch cdl;
 
     public Mission(Machine machine, List<Character> startPositions, double missionSize,
                    String toDecrypt, Set<String> dictionary, Speedometer speedometer,
                    IntegerProperty missionsDone, BlockingQueue<MissionResult> resultQueue,
-                   BlockingQueue<Runnable> workQueue, BooleanProperty isEmptyQueue,
-                   String allyName, String agentName, IntegerProperty missionsInQueue){
+                   String allyName, String agentName, IntegerProperty missionsInQueue,
+                   CountDownLatch cdl){
         this.machine = machine;
         this.missionSize = missionSize;
         this.toDecrypt = toDecrypt;
@@ -56,20 +56,18 @@ public class Mission implements Runnable {
         machine.updateByPositionsList(currentPositions);
         this.speedometer = speedometer;
         candidates = new LinkedList<>();
-        this.workQueue = workQueue;
-        this.isEmptyQueue = isEmptyQueue;
         this.allyName = allyName;
         this.agentName = agentName;
         this.missionsInQueue = missionsInQueue;
+        this.cdl = cdl;
     }
 
     @Override
     public void run() {
-        if(workQueue != null){
-            isEmptyQueue.set(workQueue.isEmpty());
-        }
+        cdl.countDown();
+        System.out.printf("cdl down: %d%n", cdl.getCount());
 
-        Platform.runLater(() -> missionsInQueue.set(missionsInQueue.get() - 1));
+        Platform.runLater(() -> missionsInQueue.set((int)cdl.getCount()));
 
         for (int i = 0; i < missionSize; i++){
             //do thing:

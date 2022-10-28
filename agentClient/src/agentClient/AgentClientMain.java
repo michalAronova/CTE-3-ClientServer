@@ -16,7 +16,6 @@ import static util.Constants.ALLIES_APP_FXML_RESOURCE_LOCATION;
 
 public class AgentClientMain extends Application {
     private AgentAppController agentAppController;
-
     @Override
     public void start(Stage primaryStage) {
 

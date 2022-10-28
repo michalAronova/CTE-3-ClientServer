@@ -148,5 +148,12 @@ public class ActiveContestsController implements Closeable {
     public void clearChoice(){
         chosenContestName.set("");
     }
+
+    public void stopRefresher() {
+        if (refresher != null && timer != null) {
+            refresher.cancel();
+            timer.cancel();
+        }
+    }
 }
 

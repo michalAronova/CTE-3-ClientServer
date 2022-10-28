@@ -91,11 +91,19 @@ public class Agent {
             }
         });
 
-        isEmptyQueue.addListener((observable, oldValue, newValue) -> {
-            if (newValue && isCompetitionOn.getValue()) {
-                new Thread(this::pullMissionsFromAlly, "Pull Thread for " + username).start();
-            }
-        });
+//        isEmptyQueue.addListener((observable, oldValue, newValue) -> {
+//            if (newValue && isCompetitionOn.getValue()) {
+//                new Thread(this::pullMissionsFromAlly, "Pull Thread for " + username).start();
+//            }
+//        });
+
+//        missionsInQueue.addListener((observable, oldValue, newValue) -> {
+//            System.out.println("-------------------------mission in queue changed: "+ newValue);
+//        });
+//
+//        missionsDone.addListener((observable, oldValue, newValue) -> {
+//            System.out.println("*************************missions done changed: "+ newValue);
+//        });
     }
 
     public void updateByContest(List<Character> keys, Set<String> words){
@@ -239,36 +247,36 @@ public class Agent {
 
     public void pullMissionsFromAlly(){
         List<MissionDTO> missionsDTOs;
-        System.out.println("Using thread: "+ Thread.currentThread().getName());
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+
+        missionsDTOs = requestMissionPull();
+        final int missionAmount = missionsDTOs.size();
+        cdl = new CountDownLatch(missionAmount);
+        Platform.runLater(() -> {
+            missionsInQueue.set((int)cdl.getCount());
+            totalMissionsPulled.set(totalMissionsPulled.get() + missionAmount);
+        });
+
+        if (missionsDTOs.size() > 0) {
+            missionsDTOs.forEach(missionDTO -> {
+                try {
+                    Mission mission = new Mission(deepCopyMachine(missionDTO.getMachineEncoded()), missionDTO.getStartPositions(),
+                            missionDTO.getMissionSize(), missionDTO.getToDecrypt(), dictionary, this::speedometer,
+                            missionsDone, resultQueue, myAllies, username, missionsInQueue, cdl);
+                    workQueue.put(mission);
+                } catch (InterruptedException e) {
+                    System.out.println(Thread.currentThread().getName() + " was interrupted");
+                }
+            });
         }
 
-        //trying to get missions until I fill up my queue...
-        while(isEmptyQueue() && !Thread.currentThread().isInterrupted() && isCompetitionOn.getValue()) {
-            missionsDTOs = requestMissionPull();
-            final int missionAmount = missionsDTOs.size();
-
-            Platform.runLater(() -> {
-                missionsInQueue.set(missionAmount);
-                totalMissionsPulled.set(totalMissionsPulled.get() + missionsInQueue.get());
-            });
-
-            if (missionsDTOs.size() > 0) {
-                missionsDTOs.forEach(missionDTO -> {
-                    try {
-                        Mission mission = new Mission(deepCopyMachine(missionDTO.getMachineEncoded()), missionDTO.getStartPositions(),
-                                missionDTO.getMissionSize(), missionDTO.getToDecrypt(), dictionary, this::speedometer,
-                                missionsDone, resultQueue, workQueue, isEmptyQueue, myAllies, username, missionsInQueue);
-                        workQueue.put(mission);
-                    } catch (InterruptedException e) {
-                        System.out.println(Thread.currentThread().getName() + " was interrupted");
-                    }
-                });
-                isEmptyQueue.set(false);
+        try {
+            cdl.await();
+            if(isCompetitionOn.getValue() && !Thread.currentThread().isInterrupted()) {
+                pullMissionsFromAlly();
             }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -287,7 +295,6 @@ public class Agent {
         String finalUrl = HttpUrl
                 .parse(Constants.PULL_MISSIONS)
                 .newBuilder()
-                //.addQueryParameter("mission-done-by-agent", String.valueOf(missionsDone))
                 .build()
                 .toString();
 
@@ -304,7 +311,6 @@ public class Agent {
                 }
                 else if(response.code() == 204){ //HttpServletResponse.SC_NO_CONTENT - contest has ended
                     //System.out.println("can't pull because competition has ended...");
-                    //isCompetitionOn.set(false);
                 }
             }
         } catch (IOException e) {

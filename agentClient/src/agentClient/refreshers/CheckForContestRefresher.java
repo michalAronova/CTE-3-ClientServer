@@ -45,8 +45,7 @@ public class CheckForContestRefresher extends TimerTask {
                         if(!bodyString.isEmpty()){
                             DMInfo dmInfo = GSON_INSTANCE
                                     .fromJson(bodyString, DMInfo.class);
-                            System.out.println("DMINFO JSON: ");
-                            System.out.println(bodyString);
+
                             inContest.set(dmInfo.isCompetitionOn());
                             Platform.runLater(() -> {
                                 updateContestDetails.accept(dmInfo.getContestDetails());
@@ -57,7 +56,6 @@ public class CheckForContestRefresher extends TimerTask {
                     else{
                         System.out.println(bodyString);
                     }
-
                 }
             }
 

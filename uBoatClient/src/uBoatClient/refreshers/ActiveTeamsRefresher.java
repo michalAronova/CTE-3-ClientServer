@@ -25,11 +25,14 @@ public class ActiveTeamsRefresher extends TimerTask {
     private final Consumer<List<Team>> teamsListConsumer;
     private final BooleanProperty isReady;
     private final BooleanProperty isCompetitionOn;
+    private final BooleanProperty refreshTeams;
 
-    public ActiveTeamsRefresher(Consumer<List<Team>> teamsListConsumer, BooleanProperty isReady, BooleanProperty isCompetitionOn) {
+    public ActiveTeamsRefresher(Consumer<List<Team>> teamsListConsumer, BooleanProperty isReady,
+                                BooleanProperty isCompetitionOn, BooleanProperty refreshTeams) {
         this.teamsListConsumer = teamsListConsumer;
         this.isReady = isReady;
         this.isCompetitionOn = isCompetitionOn;
+        this.refreshTeams = refreshTeams;
     }
 
     @Override
@@ -39,6 +42,10 @@ public class ActiveTeamsRefresher extends TimerTask {
         }
 
         if(!isReady.get()){
+            return;
+        }
+
+        if(!refreshTeams.get()){
             return;
         }
 

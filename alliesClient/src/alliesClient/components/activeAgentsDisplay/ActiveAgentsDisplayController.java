@@ -85,5 +85,11 @@ public class ActiveAgentsDisplayController {
         agentsTimer.schedule(activeAgentsRefresher, SMALL_REFRESH_RATE, SMALL_REFRESH_RATE);
     }
 
+    public void stopRefresher() {
+        if (activeAgentsRefresher != null && agentsTimer != null) {
+            activeAgentsRefresher.cancel();
+            agentsTimer.cancel();
+        }
+    }
 }
 

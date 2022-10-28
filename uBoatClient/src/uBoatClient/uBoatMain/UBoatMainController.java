@@ -71,6 +71,7 @@ public class UBoatMainController implements MainAppController, Closeable {
     private final StringProperty winnerName;
     private final BooleanProperty hasInput;
 
+    private final BooleanProperty refreshTeams;
     private IntegerProperty candidatesAmount;
 
     //refreshers and timers
@@ -88,6 +89,7 @@ public class UBoatMainController implements MainAppController, Closeable {
         xmlErrorMessage = new SimpleStringProperty("");
         isReady = new SimpleBooleanProperty(false);
         isCompetitionOn = new SimpleBooleanProperty(false);
+        refreshTeams = new SimpleBooleanProperty(true);
 
         //if changed to false - inform the server this uboat is no longer ready!
         isCompetitionOn.addListener((observable, oldValue, newValue) -> {
@@ -149,6 +151,7 @@ public class UBoatMainController implements MainAppController, Closeable {
     private void cleanupAfterContestFinished() {
         winnerName.set("");
         isReady.set(false);
+        refreshTeams.set(true);
         candidatesComponentController.clear();
         activeTeamsComponentController.clear();
         teamsLeftForStart.set(requiredTeams);
@@ -167,8 +170,9 @@ public class UBoatMainController implements MainAppController, Closeable {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
+                    System.out.println(responseBody.string());
                     close();
-                    uBoatAppController.loggedOut();
+                    Platform.runLater(() -> uBoatAppController.loggedOut());
                 }
             }
             @Override
@@ -344,10 +348,11 @@ public class UBoatMainController implements MainAppController, Closeable {
                 try (ResponseBody responseBody = response.body()) {
                     String body = responseBody.string();
                     if (response.code() != 200) {
+                        System.out.println(body);
                         Platform.runLater(() ->
                                 {
                                     xmlErrorLabel.setStyle("-fx-text-fill: red");
-                                    xmlErrorMessage.set("Error:" + body);
+                                    xmlErrorMessage.set("Error: " + body);
                                     filePath.set("");
                                 }
                         );
@@ -386,7 +391,8 @@ public class UBoatMainController implements MainAppController, Closeable {
     private void startContestFinishedRefresher() {
         contestFinishedRefresher = new ContestFinishedRefresher(isCompetitionOn,
                 winnerName,
-                this::cleanupAfterContestFinished);
+                this::cleanupAfterContestFinished,
+                refreshTeams);
         finishedTimer = new Timer();
         finishedTimer.schedule(contestFinishedRefresher, REFRESH_RATE, REFRESH_RATE);
     }
@@ -396,7 +402,7 @@ public class UBoatMainController implements MainAppController, Closeable {
                     activeTeamsComponentController.replaceTeams(teams);
                     teamsLeftForStart.set(requiredTeams - teams.size());
                 }),
-                isReady, isCompetitionOn);
+                isReady, isCompetitionOn, refreshTeams);
         teamsTimer = new Timer();
         teamsTimer.schedule(activeTeamsRefresher, REFRESH_RATE, REFRESH_RATE);
     }

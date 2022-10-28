@@ -34,7 +34,6 @@ public class ContestDetailsController {
         difficulty = new SimpleStringProperty(noData);
         inGame = new SimpleIntegerProperty(0);
         required = new SimpleIntegerProperty(0);
-
     }
 
     @FXML public void initialize(){
@@ -70,6 +69,14 @@ public class ContestDetailsController {
 
     public void setDisable(boolean disable) {
 
+    }
+    public void clear() {
+        battleName.set(noData);
+        uboatName.set(noData);
+        activeOrIdle.set(noData);
+        difficulty.set(noData);
+        inGame.set(0);
+        required.set(0);
     }
 }
 

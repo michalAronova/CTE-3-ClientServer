@@ -98,14 +98,15 @@ public class UBoatAppController implements LoginController {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
+                    String responseBodyString = responseBody.string();
                     if (response.code() == 200) {
+                        System.out.println(responseBodyString);
                         Platform.runLater(() -> {
                             usernameProperty.set(username);
                             isValidUsername.set(true);
                         });
                     }
                     else {
-                        String responseBodyString = responseBody.string();
                         Platform.runLater(() ->
                                 chooseNameComponentController
                                         .errorMessageProperty().set("Something went wrong: " + responseBodyString)
@@ -141,6 +142,12 @@ public class UBoatAppController implements LoginController {
             vBox.getChildren().add(chooseNameNode);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void close() {
+        if(uBoatMainController != null){
+            uBoatMainController.close();
         }
     }
 }

@@ -27,6 +27,7 @@ import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 import util.http.HttpClientUtil;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
@@ -35,7 +36,7 @@ import static parameters.ConstantParams.DESIRED_UBOAT;
 import static parameters.ConstantParams.MISSION_SIZE;
 import static util.Constants.*;
 
-        public class AlliesMainController implements MainAppController {
+        public class AlliesMainController implements MainAppController, Closeable {
     @FXML private GridPane contestOnGrid;
     @FXML private Label usernameLabel;
 
@@ -302,5 +303,26 @@ import static util.Constants.*;
     @Override
     public void updateCandidateAmount(int size) {
         candidatesAmount.set(size);
+    }
+
+    @Override
+    public void close(){
+        if (isWinnerFoundRefresher != null && winnerFoundTimer != null) {
+            isWinnerFoundRefresher.cancel();
+            winnerFoundTimer.cancel();
+        }
+        if (candidatesRefresher != null && candidatesTimer != null) {
+            candidatesRefresher.cancel();
+            candidatesTimer.cancel();
+        }
+        if (rivalAlliesRefresher != null && rivalAlliesTimer != null) {
+            rivalAlliesRefresher.cancel();
+            rivalAlliesTimer.cancel();
+        }
+
+        activeAgentsDisplayController.stopRefresher();
+        activeContestsController.stopRefresher();
+        agentDisplayController.stopRefresher();
+        missionsProgressController.stopRefresher();
     }
 }

@@ -40,7 +40,7 @@ public class UBoatClientMain extends Application {
 
     @Override
     public void stop() { //this handles the clicking on x...
-        //uBoatAppController.close(); // chain reaction to shut down everything
+        uBoatAppController.close(); // chain reaction to shut down everything
         // important to remove user from server
         HttpClientUtil.shutdown();
     }

@@ -61,5 +61,12 @@ public class MissionsProgressController {
     public void clear() {
         dataList.clear();
     }
+
+    public void stopRefresher() {
+        if (missionProgressRefresher != null && missionProgressTimer != null) {
+            missionProgressRefresher.cancel();
+            missionProgressTimer.cancel();
+        }
+    }
 }
 

@@ -33,7 +33,7 @@ public class LoadServlet extends HttpServlet {
         String usernameFromSession = SessionUtils.getUsername(req);
 
         if(usernameFromSession == null){
-            resp.sendError(SC_UNAUTHORIZED, "you are not logged in");
+            resp.setStatus(SC_UNAUTHORIZED);
             out.println("you are not logged in");
             return;
         }
@@ -41,7 +41,7 @@ public class LoadServlet extends HttpServlet {
         UBoatUserManager uBoatUserManager = ServletUtils.getUBoatUserManager(getServletContext());
         UBoat boatFromSession = (UBoat) uBoatUserManager.getUser(usernameFromSession);
         if(boatFromSession == null){
-            resp.sendError(SC_UNAUTHORIZED, "no boat by this name");
+            resp.setStatus(SC_UNAUTHORIZED);
             out.println("no boat by name "+ usernameFromSession);
             return;
         }

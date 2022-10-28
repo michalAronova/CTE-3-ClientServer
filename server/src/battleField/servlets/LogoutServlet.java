@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import parameters.ConstantParams;
 
 import java.io.IOException;
 
@@ -18,17 +19,25 @@ public class LogoutServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=UTF-8");
-
+        System.out.println("in logout servlet...");
         String usernameFromSession = SessionUtils.getUsername(request);
         EntityEnum entityFromSession = SessionUtils.getEntity(request);
+        System.out.println("username: "+usernameFromSession+ " | entity: "+entityFromSession);
 
         UsernameManager usernameManager = ServletUtils.getUsernameManager(getServletContext());
+        System.out.println("usernameFromSession logging out: "+ usernameFromSession);
+        response.getWriter().println("usernameFromSession logging out: "+ usernameFromSession);
 
         if (usernameFromSession != null) { //user is logged in
             synchronized (this) {
+                //SessionUtils.clearSession(request);
+                request.getSession().removeAttribute(ConstantParams.USERNAME);
+                request.getSession().removeAttribute(ConstantParams.ENTITY);
+                request.getSession().invalidate();
+                System.out.println("AFTER INVALIDATE: ");
+                System.out.println(SessionUtils.getUsername(request));
                 usernameManager.removeUser(usernameFromSession);
                 removeUserByEntity(usernameFromSession, entityFromSession);
-                SessionUtils.clearSession(request);
             }
         }
     }

@@ -30,6 +30,8 @@ public class UBoatLoginServlet  extends HttpServlet {
         UserManager userManager = ServletUtils.getUBoatUserManager(getServletContext());
         PrintWriter out = response.getWriter();
 
+        out.println("usernameFromSession: "+ usernameFromSession);
+
         if (usernameFromSession == null) { //user is not logged in yet
 
             String usernameFromParameter = request.getParameter(USERNAME);

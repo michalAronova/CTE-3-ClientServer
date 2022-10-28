@@ -144,6 +144,7 @@ public class AgentMainController implements MainAppController, Closeable {
     private void handleAllyOKClicked() {
         candidatesComponentController.clear();
         agent.clearData();
+        contestDetailsController.clear();
     }
 
     public String getAlliesName() {
@@ -204,7 +205,22 @@ public class AgentMainController implements MainAppController, Closeable {
 
     @Override
     public void close() {
-        //stop all refreshers here
+        if (allyApprovedRefresher != null && allyApprovedTimer != null) {
+            allyApprovedRefresher.cancel();
+            allyApprovedTimer.cancel();
+        }
+        if (checkForContestRefresher != null && checkForContestTimer != null) {
+            checkForContestRefresher.cancel();
+            checkForContestTimer.cancel();
+        }
+        if (checkForFinishRefresher != null && checkForFinishTimer != null) {
+            checkForFinishRefresher.cancel();
+            checkForFinishTimer.cancel();
+        }
+        if (statusUpdater != null && statusUpdateTimer != null) {
+            statusUpdater.cancel();
+            statusUpdateTimer.cancel();
+        }
     }
 
 
