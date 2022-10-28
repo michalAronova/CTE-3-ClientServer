@@ -6,6 +6,7 @@ import agentClient.agentLogic.Agent;
 import agentClient.refreshers.AllyApprovedRefresher;
 import agentClient.refreshers.CheckForContestRefresher;
 import agentClient.refreshers.CheckForFinishRefresher;
+import agentClient.refreshers.StatusUpdater;
 import clientUtils.MainAppController;
 import clientUtils.candidatesComponent.CandidatesComponentController;
 import clientUtils.contestDetails.ContestDetailsController;
@@ -18,7 +19,7 @@ import javafx.scene.control.Label;
 import java.io.Closeable;
 import java.util.Timer;
 
-import static util.Constants.REFRESH_RATE;
+import static util.Constants.*;
 
 public class AgentMainController implements MainAppController, Closeable {
     @FXML private Label usernameLabel;
@@ -42,9 +43,11 @@ public class AgentMainController implements MainAppController, Closeable {
     private final BooleanProperty inContest;
     private final BooleanProperty waitForAllyApproval;
     //refreshers and timers
-    CheckForContestRefresher checkForContestRefresher;
-    CheckForFinishRefresher checkForFinishRefresher;
-    AllyApprovedRefresher allyApprovedRefresher;
+    private CheckForContestRefresher checkForContestRefresher;
+    private CheckForFinishRefresher checkForFinishRefresher;
+    private AllyApprovedRefresher allyApprovedRefresher;
+    private StatusUpdater statusUpdater;
+    private Timer statusUpdateTimer;
     private Timer checkForContestTimer;
     private Timer checkForFinishTimer;
     private Timer allyApprovedTimer;
@@ -66,7 +69,14 @@ public class AgentMainController implements MainAppController, Closeable {
     public void createAgent(String username, String myAllies, int threadCount, int missionAmountPull){
         agent = new Agent(username, myAllies, threadCount, missionAmountPull);
         agent.isCompetitionOnProperty().bind(inContest);
-        agent.setUpdateLocal(this::updateCandidates);
+        agent.setUpdateUICandidates(this::updateCandidates);
+        connectDataToAgent();
+    }
+
+    private void connectDataToAgent() {
+        inQueue.bind(agent.missionsInQueueProperty());
+        pulled.bind(agent.totalMissionsPulledProperty());
+        completed.bind(agent.missionsDoneProperty());
     }
 
     private void updateCandidates(MissionResult missionResult) {
@@ -101,6 +111,13 @@ public class AgentMainController implements MainAppController, Closeable {
         startCheckForContestRefresher();
         startCheckForFinishRefresher();
         startAllyApprovedRefresher();
+        startStatusUpdater();
+    }
+
+    private void startStatusUpdater() {
+        statusUpdater = new StatusUpdater(totalCandidates, inQueue, completed);
+        statusUpdateTimer = new Timer();
+        statusUpdateTimer.schedule(statusUpdater, TINY_REFRESH_RATE, TINY_REFRESH_RATE);
     }
 
     public void startCheckForContestRefresher(){
@@ -126,7 +143,7 @@ public class AgentMainController implements MainAppController, Closeable {
 
     private void handleAllyOKClicked() {
         candidatesComponentController.clear();
-        clearMissionInfo();
+        agent.clearData();
     }
 
     public String getAlliesName() {
@@ -194,12 +211,5 @@ public class AgentMainController implements MainAppController, Closeable {
     @Override
     public void updateCandidateAmount(int size) {
         totalCandidates.set(size);
-    }
-
-    private void clearMissionInfo(){
-        totalCandidates.set(0);
-        inQueue.set(0);
-        pulled.set(0);
-        completed.set(0);
     }
 }

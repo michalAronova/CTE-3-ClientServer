@@ -88,6 +88,14 @@ public class UBoatMainController implements MainAppController, Closeable {
         xmlErrorMessage = new SimpleStringProperty("");
         isReady = new SimpleBooleanProperty(false);
         isCompetitionOn = new SimpleBooleanProperty(false);
+
+        //if changed to false - inform the server this uboat is no longer ready!
+        isCompetitionOn.addListener((observable, oldValue, newValue) -> {
+            if(!newValue){
+                unReadyUBoat();
+            }
+        });
+
         hasInput = new SimpleBooleanProperty(false);
         winnerName = new SimpleStringProperty("");
         candidatesAmount = new SimpleIntegerProperty(0);
@@ -192,6 +200,33 @@ public class UBoatMainController implements MainAppController, Closeable {
                         Platform.runLater(() -> {
 
                         });
+                    }
+                }
+            }
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("failed");
+            }
+        });
+    }
+
+    private void unReadyUBoat(){
+        String finalUrl = HttpUrl
+                .parse(Constants.UBOAT_UNREADY)
+                .newBuilder()
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    String str = responseBody.string();
+                    if (response.code() == 200) {
+                        System.out.println(str);
+                    }
+                    else {
+                        System.out.println(str);
                     }
                 }
             }

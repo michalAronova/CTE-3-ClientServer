@@ -30,11 +30,6 @@ public class ActiveAgentsRefresher extends TimerTask {
 
     @Override
     public void run() {
-        //don't refresh if ready
-        if (isAllyReady.get()) {
-            return;
-        }
-
         HttpClientUtil.runAsync(MY_AGENTS, new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {

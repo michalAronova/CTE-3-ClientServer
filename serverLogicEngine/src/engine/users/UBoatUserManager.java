@@ -38,6 +38,10 @@ public class UBoatUserManager extends UserManager{
         }
     }
 
+    public synchronized  void unReadyUBoat(String username){
+        readyUBoats.remove(username);
+    }
+
     public synchronized boolean addBattleFieldName(String battleFieldName){
         //returns TRUE if the name didn't already exist
         //hence, if this returns false - the name existed, and should handle! (ERROR)

@@ -92,7 +92,6 @@ public class Allies implements Entity {
 
     public synchronized void setUBoat(UBoat uBoat){
         this.uBoat = uBoat;
-        uBoat.addParticipant(this);
         isCompetitionOn.bind(uBoat.isCompetitionOn());
         dmInfo = new DMInfo(isCompetitionOn.getValue(), uBoat.getAsDTO(),
                 uBoat.getKeys(), uBoat.getDictionary());

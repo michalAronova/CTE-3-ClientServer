@@ -51,7 +51,7 @@ public class DecipherManager {
 
     private BiConsumer<Integer, Long> updateTotalMissionDone;
     private double totalMissionDone;
-    private double totalMissionProduced;
+    private double totalMissionProduced = 0;
 
     public DecipherManager(Dictionary dictionary, Machine machine,
                            Stock stock, Difficulty difficulty, CodeObj machineCode, String encryption){
@@ -250,15 +250,18 @@ public class DecipherManager {
                                                     nextRotorsPositions,
                                                     leftoverMissionsAmountForPositions,
                                                     encryption));
+                    if(leftoverMissionsAmountForPositions != 0) {
+                        totalMissionProduced++;
+                    }
                 }
                 else{
                     workQueue.put(new MissionDTO(updatingMachineEncoding,
                                                     nextRotorsPositions,
                                                     missionSize,
                                                     encryption));
+                    totalMissionProduced++;
                 }
 
-                totalMissionProduced++;
                 totalMissions++;
             }
         }

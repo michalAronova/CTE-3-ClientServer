@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Timer;
 
 import static util.Constants.REFRESH_RATE;
+import static util.Constants.SMALL_REFRESH_RATE;
 
 public class ActiveAgentsDisplayController {
     @FXML private Label encryptionLabel;
@@ -57,8 +58,6 @@ public class ActiveAgentsDisplayController {
 
     public void setMainApplicationController(AlliesMainController mainApplicationController){
         this.mainApplicationController = mainApplicationController;
-        //encryptionLabel.textProperty().bind(mainApplicationController.getEncryptionProperty());
-        //encryption.bind(mainApplicationController.getEncryptionProperty());
         startActiveAgentsRefresher();
     }
 
@@ -81,9 +80,9 @@ public class ActiveAgentsDisplayController {
 
     private void startActiveAgentsRefresher(){
         activeAgentsRefresher = new ActiveAgentsRefresher(
-                (myAgents) -> addMultipleAgents(myAgents), mainApplicationController.getIsAllyReady());
+                this::addMultipleAgents, mainApplicationController.getIsAllyReady());
         agentsTimer = new Timer();
-        agentsTimer.schedule(activeAgentsRefresher, REFRESH_RATE, REFRESH_RATE);
+        agentsTimer.schedule(activeAgentsRefresher, SMALL_REFRESH_RATE, SMALL_REFRESH_RATE);
     }
 
 }

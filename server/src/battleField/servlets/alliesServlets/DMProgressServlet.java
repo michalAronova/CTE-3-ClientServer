@@ -23,7 +23,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 public class DMProgressServlet extends HttpServlet {
     //get the ally entity from session
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("application/json");
 
         try (PrintWriter out = response.getWriter()) {
             Gson gson = new Gson();
@@ -33,6 +33,7 @@ public class DMProgressServlet extends HttpServlet {
             Allies ally = (Allies) alliesUserManager.getEntityObject(usernameFromSession);
             //parse current DM stat
             DecipherManager dm = ally.getDM();
+
             DMProgress progress = new DMProgress(dm.getTotalMissionAmount(),
                                             dm.getTotalMissionProduced(),
                                             ally.getTotalMissionDone());

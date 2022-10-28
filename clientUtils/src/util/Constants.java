@@ -10,6 +10,7 @@ public class Constants {
     public final static int REFRESH_RATE = 2000;
     public final static int SMALL_REFRESH_RATE = 500;
     public final static int MEDIUM_REFRESH_RATE = 1000;
+    public final static int TINY_REFRESH_RATE = 200;
     public final static String CHAT_LINE_FORMATTING = "%tH:%tM:%tS | %.10s: %s%n";
     public final static String FINAL_MESSAGE = "And The winner is: ";
     // fxml locations
@@ -45,6 +46,7 @@ public class Constants {
     public final static String UBOAT_LIST = FULL_SERVER_PATH + "/uboat/users-list";
     public final static String UBOAT_LOGIN_PAGE = FULL_SERVER_PATH + "/signup/uboat/login";
     public final static String UBOAT_READY = FULL_SERVER_PATH + "/uboat/ready";
+    public final static String UBOAT_UNREADY = FULL_SERVER_PATH +"/uboat/un-ready";
 
     //allies
     public final static String ACTIVE_CONTESTS = FULL_SERVER_PATH + "/allies/active-contests";

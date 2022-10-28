@@ -51,6 +51,7 @@ public class UpdateWorkStatusServlet extends HttpServlet {
             out.println("Wrong parameter type inserted");
             return;
         }
+
         UserManager alliesUserManager = ServletUtils.getAlliesUserManager(getServletContext());
         Allies myAllies = (Allies) alliesUserManager.getEntityObject
                 (agentUserManager.getAllyName(usernameFromSession));

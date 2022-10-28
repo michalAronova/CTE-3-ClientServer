@@ -43,12 +43,20 @@ public class RivalAlliesServlet extends HttpServlet {
         resp.setContentType("application/json");
         UserManager alliesUserManager = ServletUtils.getAlliesUserManager(getServletContext());
         UBoat myBoat = ((Allies) alliesUserManager.getEntityObject(usernameFromSession)).getUBoat();
+
         Gson gson = new Gson();
 
-        String json = gson.toJson(myBoat.getDTOParticipants());
+        String jsonParticipants;
+
+        if(myBoat == null){
+            jsonParticipants = gson.toJson(new LinkedList<Team>());
+        }
+        else {
+            jsonParticipants = gson.toJson(myBoat.getDTOParticipants());
+        }
 
         resp.setStatus(HttpServletResponse.SC_OK);
-        out.println(json);
+        out.println(jsonParticipants);
         out.flush();
     }
 }

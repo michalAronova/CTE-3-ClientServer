@@ -7,6 +7,7 @@ import engine.decipherManager.mission.Mission;
 import engine.decipherManager.resultListener.ResultListener;
 import enigmaMachine.Machine;
 import enigmaMachine.keyBoard.KeyBoard;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -43,9 +44,7 @@ public class Agent {
     private final BooleanProperty isEmptyQueue;
 
     private final BooleanProperty isCompetitionOn;
-    private Consumer<MissionResult> updateLocal;
-
-    private IntegerProperty missionsDone;
+    private Consumer<MissionResult> updateUICandidates;
 
     private KeyBoard keyboard;
     private Set<String> dictionary;
@@ -53,14 +52,19 @@ public class Agent {
 
     private CountDownLatch cdl;
 
-    private int totalMissionDone = 0;
-    private int totalCandidatesFound = 0;
+    //data for UI...
+    private final IntegerProperty missionsInQueue;
+    private final IntegerProperty missionsDone;
+    private final IntegerProperty totalMissionsPulled;
+
     public Agent(String username, String myAllies, int threadCount, int missionAmountPull) {
         this.username = username;
         this.myAllies = myAllies;
         this.threadCount = threadCount;
         this.missionAmountPull = missionAmountPull;
         missionsDone = new SimpleIntegerProperty(0);
+        missionsInQueue = new SimpleIntegerProperty(0);
+        totalMissionsPulled = new SimpleIntegerProperty(0);
 
         //create result queue
         resultQueue = new LinkedBlockingQueue<>();
@@ -95,6 +99,8 @@ public class Agent {
     }
 
     public void updateByContest(List<Character> keys, Set<String> words){
+        if(keys == null || words == null) return;
+
         this.keyboard = new KeyBoard(charListToString(keys));
         this.dictionary = words;
     }
@@ -106,7 +112,6 @@ public class Agent {
     }
 
     public void start(){
-        //isCompetitionOn.set(true);
         decipherTask = new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {
@@ -122,11 +127,12 @@ public class Agent {
         if(decipherTask != null){
             decipherTask.cancel();
         }
+        workQueue.clear();
+        resultQueue.clear();
     }
 
     private void decipher() {
         System.out.println(Thread.currentThread().getName()+" is working");
-        missionsDone.set(0);
         //isCompetitionOn.set(true);
         threadExecutor.prestartAllCoreThreads();
 
@@ -136,14 +142,17 @@ public class Agent {
     }
 
     private void transferMissionResult(MissionResult missionResult) {
-        updateLocal.accept(missionResult);
+        updateUICandidates.accept(missionResult);
 
         String finalUrl = HttpUrl
                 .parse(Constants.UPLOAD_CANDIDATES)
                 .newBuilder()
                 .build()
                 .toString();
-        totalCandidatesFound += missionResult.getCandidates().size();
+
+        //totalCandidatesFound += missionResult.getCandidates().size();
+        //this updates in UI by sending the whole mission result (see first line in this method)
+
         HttpClientUtil.runAsyncResultUpload(finalUrl, missionResult, new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -240,13 +249,19 @@ public class Agent {
         //trying to get missions until I fill up my queue...
         while(isEmptyQueue() && !Thread.currentThread().isInterrupted() && isCompetitionOn.getValue()) {
             missionsDTOs = requestMissionPull();
+            final int missionAmount = missionsDTOs.size();
+
+            Platform.runLater(() -> {
+                missionsInQueue.set(missionAmount);
+                totalMissionsPulled.set(totalMissionsPulled.get() + missionsInQueue.get());
+            });
 
             if (missionsDTOs.size() > 0) {
                 missionsDTOs.forEach(missionDTO -> {
                     try {
                         Mission mission = new Mission(deepCopyMachine(missionDTO.getMachineEncoded()), missionDTO.getStartPositions(),
                                 missionDTO.getMissionSize(), missionDTO.getToDecrypt(), dictionary, this::speedometer,
-                                missionsDone, resultQueue, workQueue, isEmptyQueue, myAllies, username);
+                                missionsDone, resultQueue, workQueue, isEmptyQueue, myAllies, username, missionsInQueue);
                         workQueue.put(mission);
                     } catch (InterruptedException e) {
                         System.out.println(Thread.currentThread().getName() + " was interrupted");
@@ -272,7 +287,7 @@ public class Agent {
         String finalUrl = HttpUrl
                 .parse(Constants.PULL_MISSIONS)
                 .newBuilder()
-                .addQueryParameter("mission-done-by-agent", String.valueOf(missionsDone))
+                //.addQueryParameter("mission-done-by-agent", String.valueOf(missionsDone))
                 .build()
                 .toString();
 
@@ -306,7 +321,37 @@ public class Agent {
         return isCompetitionOn;
     }
 
-    public void setUpdateLocal(Consumer<MissionResult> updateLocal) {
-        this.updateLocal = updateLocal;
+    public void setUpdateUICandidates(Consumer<MissionResult> updateUICandidates) {
+        this.updateUICandidates = updateUICandidates;
+    }
+
+    public int getMissionsInQueue() {
+        return missionsInQueue.get();
+    }
+
+    public IntegerProperty missionsInQueueProperty() {
+        return missionsInQueue;
+    }
+
+    public int getMissionsDone() {
+        return missionsDone.get();
+    }
+
+    public IntegerProperty missionsDoneProperty() {
+        return missionsDone;
+    }
+
+    public int getTotalMissionsPulled() {
+        return totalMissionsPulled.get();
+    }
+
+    public IntegerProperty totalMissionsPulledProperty() {
+        return totalMissionsPulled;
+    }
+
+    public void clearData() {
+        missionsDone.set(0);
+        missionsInQueue.set(0);
+        totalMissionsPulled.set(0);
     }
 }

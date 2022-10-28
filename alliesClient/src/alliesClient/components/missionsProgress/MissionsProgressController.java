@@ -2,7 +2,6 @@ package alliesClient.components.missionsProgress;
 
 import DTO.dmProgress.DMProgress;
 import alliesClient.alliesMain.AlliesMainController;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +12,7 @@ import javafx.scene.control.TableView;
 import java.util.Timer;
 
 import static util.Constants.REFRESH_RATE;
+import static util.Constants.TINY_REFRESH_RATE;
 
 public class MissionsProgressController {
     @FXML private TableView<DMProgress> missionDataTableView;
@@ -28,16 +28,16 @@ public class MissionsProgressController {
 
     @FXML public void initialize(){
         totalColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(String.valueOf(param.getValue().getTotal())));
+                new SimpleStringProperty(String.format("%.0f", param.getValue().getTotal())));
         producedColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(String.valueOf(param.getValue().getProduced())));
+                new SimpleStringProperty(String.format("%.0f", param.getValue().getProduced())));
         completedColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(String.valueOf(param.getValue().getCompleted())));
+                new SimpleStringProperty(String.format("%.0f", param.getValue().getCompleted())));
 
         missionDataTableView.setItems(dataList);
     }
 
-    public void setDTO(DMProgress progressDTO){
+    public void setDMProgress(DMProgress progressDTO){
         this.progressDTO = progressDTO;
         dataList.clear();
         dataList.add(progressDTO);
@@ -49,13 +49,17 @@ public class MissionsProgressController {
 
     public void setMainApplicationController(AlliesMainController mainApplicationController){
         this.mainApplicationController = mainApplicationController;
-        //startMissionProgressRefresher();
+        startMissionProgressRefresher();
     }
 
     public void startMissionProgressRefresher() {
-        missionProgressRefresher = new MissionsProgressRefresher(this::setDTO, mainApplicationController.isCompetitionOnProperty());
+        missionProgressRefresher = new MissionsProgressRefresher(this::setDMProgress, mainApplicationController.isCompetitionOnProperty());
         missionProgressTimer = new Timer();
-        missionProgressTimer.schedule(missionProgressRefresher, REFRESH_RATE, REFRESH_RATE);
+        missionProgressTimer.schedule(missionProgressRefresher, TINY_REFRESH_RATE, TINY_REFRESH_RATE);
+    }
+
+    public void clear() {
+        dataList.clear();
     }
 }
 

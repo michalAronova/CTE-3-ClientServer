@@ -214,6 +214,10 @@ import static util.Constants.*;
     }
 
     private void checkIsCompetitionOn() {
+        if(chosenContest == null){
+            isCompetitionOn.set(false);
+            System.out.println("competition set to false in "+usernameLabel.getText());
+        }
         if(activeTeamsController.getActiveTeamsAmount() == chosenContest.getTotalRequiredTeams()){
             isCompetitionOn.set(true);
             System.out.println("competition set to true in "+usernameLabel.getText());
@@ -224,9 +228,12 @@ import static util.Constants.*;
     }
 
     public void onDialogOKClicked(){
+        encryption.set("");
         competitionTabPane.getSelectionModel().select(dashboardTab);
         contestTab.setDisable(true);
         allyOKClickedRequest();
+        candidatesComponentController.clear();
+        missionsProgressController.clear();
     }
 
     private void allyOKClickedRequest() {
@@ -268,7 +275,6 @@ import static util.Constants.*;
         activeContestsController.clearChoice();
         chosenContest = null;
         registeredToContest.set(false);
-        encryption.set("");
         isAllyReady.set(false);
     }
 

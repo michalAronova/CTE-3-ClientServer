@@ -43,7 +43,7 @@ public class StatusUpdater extends TimerTask {
                 try (ResponseBody responseBody = response.body()) {
                     String body = responseBody.string();
                     if (response.code() == 200) {
-                        System.out.println("updated successfully");
+                        //System.out.println("updated successfully");
                     }
                     else {
                         System.out.println("Error occurred in server: "+ body);

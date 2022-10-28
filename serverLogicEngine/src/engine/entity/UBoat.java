@@ -92,6 +92,7 @@ public class UBoat implements Entity{
 
     public synchronized void removeAllParticipants(){
         participants.clear();
+        name2ready.clear();
     }
 
     public void setAlliesParams(Allies ally){

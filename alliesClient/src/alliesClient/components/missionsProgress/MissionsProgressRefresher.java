@@ -38,8 +38,8 @@ public class MissionsProgressRefresher extends TimerTask {
         HttpClientUtil.runAsync(DM_PROGRESS, new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                String jsonAlliesList = response.body().string();
-                DMProgress status = GSON_INSTANCE.fromJson(jsonAlliesList, DMProgress.class);
+                String jsonDMProgress = response.body().string();
+                DMProgress status = GSON_INSTANCE.fromJson(jsonDMProgress, DMProgress.class);
                 Platform.runLater(() -> DMProgressConsumer.accept(status));
             }
 

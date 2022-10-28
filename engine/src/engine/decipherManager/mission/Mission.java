@@ -8,6 +8,7 @@ import engine.decipherManager.dictionary.Dictionary;
 import engine.decipherManager.speedometer.Speedometer;
 import enigmaMachine.Machine;
 import enigmaMachine.keyBoard.KeyBoard;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.util.Pair;
@@ -38,26 +39,13 @@ public class Mission implements Runnable {
     private final BooleanProperty isEmptyQueue;
     private final String allyName;
     private final String agentName;
-
-    /*public Mission(Machine machine, List<Character> startRotorsPositions, double missionSize,
-                   String toDecrypt, Dictionary dictionary, Speedometer speedometer,
-                   BlockingQueue<MissionResult> resultQueue, BiConsumer<Integer, Long> updateTotalMissionDone) {
-        this.machine = machine;
-        this.missionSize = missionSize;
-        this.toDecrypt = toDecrypt;
-        this.dictionary = dictionary;
-        this.currentPositions = startRotorsPositions;
-        this.resultQueue = resultQueue;
-        machine.updateByPositionsList(currentPositions);
-        this.speedometer = speedometer;
-        candidates = new LinkedList<>();
-    }*/
+    private final IntegerProperty missionsInQueue;
 
     public Mission(Machine machine, List<Character> startPositions, double missionSize,
                    String toDecrypt, Set<String> dictionary, Speedometer speedometer,
                    IntegerProperty missionsDone, BlockingQueue<MissionResult> resultQueue,
                    BlockingQueue<Runnable> workQueue, BooleanProperty isEmptyQueue,
-                   String allyName, String agentName){
+                   String allyName, String agentName, IntegerProperty missionsInQueue){
         this.machine = machine;
         this.missionSize = missionSize;
         this.toDecrypt = toDecrypt;
@@ -72,20 +60,17 @@ public class Mission implements Runnable {
         this.isEmptyQueue = isEmptyQueue;
         this.allyName = allyName;
         this.agentName = agentName;
+        this.missionsInQueue = missionsInQueue;
     }
 
-//    public void setResultQueue(BlockingQueue<MissionResult> resultQueue){ this.resultQueue = resultQueue; }
-//
-//    public void setWorkQueueAndEmptyProperty(BlockingQueue<Runnable> workQueue, BooleanProperty isEmptyQueue){
-//        this.workQueue = workQueue;
-//        this.isEmptyQueue = isEmptyQueue;
-//    }
     @Override
     public void run() {
         if(workQueue != null){
             isEmptyQueue.set(workQueue.isEmpty());
         }
-//        long startTime = System.currentTimeMillis();
+
+        Platform.runLater(() -> missionsInQueue.set(missionsInQueue.get() - 1));
+
         for (int i = 0; i < missionSize; i++){
             //do thing:
             //  1. machine.process(toDecrypt);
@@ -107,11 +92,11 @@ public class Mission implements Runnable {
             currentPositions = speedometer.calculateNext(currentPositions);
             machine.updateByPositionsList(currentPositions);
         }
+
         if(missionSize != 0) {
-            synchronized (missionsDone){
-                missionsDone.set(missionsDone.get() + 1);
-            }
+            Platform.runLater(() -> missionsDone.set(missionsDone.get() + 1));
         }
+
         if(!candidates.isEmpty()){
             try {
                 resultQueue.put(new MissionResult(candidates, agentName, allyName));
