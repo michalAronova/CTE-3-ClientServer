@@ -107,14 +107,14 @@
                                       <items>
                                         <AnchorPane>
                                              <children>
-                                                <fx:include fx:id="activeTeamsComponent" source="../../../clientUtils/clientUtils/activeTeams/activeTeamsComponent.fxml" GridPane.rowIndex="1" />
+                                                <fx:include fx:id="activeTeamsComponent" source="/clientUtils/activeTeams/activeTeamsComponent.fxml" GridPane.rowIndex="1" />
                                              </children>
                                           </AnchorPane>
                                           <ScrollPane fitToHeight="true" fitToWidth="true">
                                              <content>
                                               <AnchorPane>
                                                    <children>
-                                                      <fx:include fx:id="candidatesComponent" source="../../../clientUtils/clientUtils/candidatesComponent/candidatesComponent.fxml" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+                                                      <fx:include fx:id="candidatesComponent" source="/clientUtils/candidatesComponent/candidatesComponent.fxml" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
                                                    </children>
                                                 </AnchorPane>
                                              </content>

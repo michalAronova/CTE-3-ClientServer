@@ -28,7 +28,6 @@ public class UBoatReadyServlet extends HttpServlet {
                     // stands for unauthorized as there is already such user with this name
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     out.print(errorMessage);
-                    System.out.println(errorMessage);
                 } else {
                     uBoatUserManager.addReadyUBoat(usernameFromSession);
                     out.print("UBoat "+ usernameFromSession+" is ready!");

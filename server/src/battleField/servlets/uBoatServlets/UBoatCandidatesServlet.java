@@ -45,19 +45,10 @@ public class UBoatCandidatesServlet extends HttpServlet {
 
         Gson gson = new Gson();
         String jsonResponse = gson.toJson(results);
-        logServerMessage("Server Candidate version: " + serverCandidatesVersion +
-                ", User '" + username + " ("+ EntityEnum.UBOAT +
-                ")' Client Candidate version: " + clientCandidatesVersion);
-        logServerMessage(jsonResponse);
 
         try (PrintWriter out = response.getWriter()) {
             out.print(jsonResponse);
             out.flush();
         }
     }
-
-    private void logServerMessage(String message){
-        System.out.println(message);
-    }
-
 }

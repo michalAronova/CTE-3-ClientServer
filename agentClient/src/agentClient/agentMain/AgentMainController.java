@@ -260,6 +260,7 @@ public class AgentMainController implements MainAppController, Closeable {
         }
 
         chatRoomComponentController.close();
+        chatRoomComponentController.close();
     }
 
 

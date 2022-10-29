@@ -31,6 +31,7 @@ import static util.Constants.AGENT_MAIN_FXML_RESOURCE_LOCATION;
 import static util.Constants.REFRESH_RATE;
 
 public class AgentAppController implements LoginController, Closeable {
+    @FXML private Label chooseAllyLabel;
     @FXML private VBox vBox;
     @FXML private Label errorLabel;
     @FXML private ScrollPane mainScrollPane;
@@ -216,7 +217,7 @@ public class AgentAppController implements LoginController, Closeable {
             }
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                System.out.println("request failes");
+                System.out.println("request failed");
                 Platform.runLater(() -> errorMessage.set("Request failed"));
             }
         });
@@ -258,5 +259,15 @@ public class AgentAppController implements LoginController, Closeable {
 
     public boolean getInWaitingList() {
         return inWaitingList.get();
+    }
+
+    public void presetAlly(String premadeAlly) {
+        stopAlliesRefresher();
+        chooseAllyLabel.setVisible(false);
+        allyRadioButtonVBox.getChildren().clear();
+        allyname2toggle.clear();
+        allyRadioButtonVBox.getChildren().add(new Label("Your ally is: "));
+        addAllyRadioButton(premadeAlly);
+        allyname2toggle.get(premadeAlly).setSelected(true);
     }
 }

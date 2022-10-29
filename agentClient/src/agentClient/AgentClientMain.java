@@ -16,6 +16,7 @@ import static util.Constants.ALLIES_APP_FXML_RESOURCE_LOCATION;
 
 public class AgentClientMain extends Application {
     private AgentAppController agentAppController;
+    private static String premadeAlly;
     @Override
     public void start(Stage primaryStage) {
 
@@ -45,5 +46,10 @@ public class AgentClientMain extends Application {
         HttpClientUtil.shutdown();
     }
 
-    public static void main(String[] args) { launch(args);}
+    public static void main(String[] args) {
+        if(args.length > 0){
+            premadeAlly = args[0];
+        }
+        launch(args);
+    }
 }

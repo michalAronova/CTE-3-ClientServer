@@ -34,7 +34,7 @@
                 <RowConstraints vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <fx:include fx:id="chooseNameComponent" source="../../../clientUtils/clientUtils/chooseNameComponent/chooseNameComponent.fxml" />
+                  <fx:include fx:id="chooseNameComponent" source="/clientUtils/chooseNameComponent/chooseNameComponent.fxml" />
                   <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                      <children>
                         <Label text="Thread count: " />
@@ -51,7 +51,7 @@
                      <children>
                         <VBox spacing="2.0">
                            <children>
-                              <Label text="Choose your ally:" />
+                              <Label fx:id="chooseAllyLabel" text="Choose your ally:" />
                               <VBox fx:id="allyRadioButtonVBox">
                                  <children>
                                     <RadioButton mnemonicParsing="false" text="ally #1" />

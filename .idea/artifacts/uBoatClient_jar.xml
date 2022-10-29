@@ -1,0 +1,18 @@
+<component name="ArtifactManager">
+  <artifact name="uBoatClient:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/uBoatClient_jar</output-path>
+    <root id="root">
+      <element id="archive" name="uBoatClient.jar">
+        <element id="module-output" name="uBoatClient" />
+        <element id="module-output" name="clientUtils" />
+        <element id="module-output" name="DTO" />
+        <element id="module-output" name="constants" />
+        <element id="module-output" name="exceptions" />
+        <element id="module-output" name="enigmaMachine" />
+      </element>
+      <element id="library" level="project" name="okHttp" />
+      <element id="library" level="project" name="gson-2.1" />
+      <element id="library" level="project" name="controlsfx-8.40.11" />
+    </root>
+  </artifact>
+</component>

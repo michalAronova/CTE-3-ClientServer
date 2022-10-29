@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact name="alliesClient:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/alliesClient_jar</output-path>
+    <root id="root">
+      <element id="archive" name="alliesClient.jar">
+        <element id="module-output" name="alliesClient" />
+        <element id="module-output" name="clientUtils" />
+        <element id="module-output" name="DTO" />
+        <element id="module-output" name="constants" />
+        <element id="module-output" name="exceptions" />
+      </element>
+      <element id="library" level="project" name="okHttp" />
+      <element id="library" level="project" name="gson-2.1" />
+      <element id="library" level="project" name="controlsfx-8.40.11" />
+    </root>
+  </artifact>
+</component>

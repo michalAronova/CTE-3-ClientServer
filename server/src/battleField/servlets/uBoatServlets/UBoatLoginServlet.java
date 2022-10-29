@@ -30,15 +30,11 @@ public class UBoatLoginServlet  extends HttpServlet {
         UserManager userManager = ServletUtils.getUBoatUserManager(getServletContext());
         PrintWriter out = response.getWriter();
 
-        out.println("trying to login. usernameFromSession: "+ usernameFromSession);
-        System.out.println("trying to login. usernameFromSession: "+ usernameFromSession);
-
         if (usernameFromSession == null) { //user is not logged in yet
 
             String usernameFromParameter = request.getParameter(USERNAME);
             if (usernameFromParameter == null || usernameFromParameter.isEmpty()) {
                 //no username in session and no username in parameter - not standard situation. it's a conflict
-
                 // stands for conflict in server state
                 response.setStatus(HttpServletResponse.SC_CONFLICT);
             } else {
@@ -51,7 +47,6 @@ public class UBoatLoginServlet  extends HttpServlet {
                         // stands for unauthorized as there is already such user with this name
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         out.println(errorMessage);
-                        System.out.println(errorMessage);
                     }
                     else {
                         usernameManager.addUser(usernameFromParameter);
@@ -63,9 +58,6 @@ public class UBoatLoginServlet  extends HttpServlet {
                         response.setStatus(HttpServletResponse.SC_OK);
                         out.println(String.format("logged in as %s (%s)",
                                 usernameFromParameter, EntityEnum.UBOAT));
-
-                        System.out.printf("logged in as %s (%s)%n",
-                                usernameFromParameter, EntityEnum.UBOAT);
                     }
                 }
             }
@@ -73,7 +65,6 @@ public class UBoatLoginServlet  extends HttpServlet {
             //user is already logged in
             response.setStatus(HttpServletResponse.SC_OK);
             out.println("user is already logged in");
-            System.out.println("user is already logged in");
         }
     }
 }

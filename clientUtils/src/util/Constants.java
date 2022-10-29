@@ -20,9 +20,9 @@ public class Constants {
     public final static String UBOAT_MAIN_FXML_RESOURCE_LOCATION = "/uBoatClient/uBoatMain/uBoatMain.fxml";
     public final static String ALLIES_MAIN_FXML_RESOURCE_LOCATION = "/alliesClient/alliesMain/alliesMain.fxml";
     public final static String AGENT_MAIN_FXML_RESOURCE_LOCATION = "/agentClient/agentMain/agentMain.fxml";
-    public final static String CHOOSE_NAME_FXML_RESOURCE_LOCATION = "../../../clientUtils/clientUtils/chooseNameComponent/chooseNameComponent.fxml";
+    public final static String CHOOSE_NAME_FXML_RESOURCE_LOCATION = "/clientUtils/chooseNameComponent/chooseNameComponent.fxml";
 
-    public final static String CHAT_ROOM_FXML_RESOURCE_LOCATION = "../../../clientUtils/clientUtils/chat/chatroom/chat-room-main.fxml";
+    public final static String CHAT_ROOM_FXML_RESOURCE_LOCATION = "/clientUtils/chat/chatroom/chat-room-main.fxml";
     // Server resources locations
     public final static String BASE_DOMAIN = "localhost";
     private final static String BASE_URL = "http://" + BASE_DOMAIN + ":8080";

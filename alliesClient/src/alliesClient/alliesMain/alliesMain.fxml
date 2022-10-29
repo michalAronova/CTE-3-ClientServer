@@ -65,13 +65,13 @@
                                       <content>
                                         <AnchorPane>
                                              <children>
-                                                <fx:include fx:id="candidatesComponent" source="../../../clientUtils/clientUtils/candidatesComponent/candidatesComponent.fxml" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <fx:include fx:id="candidatesComponent" source="/clientUtils/candidatesComponent/candidatesComponent.fxml" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                              </children>
                                           </AnchorPane>
                                       </content>
                                     </ScrollPane>
-                                    <fx:include fx:id="activeTeams" source="../../../clientUtils/clientUtils/activeTeams/activeTeamsComponent.fxml" GridPane.columnIndex="1" />
-                                    <fx:include fx:id="contestDetails" source="../../../clientUtils/clientUtils/contestDetails/contestDetails.fxml" />
+                                    <fx:include fx:id="activeTeams" source="/clientUtils/activeTeams/activeTeamsComponent.fxml" GridPane.columnIndex="1" />
+                                    <fx:include fx:id="contestDetails" source="/clientUtils/contestDetails/contestDetails.fxml" />
                                     <fx:include fx:id="activeAgentsDisplay" source="../components/activeAgentsDisplay/activeAgentsDisplay.fxml" GridPane.rowIndex="1" />
                                     <fx:include fx:id="missionsProgress" source="../components/missionsProgress/missionsProgress.fxml" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
                                  </children>

@@ -74,7 +74,6 @@ public class AgentLoginServlet extends HttpServlet {
                         request.getSession(true).setAttribute(ConstantParams.USERNAME, usernameFromParameter);
                         request.getSession().setAttribute(ConstantParams.ENTITY, EntityEnum.AGENT);
 
-
                         response.getOutputStream()
                                 .print(String.format("logged in as %s (%s)",
                                         usernameFromParameter, EntityEnum.AGENT));
